@@ -2,16 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ThwartAction
+public class ThwartAction : Action
 {
-    public IThwarter thwarter;
-    public IScheme target;
-    public List<string> keywords;
+    [HideInInspector]
+    public Thwarter owner;
+    public int thwart;
 
-    public ThwartAction(IThwarter thwarter, IScheme target, List<string> keywords)
+    public ThwartAction(ActionData data) : base (data){}
+
+    public ThwartAction(int _thwart = 0, Thwarter owner = null) : base("ThwartAction")
     {
-        this.thwarter = thwarter;
-        this.target = target;
-        this.keywords = keywords;
+        this.owner = owner;
+
+        if (this.owner == null)
+            value = _thwart;
+        else
+            value = owner._thwart;
     }
+    public override void Execute() => ThwartSystem.instance.InitiateThwart(this);
 }

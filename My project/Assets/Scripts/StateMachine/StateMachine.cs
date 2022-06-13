@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class StateMachine
 {
-    IState currentState;
+    [HideInInspector]
+    public IState currentState;
 
     public void ChangeState(IState newState)
     {

@@ -11,10 +11,16 @@ public class Threat : MonoBehaviour
     [SerializeField]
     private GameEvent beingThwarted;
 
+    private void Start()
+    {
+        var data = GetComponent<CardUI>().card.data as Scheme;
+        currThreat = startingThreat = data.startingThreat;
+    }
+
     public void RemoveThreat(int thwart)
     {
         _thwart = thwart;
-        beingThwarted.Raise();
+        //beingThwarted.Raise();
 
         if (_thwart > 0)
         {
@@ -25,6 +31,8 @@ public class Threat : MonoBehaviour
                 gameObject.SendMessage("WhenDefeated", SendMessageOptions.DontRequireReceiver);
             }
         }
+
+        GetComponent<CardUI>().Refresh();
     }
 
     public void GainThreat(int threat)

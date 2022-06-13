@@ -16,76 +16,36 @@ public class AttackSystem : MonoBehaviour
             Destroy(this);
     }
     #endregion
-    #region GameEvents
-    [SerializeField]
-    private GameEvent attackInitiated;
-    [SerializeField]
-    private GameEvent attackComplete;
-    [SerializeField]
-    private GameEvent applyingOverkill;
-    [SerializeField]
-    private GameEvent overkillApplied;
-    #endregion
     #region Fields
-    ICombatant attacker;
-    IDestructable target;
-    List<string> keywords;
     public int excess = 0;
     #endregion
-    #region Properties
-    public ICombatant Attacker
+
+    public void InitiateAttack(AttackAction attack) => StartCoroutine(AttackSystem.instance.Attack(attack));
+
+    private IEnumerator Attack(AttackAction attack)
     {
-        get
-        {
-            return attacker;
-        }
+        yield return StartCoroutine(TargetSystem.instance.GetTarget("Enemy", "Health"));
+        var target = TargetSystem.instance.target;
+
+        if (attack.owner.keywords.Contains("Piercing"))
+            target.tough = false;
+
+        if (attack.owner.keywords.Contains("Overkill") /*&& attack.target.GetComponent<Villain>() == null*/)
+            excess = attack.owner._attack - target.currHealth;
+
+        target.TakeDamage(attack.owner._attack);
+
+        if (excess > 0)
+            Overkill();
+
+        yield return null;
     }
-    public IDestructable Target
+
+    private void Overkill()
     {
-        get
+        if (excess > 0 /*&& GameManager.instance.scenario.villain != null*/)
         {
-            return target;
+            //(GameManager.instance.scenario.villain as MonoBehaviour).gameObject.SendMessage("TakeDamage", excess, SendMessageOptions.DontRequireReceiver);
         }
-    }
-    public List<string> Keywords
-    {
-        get
-        {
-            return keywords;
-        }
-    }
-    #endregion
-
-    public void Attack(AttackAction attack)
-    {
-        attacker = attack.attacker;
-        target = attack.target;
-        keywords = attack.keywords;
-
-        //Spider-Man + Defence
-        attackInitiated.Raise();
-
-        if (keywords.Contains("Piercing"))
-            (target as IStatus).tough = false;
-
-        if (keywords.Contains("Overkill") && target.GetType() != typeof(Villain))
-            excess = attacker.attack - target.hitpoints.currHealth;
-
-        (target as MonoBehaviour).gameObject.SendMessage("TakeDamage", attacker.attack - excess, SendMessageOptions.DontRequireReceiver);
-
-        if (excess > 0 && GameManager.instance.scenario.villain != null)
-        {
-            applyingOverkill.Raise();
-            (GameManager.instance.scenario.villain as MonoBehaviour).gameObject.SendMessage("TakeDamage", excess, SendMessageOptions.DontRequireReceiver);
-            overkillApplied.Raise();
-        }
-
-        attackComplete.Raise();
-
-        attacker = null;
-        target = null;
-        keywords.Clear();
-        excess = 0;
-        return;
     }
 }

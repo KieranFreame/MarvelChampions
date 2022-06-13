@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8500fc7aedc00204b8366777dadbcc23, type: 3}
+  m_Name: WeaponRunner
+  m_EditorClassIdentifier: 
+  cardName: Weapon Runner
+  cardDescription: Surge (When this card is revealed, reveal the top card of the
+    encounter deck)
+  cardTags:
+  - Mercenary
+  keywords: []
+  faceUp: 1
+  exhausted: 0
+  cardBack: {fileID: 0}
+  cardFace: {fileID: 0}
+  cardType: {fileID: 11400000, guid: c025f53f6121e924180906bc565c5f19, type: 2}
+  abilityLoader: {fileID: 0}
+  baseAttack: 1
+  baseScheme: 1
+  baseHealth: 2
+  stunned: 0
+  confused: 0
+  tough: 0

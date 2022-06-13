@@ -16,11 +16,12 @@ public class TurnManager : MonoBehaviour
 
     public Player firstPlayer { get; set; }
     public int firstPlayerIndex { get; set; }
+    public Player currPlayer { get; set; }
 
     private void Start()
     {
         firstPlayerIndex = 0;
-        firstPlayer = GameManager.instance.players[firstPlayerIndex];
+        currPlayer = firstPlayer = GameManager.instance.players[firstPlayerIndex];
     }
 
     public void ChangeFirstPlayer()

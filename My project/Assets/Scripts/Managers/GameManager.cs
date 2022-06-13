@@ -5,7 +5,6 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-    public Scenario scenario { get; set;}
     public List<Player> players { get; set; }
     private void Awake()
     {
@@ -17,6 +16,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        scenario = new Scenario();
+        players = new List<Player>();
+        players.AddRange(GameObject.FindObjectsOfType<Player>());
     }
 }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class AlterEgo : MonoBehaviour, IIdentity
+public abstract class AlterEgo : MonoBehaviour, IIdentity, IDestructable
 {
     #region IIdentity
     public string idName { get; set; }
@@ -12,6 +12,11 @@ public abstract class AlterEgo : MonoBehaviour, IIdentity
     public int hp { get; set; }
 
     public virtual void SwitchIdentity() { }
+    #endregion
+
+    #region IDestructable
+    public Health hitpoints { get; set; }
+    public virtual void WhenDefeated() { }
     #endregion
 
     public GameEvent onFlip;

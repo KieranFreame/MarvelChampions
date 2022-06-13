@@ -19,12 +19,12 @@ public class VillainTurnController : MonoBehaviour
         else
             Destroy(this);
 
-        states.Add(new VillainIdleState());
+        /*states.Add(new VillainIdleState());
         states.Add(new AccelerateState());
         states.Add(new VillainActivateState());
         states.Add(new DealEncounterCardState());
         states.Add(new RevealEncounterCardState());
-        states.Add(new RotateFirstPlayerState());
+        states.Add(new RotateFirstPlayerState());*/
 
         stateMachine.ChangeState(states[0]);
     }
@@ -43,23 +43,18 @@ public class VillainTurnController : MonoBehaviour
     abstract class BaseControllerState : BaseState
     {
         protected VillainTurnController owner = VillainTurnController.instance;
-        protected Scenario scen = GameManager.instance.scenario;
     }
 
     class VillainIdleState : BaseControllerState
     {
-        public override void Enter()
-        {
-            Debug.Log("Idling");
-        }
+        
     }
 
-    class AccelerateState : BaseControllerState
+    /*class AccelerateState : BaseControllerState
     {
         public override void Execute()
         {
-            Debug.Log("Accelerating Main Scheme");
-            owner.accelerate.Raise();
+            owner.scenario.mainScheme.Accelerate();
             owner.stateMachine.ChangeState(owner.states[2]);
         }
     }
@@ -143,6 +138,6 @@ public class VillainTurnController : MonoBehaviour
             TurnManager.instance.ChangeFirstPlayer();
             owner.stateMachine.ChangeState(owner.states[0]);
         }
-    }
+    }*/
     #endregion
 }

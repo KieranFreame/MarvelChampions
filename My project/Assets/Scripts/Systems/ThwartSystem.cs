@@ -22,52 +22,18 @@ public class ThwartSystem : MonoBehaviour
     [SerializeField]
     private GameEvent thwartComplete;
     #endregion
-    #region Fields
-    IThwarter thwarter;
-    IScheme target;
-    List<string> keywords;
-    #endregion
-    #region Properties
-    public IThwarter Thwarter
-    {
-        get
-        {
-            return thwarter;
-        }
-    }
-    public IScheme Target
-    {
-        get
-        {
-            return target;
-        }
-    }
-    public List<string> Keywords
-    {
-        get
-        {
-            return keywords;
-        }
-    }
-    #endregion
 
-    public void Thwart(ThwartAction thwart)
+    public void InitiateThwart(ThwartAction action) => StartCoroutine(Thwart(action));
+
+    public IEnumerator Thwart(ThwartAction action)
     {
-        Debug.Log("Thwarting");
+        yield return StartCoroutine(TargetSystem.instance.GetTarget("Scheme", "Threat"));
+        var target = TargetSystem.instance.target;
 
-        thwarter = thwart.thwarter;
-        target = thwart.target;
-        keywords = thwart.keywords;
-
-        thwartInitiated.Raise();
-
-        (target as MonoBehaviour).gameObject.SendMessage("RemoveThreat", thwarter.thwart, SendMessageOptions.DontRequireReceiver);
+        target.RemoveThreat(action.value);
 
         thwartComplete.Raise();
 
-        thwarter = null;
-        target = null;
-        keywords.Clear();
-        return;
+        yield return null;
     }
 }

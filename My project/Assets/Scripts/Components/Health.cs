@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class Health : MonoBehaviour
@@ -7,30 +8,55 @@ public class Health : MonoBehaviour
     int _damage;
     private int baseHP;
     public int currHealth;
-
+    public bool tough = false;
     [SerializeField]
-    private GameEvent takingDamage;
+    private bool isPlayer;
+    private CardData data;
+
+    public Subject takingDamage { get; set; }
+
+    private void Start()
+    {
+        takingDamage = new Subject(this);
+
+        if (!isPlayer)
+        {
+            data = GetComponent<CardUI>().card.data;
+            if (data is MinionData)
+                currHealth = baseHP = (data as MinionData).baseHealth;
+            else
+                currHealth = baseHP = (data as Ally).baseHp;
+        }
+        else
+        {
+            var identity = GetComponent<Player>().identity.alterEgo;
+            currHealth = baseHP = identity.baseHP;
+        }
+    }
 
     public void TakeDamage(int damage)
     {
         _damage = damage;
-        takingDamage.Raise();
+        Task _subject = Task.Factory.StartNew(() => takingDamage.Notify());
+        Task.WaitAll(_subject);
 
         if (_damage > 0)
         {
-            if (GetComponent<IStatus>().tough)
+            if (tough)
             {
-                GetComponent<IStatus>().tough = false;
-                return;
+               tough = false;
+               return;
             }
 
             currHealth -= _damage;
 
             if (currHealth <= 0)
             {
-                GetComponent<IDestructable>().WhenDefeated();
+                //GetComponent<IDestructable>().WhenDefeated(); func in event trigger
             }
-        }   
+        }
+
+        gameObject.SendMessage("Refresh");
     }
 
     public void RecoverHealth(int healing)
@@ -39,6 +65,15 @@ public class Health : MonoBehaviour
 
         if (currHealth > baseHP)
             currHealth = baseHP;
+
+        GetComponent<HealthUI>().Refresh();
+    }
+
+    public void IncreaseMaxHealth(int amount)
+    {
+        baseHP += 3;
+        RecoverHealth(3);
+        GetComponent<HealthUI>().Refresh();
     }
 
     public int BaseHP
