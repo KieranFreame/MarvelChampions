@@ -9,9 +9,6 @@ public class VillainStage
     public int baseAttack;
     public int baseHitpoints;
 
-    public List<ActionData> data;
-
     [Header("Keywords")]
-    public bool steady;
-    public bool stalwart;
+    public List<Keywords> keywords;
 }

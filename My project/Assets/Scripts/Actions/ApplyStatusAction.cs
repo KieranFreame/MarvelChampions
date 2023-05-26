@@ -4,22 +4,12 @@ using UnityEngine;
 
 public class ApplyStatusAction : Action
 {
-    public CardUI owner;
-    public Status status;
-    public bool targetSelf;
+    public Status Status { get; private set; }
 
-    public ApplyStatusAction(Status status, bool targetSelf, CardUI owner = null) : base("ApplyStatusAction")
+    public ApplyStatusAction(Status status, GameObject owner = null, List<TargetType> targets = null)
     {
-        this.status = status;
-        this.targetSelf = targetSelf;
-        this.owner = owner;
+        Owner = owner;
+        Targets = targets;
+        Status = status;
     }
-
-    public ApplyStatusAction(StatusData data) : base(data)
-    {
-        this.status = data.status;
-        this.targetSelf = data.targetSelf;
-    }
-
-    public override void Execute() => ApplyStatusSystem.instance.InitiateStatus(this);
 }

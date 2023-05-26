@@ -7,7 +7,8 @@ public class HeroData : ScriptableObject
 {
     [Header("CardDetails")]
     public string heroName;
-    public List<string> heroTags;
+    public List<string> heroTraits;
+    public List<Keywords> keywords;
 
     [Header("Stats")]
     public int baseATK;
@@ -16,5 +17,5 @@ public class HeroData : ScriptableObject
     public int baseHandSize;
 
     [Header("Ability")]
-    public List<ActionData> actions;
+    public IdentityEffect effect;
 }

@@ -1,36 +1,65 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
     #region Fields
+    public HeroData heroData;
+    public AlterEgoData alterEgoData;
+    public Identity Identity { get; private set; }
+    public CharacterStats CharStats { get; set; }
+    public Deck Deck { get; private set; }
 
-    public Identity identity;
+    [SerializeField] private List<string> cardIDs = new();
 
-    public Deck deck;
-    public List<CardData> cardData = new List<CardData>();
-    public List<Card> encounterCards = new List<Card>();
-
-    public Hand hand = new Hand();
-
-    public int allyLimit { get; set; }
-    public List<Ally> activeAllies = new List<Ally>();
-
-    public List<PlayerCard> upgrades = new List<PlayerCard>();
-    public List<PlayerCard> supports = new List<PlayerCard>();
-    public List<CardData> attachments = new List<CardData>();
+    public Hand Hand = new();
+    public PlayerCards CardsInPlay { get; private set; } = new();
+    public PlayerEncounterCards EncounterCards { get; private set; } = new();
 
     #endregion
+    private void OnEnable()
+    {
+        Identity = new Identity(this, a:alterEgoData, h:heroData);
+        CharStats = new(Identity, heroData, alterEgoData);
 
+        TurnManager.OnEndPlayerPhase += DrawToHandSize;
+        TurnManager.OnEndPlayerPhase += Identity.EndPlayerPhase;
+        
+    }
+    private void OnDisable()
+    {
+        TurnManager.OnEndPlayerPhase -= DrawToHandSize;
+        TurnManager.OnEndPlayerPhase -= Identity.EndPlayerPhase;
+    }
     private void Start()
     {
-        allyLimit = 3;
-        deck = new Deck(this);
+        Deck = new Deck();
 
-        cardData.AddRange(identity.heroSet.heroSet);
+        foreach (string id in Database.GetCardSetByName(Identity.Hero.Name).cardIDs)
+        {
+            CardData data = Database.GetCardDataById(id);
 
-        for (int i = 0; i < cardData.Count; i++)
-            deck.AddToDeck(new Card(cardData[i]));
+            if (data != null) //temp
+                Deck.AddToDeck(data);
+        }
+
+        foreach (string id in cardIDs)
+        {
+            CardData data = Database.GetCardDataById(id);
+
+            if (data != null) //temp
+                Deck.AddToDeck(data);
+        }
+
+        DrawCardSystem.instance.DrawCards(new DrawCardsAction(Identity.ActiveIdentity.BaseHandSize));
+    }
+    private void DrawToHandSize()
+    {
+        while (Hand.cards.Count < Identity.ActiveIdentity.BaseHandSize)
+        {
+            DrawCardSystem.instance.DrawCards(new DrawCardsAction(1));
+        }
     }
 }

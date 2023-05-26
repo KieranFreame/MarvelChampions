@@ -1,13 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager instance;
-    public int result { get; private set; } = -1;
-
     private void Awake()
     {
         if (instance == null)
@@ -16,38 +15,21 @@ public class UIManager : MonoBehaviour
             Destroy(this);
     }
 
-    [SerializeField]
-    GameObject effectSelection;
-    [SerializeField]
-    GameObject activateEffect;
+    #region Events
+    public event UnityAction OnUIEnable;
+    public static event UnityAction<List<string>> SelectEffect;
+    public static event UnityAction<Card> OnShowCardInfo;
+    #endregion
 
-    public IEnumerator GetPlayerChoice(List<Action> effects)
+    public static bool InStateMachine { get; set; }
+
+    public void UIEnable()
     {
-        result = -1;
-
-        effectSelection.SetActive(true);
-        var ui = effectSelection.GetComponent<EffectSelectionUI>();
-
-        ui.LoadStrings(effects);
-
-        yield return StartCoroutine(ui.GetChoice());
-        result = ui.result;
-
-        effectSelection.SetActive(false);
+        OnUIEnable?.Invoke();
     }
-
-    public IEnumerator ActivateEffect(string cardName)
+    public static void ShowCardInfo(Card data = null)
     {
-        result = -1;
-
-        activateEffect.SetActive(true);
-        var ui = activateEffect.GetComponent<ActivateEffectUI>();
-
-        ui.LoadStrings(cardName);
-
-        yield return StartCoroutine(ui.GetChoice());
-        
-        result = ui.result;
-        activateEffect.SetActive(false);
+        OnShowCardInfo?.Invoke(data);
     }
+    public static void ChooseEffect(List<string> effectDescriptions) => SelectEffect?.Invoke(effectDescriptions);
 }

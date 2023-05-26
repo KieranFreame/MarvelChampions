@@ -1,46 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class Recovery : MonoBehaviour
+public class Recovery
 {
-    int _recovery;
-    private int baseREC;
-    AlterEgoData identity;
-
-    private void Start()
+    private int _recovery;
+    public int REC
     {
-        identity = transform.parent.GetComponent<Player>().identity.alterEgo;
-        _recovery = baseREC = identity.baseREC;
+        get => _recovery;
+        set
+        {
+            _recovery = value;
+            RecoveryChanged?.Invoke();
+        }
+    }
+    public int BaseREC { get; private set; }
+
+    //public event UnityAction OnRecover;
+    public event UnityAction RecoveryChanged;
+
+    public Identity Owner { get; private set; }
+
+    public Recovery(Identity owner, AlterEgoData data)
+    {
+        Owner = owner;
+        REC = BaseREC = data.baseREC;
     }
 
     public void Recover()
     {
-        var animator = transform.parent.Find("IdentityProfile").GetComponent<Animator>();
-        if (animator != null)
-            animator.Play("Exhaust");
-        GetComponent<Health>().RecoverHealth(_recovery);
+        Owner.CharStats.Health.RecoverHealth(REC);
+        Owner.Exhaust();
+        //OnRecover?.Invoke();
     }
-
-    public void Refresh()
-    {
-        _recovery = baseREC = identity.REC;
-    }
-
-    public int BaseREC
-    {
-        get
-        {
-            return baseREC;
-        }
-        set
-        {
-            baseREC = value;
-        }
-    }
-
-    public int _Recovery
-    {
-        get { return _recovery; }
-    }
+    
 }

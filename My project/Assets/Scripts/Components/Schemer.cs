@@ -1,30 +1,61 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class Schemer : MonoBehaviour
+public class Schemer : IConfusable
 {
-    public int _scheme { get; set; }
-    public List<string> keywords = new List<string>(); //temp?
-    public int baseSCH { get; set; }
-    public bool confused;
+    private int _scheme;
+    public int BaseScheme { get; private set; }
+    private bool _confused;
+    public List<string> keywords = new(); //temp?
 
-    private void Start()
+    public dynamic Owner { get; private set; }
+
+    public event UnityAction<bool> OnToggleConfuse;
+    public event UnityAction SchemeChanged;
+
+    public Schemer(Villain owner)
     {
-        var data = GetComponent<CardUI>().card.data as MinionData;
-        _scheme = baseSCH = data.baseScheme;
+        Owner = owner;
+        CurrentScheme = BaseScheme = owner.BaseScheme;
     }
 
-    public void Scheme()
+    public Schemer(MinionCard owner, MinionCardData data)
     {
+        Owner = owner;
+        CurrentScheme = BaseScheme = data.baseScheme;
+    }
 
-        if (confused)
+    public SchemeAction Scheme()
+    {
+        if (Confused)
         {
-            confused = false;
-            return;
+            Confused = false;
+            return null;
         }
 
-        var scheme = new SchemeAction(owner:this);
-        scheme.Execute();
+        var scheme = new SchemeAction(_scheme, Owner.gameObject);
+        return scheme;
+    }
+
+    public bool Confused
+    {
+        get => _confused;
+        set 
+        { 
+            _confused = value;
+            OnToggleConfuse?.Invoke(_confused);
+        }
+    }
+
+    public int CurrentScheme
+    {
+        get { return _scheme; }
+        set
+        {
+            _scheme = value;
+            SchemeChanged?.Invoke();
+        }
     }
 }

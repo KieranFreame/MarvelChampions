@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Linq;
 
 public class PayCostSystem : MonoBehaviour
 {
@@ -17,10 +18,9 @@ public class PayCostSystem : MonoBehaviour
         else
             Destroy(this);
 
-        states.Add(new IdleState(this));
-        states.Add(new ClearState(this));
-        states.Add(new GetCandidatesState(this));
-        states.Add(new SelectTargetsState(this));
+        states.Add(new IdleState());
+        states.Add(new GetCandidatesState());
+        states.Add(new SelectTargetsState());
 
         stateMachine.ChangeState(states[0]);
     }
@@ -33,73 +33,147 @@ public class PayCostSystem : MonoBehaviour
 
     void Start()
     {
-        raycaster = GameObject.Find("Canvas").GetComponent<GraphicRaycaster>();
+        raycaster = GameObject.Find("Board").GetComponent<GraphicRaycaster>();
         eventSystem = GetComponent<EventSystem>();
     }
     #endregion
 
-    public StateMachine stateMachine = new StateMachine();
-    public List<IState> states = new List<IState>();
+    #region State Machine
+    private readonly StateMachine stateMachine = new();
+    private readonly List<IState> states = new();
 
-    List<dynamic> candidates = new List<dynamic>();
-    public List<Card> discards;
-    public List<Resource> resources;
-    CardData cardToPlay;
-    List<Card> zone;
+    public void ChangeState(int index)
+    {
+        stateMachine.ChangeState(states[index]);
+    }
+    #endregion
+
+    #region Fields
+    readonly List<PlayerCard> candidates = new();
+    readonly private List<Card> _discards = new();
+    private readonly List<Resource> _resources = new();
+    PlayerCard cardToPlay;
+    List<PlayerCard> zone;
+
+    private bool finishedSelecting = false;
+    #endregion
 
     private void Update()
     {
         stateMachine.Update();
     }
 
-    public IEnumerator GetTargets(CardData data, List<Card> targets)
+    private void Clear()
     {
-        this.cardToPlay = data;
-        this.zone = targets;
+        Resources.Clear();
+        Discards.Clear();
+    }
+
+    public IEnumerator GetTargets(PlayerCard card, List<PlayerCard> targets)
+    {
+        cardToPlay = card;
+        zone = targets;
         stateMachine.ChangeState(states[1]);
 
         while (stateMachine.currentState != states[0])
             yield return null;
     }
 
+    public IEnumerator GetResources(Resource resourceToCheck = Resource.Wild, int amount = 0)
+    {
+        UIManager.InStateMachine = true;
+        FinishButton.ToggleFinishButton(true, FinishedSelecting);
+        PlayerCard card = null;
+        Player player = FindObjectOfType<Player>();
+        finishedSelecting = false;
+        Clear();
+
+        while (!finishedSelecting)
+        {
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                pointerEventData = new PointerEventData(eventSystem)
+                {
+                    position = Input.mousePosition
+                };
+
+                List<RaycastResult> results = new();
+
+                raycaster.Raycast(pointerEventData, results);
+
+                results.Find(x => x.gameObject.TryGetComponent(out card));
+
+                if (card != null)
+                {
+                    if (card.Resources.Contains(resourceToCheck) || card.Resources.Contains(Resource.Wild))
+                    {
+                        //TODO: Add functionality for Quincarrier, Enhanced cards etc.
+
+                        _discards.Add(card);
+
+                        foreach (Resource r in card.Resources)
+                        {
+                            if (resourceToCheck == Resource.Wild || r == resourceToCheck || r == Resource.Wild)
+                            {
+                                _resources.Add(r);
+
+                                if (amount != 0 && _resources.Count == amount)
+                                    finishedSelecting = true;
+                            }
+
+                        }
+                    }
+                }    
+            }
+
+            yield return null;
+        }
+
+        foreach (PlayerCard c in _discards.Cast<PlayerCard>())
+            player.Hand.Remove(c);
+
+        player.Deck.Discard(Discards);
+
+        UIManager.InStateMachine = false;
+        FinishButton.ToggleFinishButton(false, FinishedSelecting);
+    }
+
+    public void FinishedSelecting()
+    {
+        finishedSelecting = true;
+        FinishButton.ToggleFinishButton(false, FinishedSelecting);
+    }
+
+    #region Properties
+    public StateMachine StateMachine
+    {
+        get { return stateMachine; }
+    }
+    public List<IState> States
+    {
+        get { return states; }
+    }
+    public List<Card> Discards
+    {
+        get { return _discards; }
+    }
+    public List<Resource> Resources
+    {
+        get { return _resources; }
+    }
+    #endregion
+
     #region States
     abstract class BasePayCostSystemState : BaseState
     {
-        protected PayCostSystem owner;
-    }
-
-    class IdleState : BasePayCostSystemState
-    {
-        public IdleState(PayCostSystem owner)
-        {
-            this.owner = owner;
-        }
-    }
-
-    class ClearState : BasePayCostSystemState
-    {
-        public ClearState(PayCostSystem owner)
-        {
-            this.owner = owner;
-        }
-
-        public override void Enter()
-        {
-            if (owner.discards.Count > 0)
-                owner.discards.Clear();
-            
-            if (owner.resources.Count > 0)
-                owner.resources.Clear();
-
-            owner.stateMachine.ChangeState(owner.states[2]);
-        }
+        protected PayCostSystem owner = instance;
     }
 
     class GetCandidatesState : BasePayCostSystemState
     {
-        public GetCandidatesState(PayCostSystem owner)
+        public override void Enter()
         {
-            this.owner = owner;
+            owner.Clear();
         }
 
         public override void Execute()
@@ -108,9 +182,9 @@ public class PayCostSystem : MonoBehaviour
 
             /*List<Card> supports = new List<Card>();
 
-            foreach (CardUI ui in GameObject.Find("UpgradesAndSupports").transform.GetComponentsInChildren<CardUI>())
+            foreach (PlayerCard card in GameObject.Find("UpgradesAndSupports").transform.GetComponentsInChildren<PlayerCard>())
             {
-                supports.Add(ui.card);
+                supports.Add(card);
             }
 
             foreach (Card c in supports)
@@ -118,62 +192,67 @@ public class PayCostSystem : MonoBehaviour
                 if the card provides a resource, add it to candidates [Quincarrier, the Enhanced cards, Eye of Agamotto)
             }*/
 
-            owner.stateMachine.ChangeState(owner.states[3]);
+            owner.ChangeState(2);
         }
     }
 
     class SelectTargetsState : BasePayCostSystemState
     {
-        public SelectTargetsState(PayCostSystem owner)
+        public override void Enter()
         {
-            this.owner = owner;
+            owner.StartCoroutine(SelectTargets());
         }
 
-        public override void Execute()
+        IEnumerator SelectTargets()
         {
-            if (Input.GetMouseButton(0))
+            while (owner.Resources.Count < owner.cardToPlay.CardCost)
             {
-                owner.pointerEventData = new PointerEventData(owner.eventSystem);
-                owner.pointerEventData.position = Input.mousePosition;
-
-                List<RaycastResult> results = new List<RaycastResult>();
-
-                owner.raycaster.Raycast(owner.pointerEventData, results);
-
-                foreach (RaycastResult result in results)
+                if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
-                    if (result.gameObject.transform.parent.GetComponent<CardUI>() != null)
+                    owner.pointerEventData = new PointerEventData(owner.eventSystem)
                     {
-                        var card = result.gameObject.transform.parent.GetComponent<CardUI>().card;
+                        position = Input.mousePosition,
+                    };
 
-                        foreach (dynamic c in owner.candidates)
+                    List<RaycastResult> results = new();
+
+                    owner.raycaster.Raycast(owner.pointerEventData, results);
+
+                    results.RemoveAll(x => x.gameObject.GetComponent<PlayerCard>() == null || x.gameObject.GetComponent<PlayerCard>() == owner.cardToPlay);
+                    var card = results.Count > 0 ? results[0].gameObject.GetComponent<PlayerCard>() : null;
+                            
+                    if (owner.candidates.Contains(card))
+                    {
+                        /*if (card.cardType is UpgradeType || card.cardType is SupportType)
                         {
-                            if (c.data == card.data)
+                            if (!card.Exhausted)
                             {
-                                /*if (card.data.cardType is UpgradeType || card.data.cardType is SupportType)
-                                {
-                                    if (!card.exhausted)
-                                    {
-                                        card.exhausted = true;
-                                        //resources.Add(card.data.actionResource);
-                                    }
-                                }
-                                else //card is in hand
-                                {*/
-                                    if (!owner.discards.Contains(card))
-                                    {
-                                        owner.discards.Add(card);
-                                        owner.resources.AddRange(card.GetResource(owner.cardToPlay as PlayerCard));
-                                    }
-                                //} 
-
-                                if (owner.resources.Count >= (owner.cardToPlay as PlayerCard).cardCost)
-                                    owner.stateMachine.ChangeState(owner.states[0]);
+                                card.exhausted = true;
+                                //resources.Add(card.data.actionResource);
+                            }
+                        }
+                        */
+                        
+                        if (!owner.Discards.Contains(card))
+                        {
+                            owner.Discards.Add(card);
+                            owner.Resources.AddRange(card.Resources);
+                        }
+                        else
+                        {
+                            owner.Discards.Remove(card);
+                            for (int i = owner.Resources.Count -1; owner.Resources.Count != owner.Resources.Count - card.Resources.Count; i--)
+                            {
+                                owner.Resources.RemoveAt(i);
                             }
                         }
                     }
                 }
+
+                yield return null;
             }
+            
+            owner.ChangeState(0);
         }
     }
     #endregion

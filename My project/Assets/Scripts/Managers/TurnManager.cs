@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class TurnManager : MonoBehaviour
 {
@@ -14,23 +15,44 @@ public class TurnManager : MonoBehaviour
             Destroy(this);
     }
 
-    public Player firstPlayer { get; set; }
-    public int firstPlayerIndex { get; set; }
-    public Player currPlayer { get; set; }
+    public static List<Player> Players { get; private set; } = new();
+    public Player FirstPlayer { get; set; }
+    public int FirstPlayerIndex { get; set; } = 0;
+    public Player CurrPlayer { get; set; }
 
+    public static event UnityAction OnStartPlayerPhase;
+    public static event UnityAction OnEndPlayerPhase;
+    public static event UnityAction OnStartVillainPhase;
+    public static event UnityAction OnEndVillainPhase;
+
+    public static bool IsPlayerPhase { get; private set; } = true;
     private void Start()
     {
-        firstPlayerIndex = 0;
-        currPlayer = firstPlayer = GameManager.instance.players[firstPlayerIndex];
+        Players.AddRange(FindObjectsOfType<Player>());
+        CurrPlayer = FirstPlayer = Players[FirstPlayerIndex];
     }
 
     public void ChangeFirstPlayer()
     {
-        firstPlayerIndex++;
+        FirstPlayerIndex++;
 
-        if (firstPlayerIndex >= GameManager.instance.players.Count)
-            firstPlayerIndex = 0;
+        if (FirstPlayerIndex >= Players.Count)
+            FirstPlayerIndex = 0;
 
-        firstPlayer = GameManager.instance.players[firstPlayerIndex];
+        FirstPlayer = Players[FirstPlayerIndex];
+    }
+
+    public void EndPlayerPhase()
+    {
+        IsPlayerPhase = false;
+        OnEndPlayerPhase?.Invoke();
+        OnStartVillainPhase?.Invoke();
+    }
+
+    public void EndVillainPhase()
+    {
+        IsPlayerPhase = true;
+        OnEndVillainPhase?.Invoke();
+        OnStartPlayerPhase?.Invoke();
     }
 }

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
+  m_Name: EnergyAbsorption
+  m_EditorClassIdentifier: 
+  cardID: DANVERS-R-001
+  cardName: Energy Absorption
+  cardDesc: '"That''s Enough!" - Carol Danvers'
+  cardType: 2
+  cardTraits: []
+  cardArt: {fileID: 21300000, guid: 2869bf66b11a94b4aa5760e4034b24cc, type: 3}
+  cardCost: 0
+  isUnique: 0
+  cardAspect: 5
+  cardResources: 030000000300000003000000

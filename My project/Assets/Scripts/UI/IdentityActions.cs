@@ -1,76 +1,66 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class IdentityActions : MonoBehaviour
 {
-    public Button atk;
-    public Button thw;
-    public Button rec;
-    public Button flip;
-    public Player player;
+    private Button atk;
+    private Button thw;
+    private Button rec;
+    private Button eff;
+    private Button flip;
+    private Player player;
+
+    //Events
+    public static event UnityAction Activating;
+    public static event UnityAction Flipping;
+
+    private void Awake()
+    {
+        atk = transform.Find("Attack").gameObject.GetComponent<Button>();
+        thw = transform.Find("Thwart").gameObject.GetComponent<Button>();
+        rec = transform.Find("Recover").gameObject.GetComponent<Button>();
+        eff = transform.Find("Activate").gameObject.GetComponent<Button>();
+        flip = transform.Find("Flip").gameObject.GetComponent<Button>();
+
+        player = FindObjectOfType<Player>();
+    }
 
     private void OnEnable()
     {
-        atk.gameObject.SetActive(true);
-        thw.gameObject.SetActive(true);
-        rec.gameObject.SetActive(true);
-        flip.gameObject.SetActive(true);
+        if (UIManager.InStateMachine) return;
 
-        if (player.identity.hasFlipped)
-            flip.gameObject.SetActive(false);
-
-        if (!player.identity.exhausted)
-        {
-            if (player.identity.activeIdentity == IdentityType.Hero)
-            {
-                rec.gameObject.SetActive(false);
-                return;
-            }
-
-            if (player.identity.activeIdentity == IdentityType.AlterEgo)
-            {
-                atk.gameObject.SetActive(false);
-                thw.gameObject.SetActive(false);
-                return;
-            }
-        }
-
-        atk.gameObject.SetActive(false);
-        thw.gameObject.SetActive(false);
-        rec.gameObject.SetActive(false);
+        atk.gameObject.SetActive(player.Identity.ActiveIdentity is Hero && !player.Identity.Exhausted);
+        thw.gameObject.SetActive(player.Identity.ActiveIdentity is Hero && !player.Identity.Exhausted);
+        rec.gameObject.SetActive(player.Identity.ActiveIdentity is AlterEgo && player.Identity.CharStats.Health.Damaged() && !player.Identity.Exhausted);
+        eff.gameObject.SetActive(player.Identity.ActiveEffect.CanActivate());
+        flip.gameObject.SetActive(!player.Identity.HasFlipped);
     }
 
     public void Attack()
     {
-        player.transform.Find("HeroInfo").GetComponent<Attacker>().Attack();
+        player.Identity.CharStats.InitiateAttack();
         gameObject.SetActive(false);
     }
     public void Thwart()
     {
-        player.transform.Find("HeroInfo").GetComponent<Thwarter>().Thwart();
+        player.Identity.CharStats.InitiateThwart();
         gameObject.SetActive(false);
     }
     public void Recover()
     {
-        player.transform.Find("AlterEgoInfo").GetComponent<Recovery>().Recover();
+        player.Identity.CharStats.InitiateRecover();
         gameObject.SetActive(false);
     }
     public void Flip()
     {
-        if (player.identity.activeIdentity == IdentityType.AlterEgo)
-        {
-            player.transform.Find("HeroInfo").gameObject.SetActive(true);
-            player.transform.Find("AlterEgoInfo").gameObject.SetActive(false);
-        }
-        else
-        {
-            player.transform.Find("HeroInfo").gameObject.SetActive(false);
-            player.transform.Find("AlterEgoInfo").gameObject.SetActive(true);
-        }
+        Flipping?.Invoke();
+        gameObject.SetActive(false);
+    }
 
-        player.identity.Flip();
+    public void Activate()
+    {
+        Activating?.Invoke();
         gameObject.SetActive(false);
     }
 }

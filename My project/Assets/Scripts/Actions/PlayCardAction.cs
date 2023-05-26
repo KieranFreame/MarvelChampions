@@ -4,18 +4,13 @@ using UnityEngine;
 
 public class PlayCardAction : Action
 {
-    public Player owner;
-    public List<Card> candidates = new List<Card>();
-    public Card cardToPlay;
+    public List<PlayerCard> Candidates { get; private set; } = new List<PlayerCard>();
+    public PlayerCard CardToPlay { get; private set; }
 
-    public PlayCardAction(Player owner, List<Card> candidates, Card cardToPlay) : base ("PlayCardAction")
+    public PlayCardAction(GameObject owner, List<PlayerCard> candidates, PlayerCard cardToPlay) : base ()
     {
-        this.owner = owner;
-        this.candidates = candidates;
-        this.cardToPlay = cardToPlay;
+        Owner = owner;
+        Candidates = candidates;
+        CardToPlay = cardToPlay;
     }
-
-    public PlayCardAction(ActionData data) : base(data) { }
-
-    public override void Execute() => PlayCardSystem.instance.InitiatePlayCard(this);
 }

@@ -4,10 +4,18 @@ using UnityEngine;
 
 public class HealAction : Action
 {
-    public int heal;
-    public bool targetPlayer;
+    public Health Target { get; private set; }
 
-    public HealAction(ActionData data) : base (data){}
+    public HealAction(int value, Health target)
+    {
+        Value = value;
+        Target = target;
+        
+    }
 
-    public override void Execute() => HealSystem.instance.InitiateHeal(this);
+    public HealAction(int value, TargetType targetType)
+    {
+        Value = value;
+        Targets.Add(targetType);
+    }
 }

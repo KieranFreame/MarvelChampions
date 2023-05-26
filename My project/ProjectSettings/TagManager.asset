@@ -4,8 +4,12 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Enemy
   - Scheme
+  - Minion
+  - Villain
+  - Ally
+  - Upgrade
+  - Support
   layers:
   - Default
   - TransparentFX

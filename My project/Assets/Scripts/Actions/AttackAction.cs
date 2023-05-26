@@ -4,19 +4,18 @@ using UnityEngine;
 
 public class AttackAction : Action
 {
-    public Attacker owner;
-    public int damage;
-
-    public AttackAction(int attack = 0, Attacker owner = null) : base ("AttackAction")
+    public AttackAction(int attack, TargetType target = TargetType.TargetNone, List<Keywords> _keywords = null, dynamic owner = null)
     {
-        this.owner = owner;
-        if (this.owner != null)
-            this.damage = owner._attack;
-        else
-            value = attack;
+        Owner = owner;
+        Value = attack;
+        Keywords = _keywords ?? new List<Keywords>();
+        Targets.Add(target);
     }
-
-    public AttackAction(ActionData data) : base(data) { }
-
-    public override void Execute() => AttackSystem.instance.InitiateAttack(this);
+    
+    public AttackAction(int attack, List<TargetType> targets = null, List<Keywords> _keywords = null)
+    {
+        Value = attack;
+        Keywords = _keywords;
+        Targets.AddRange(targets);
+    }
 }

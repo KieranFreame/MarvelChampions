@@ -20,18 +20,17 @@ public class HealSystem : MonoBehaviour
 
     private IEnumerator Heal(HealAction action)
     {
-        if (action.targetPlayer)
+        /*if (action.targetPlayer)
         {
             var playerHealth = GameObject.Find("PlayerUI").GetComponent<Health>();
 
             playerHealth.RecoverHealth(action.heal);
-            yield return null;
-        }
+            yield break;
+        }*/
 
-        yield return StartCoroutine(TargetSystem.instance.GetTarget("Ally", "Health"));
-        var health = TargetSystem.instance.target;
-
-        health.RecoverHealth(action.heal);
-        yield return null;
+        yield return StartCoroutine(TargetSystem.instance.GetTarget<Health>(action, health =>
+        {
+            health.RecoverHealth(action.Value);
+        }));
     }
 }

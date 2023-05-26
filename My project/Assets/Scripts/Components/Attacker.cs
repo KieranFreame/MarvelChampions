@@ -1,90 +1,81 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class Attacker : MonoBehaviour
+public class Attacker
 {
-    public int _attack { get; set; }
-    public List<string> keywords = new List<string>(); //temp?
-    public int baseATK { get; set; }
-    public bool stunned = false;
-    [SerializeField]
-    private bool isPlayer;
-    private CardData data;
-
-    private void Start()
-    {
-        if (!isPlayer)
+    #region Properties
+    private int _currAttack;
+    public int CurrentAttack {
+        get => _currAttack;
+        set
         {
-            if (GetComponent<CardUI>().card.data is Ally)
-            {
-                Ally ally = GetComponent<CardUI>().card.data as Ally;
-                _attack = baseATK = ally.combatant.baseAttack;
-            }
-            else
-            {
-                MinionData minion = GetComponent<CardUI>().card.data as MinionData;
-                _attack = baseATK = minion.combatant.baseAttack;
-            }
-            
+            _currAttack = value;
+            AttackChanged?.Invoke();
         }
+    }
+    public int BaseATK { get; private set; }
+
+    private bool stunned = false;
+    public bool Stunned
+    {
+        get { return stunned; }
+        set
+        {
+            stunned = value;
+            OnToggleStun?.Invoke(stunned);
+        }
+    }
+    #endregion
+    public dynamic Owner { get; private set; }
+    #region Events
+    public event UnityAction<bool> OnToggleStun;
+    public event UnityAction AttackChanged;
+    #endregion
+
+    #region Constructors
+    public Attacker(Card owner, CardData data)
+    {
+        Owner = owner;
+
+        if (Owner is MinionCard)
+            CurrentAttack = BaseATK = (data as MinionCardData).baseAttack;
         else
-        {
-            HeroData hero = transform.parent.GetComponent<Player>().identity.hero;
-            _attack = baseATK = hero.baseATK;
-        }
+            CurrentAttack = BaseATK = (data as AllyCardData).BaseATK;
     }
-
-    public void Attack()
+    public Attacker(Identity owner, HeroData data)
     {
-        if (!isPlayer)
-        {
-            if (GetComponent<CardUI>().card.exhausted)
-                return;
-
-            GetComponent<CardUI>().card.exhausted = true;
-
-            var animator = GetComponent<Animator>();
-            if (animator != null)
-                animator.Play("Exhaust");
-        }
-        else
-        {
-            Identity i = transform.parent.GetComponent<Player>().identity;
-            if (i.exhausted)
-                return;
-
-            i.exhausted = true;
-
-            var animator = transform.parent.Find("IdentityProfile").GetComponent<Animator>();
-            if (animator != null)
-                animator.Play("Exhaust");
-        }
-
-        if (stunned)
-        {
-            stunned = false;
-            return;
-        }
-
-        var attack = new AttackAction(owner:this);
-        attack.Execute();
+        Owner = owner;
+        CurrentAttack = BaseATK = data.baseATK;
     }
-
-    public void Refresh()
+    public Attacker(Villain owner)
     {
-        if (!isPlayer)
-        {
-            if (GetComponent<CardUI>().card.data is Ally)
-            {
-                Ally ally = GetComponent<CardUI>().card.data as Ally;
-                _attack = baseATK = ally.combatant.attack;
-            }
-            else
-            {
-                MinionData minion = GetComponent<CardUI>().card.data as MinionData;
-                _attack = baseATK = minion.combatant.attack;
-            }
-        }
+        Owner = owner;
+        owner.StageAdvanced += AdvanceStage;
+        CurrentAttack = BaseATK = owner.BaseAttack;
     }
+    #endregion
+
+    public AttackAction Attack()
+    {
+        if (Owner is IExhaust)
+        {
+            if ((Owner as IExhaust).Exhausted)
+                return null;
+
+            (Owner as IExhaust).Exhaust();
+        }
+
+        if (Stunned)
+        {
+            Stunned = false;
+            return null;
+        }
+
+        var attack = new AttackAction(CurrentAttack, _keywords:new List<Keywords>(), owner:Owner);
+        return attack;
+    }
+
+    private void AdvanceStage(int newStage) => BaseATK = Owner.BaseAttack;
 }

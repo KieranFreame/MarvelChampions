@@ -17,18 +17,15 @@ MonoBehaviour:
   - baseScheme: 1
     baseAttack: 2
     baseHitpoints: 14
-    data: []
-    steady: 0
-    stalwart: 0
+    keywords: 
   - baseScheme: 1
     baseAttack: 3
     baseHitpoints: 15
-    data: []
-    steady: 0
-    stalwart: 0
+    keywords: 
   - baseScheme: 1
     baseAttack: 4
     baseHitpoints: 16
-    data: []
-    steady: 0
-    stalwart: 0
+    keywords: 
+  villainSet: {fileID: 11400000, guid: 44296b714914a3442b744c8488177d72, type: 2}
+  MainSchemeDeck:
+  - {fileID: 11400000, guid: 83d93f95ea7788241828f90d2e9c6a0f, type: 2}

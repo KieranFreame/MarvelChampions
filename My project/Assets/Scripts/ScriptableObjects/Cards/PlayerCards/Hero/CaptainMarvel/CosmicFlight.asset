@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
+  m_Name: CosmicFlight
+  m_EditorClassIdentifier: 
+  cardID: DANVERS-U-002
+  cardName: Cosmic Flight
+  cardDesc: 'Captain Marvel gains the Aerial trait
+
+    When Captain Marvel would
+    take damage, discard Cosmic Flight; prevent 3 of that damage'
+  cardType: 4
+  cardTraits: []
+  cardArt: {fileID: 21300000, guid: 8180225e03048b442bac4519203f8675, type: 3}
+  cardCost: 2
+  isUnique: 1
+  cardAspect: 5
+  cardResources: 03000000

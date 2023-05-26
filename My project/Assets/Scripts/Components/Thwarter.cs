@@ -1,61 +1,69 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class Thwarter : MonoBehaviour
+public class Thwarter : IConfusable
 {
-    public int _thwart { get; set; }
-    public List<string> keywords = new List<string>(); //temp?
-    public int baseTHW { get; set; }
-    public bool confused;
-    [SerializeField]
-    private bool isPlayer;
-    private dynamic data;
-
-    private void Start()
+    #region Properties
+    private int _currThwart;
+    public int CurrentThwart 
     {
-        if (!isPlayer)
+        get => _currThwart;
+        set
         {
-            Ally ally = GetComponent<CardUI>().card.data as Ally;
-            _thwart = baseTHW = ally.thwarter.baseThwart;
-        }
-        else
-        {
-            HeroData hero = transform.parent.GetComponent<Player>().identity.hero;
-            _thwart = baseTHW = hero.baseTHW;
-        }
+            _currThwart = value;
+            ThwartChanged?.Invoke();
+        } 
     }
 
-    public void Thwart()
+    public int BaseThwart { get; private set; }
+
+    private bool _confused = false;
+    public bool Confused
     {
-        if (GetComponent<CardUI>().card.exhausted)
-            return;
-
-        GetComponent<CardUI>().card.exhausted = true;
-        var animator = GetComponent<Animator>();
-        if (animator != null)
-            animator.Play("Exhaust");
-
-        if (confused)
+        get { return _confused; }
+        set
         {
-            confused = false;
-            return;
+            _confused = value;
+            OnToggleConfuse?.Invoke(_confused);
+        }
+    }
+    #endregion
+
+    public dynamic Owner { get; private set; }
+
+    #region Events
+    public event UnityAction<bool> OnToggleConfuse;
+    public event UnityAction ThwartChanged;
+    #endregion
+
+    #region Constructors
+    public Thwarter(AllyCard owner, AllyCardData data)
+    {
+        Owner = owner;
+        CurrentThwart = BaseThwart = data.BaseTHW;
+    }
+    public Thwarter(Identity owner, HeroData data)
+    {
+        Owner = owner;
+        CurrentThwart = BaseThwart = data.baseTHW;
+    }
+    #endregion
+
+    public ThwartAction Thwart()
+    {
+        if ((Owner as IExhaust).Exhausted)
+            return null;
+
+        (Owner as IExhaust).Exhaust();
+
+        if (Confused)
+        {
+            Confused = false;
+            return null;
         }
 
-        var thwart = new ThwartAction(owner:this);
-        thwart.Execute();
-    }
-
-    public void SendTrigger()
-    {
-        if (isPlayer)
-            data = transform.parent.GetComponent<Player>().identity.hero;
-        else
-            data = GetComponent<CardUI>().card.data as Ally;
-
-        if (data.actions[0].trigger == "AfterThwart")
-        {
-            gameObject.SendMessage("AfterThwart", SendMessageOptions.DontRequireReceiver);
-        }        
+        return new ThwartAction(_thwart:CurrentThwart);
     }
 }

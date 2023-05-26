@@ -1,95 +1,96 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class Health : MonoBehaviour
+public class Health
 {
-    int _damage;
-    private int baseHP;
-    public int currHealth;
-    public bool tough = false;
-    [SerializeField]
-    private bool isPlayer;
-    private CardData data;
+    #region Properties
+        public int BaseHP { get; private set; }
+        private int _currHealth;
+        public int CurrentHealth
+        {
+            get { return _currHealth; }
+            set
+            {
+                _currHealth = value;
+                HealthChanged?.Invoke();
+            }
+        }
+        [SerializeField] private bool _tough = false;
+        public bool Tough
+        {
+            get { return _tough; }
+            set
+            {
+                _tough = value;
+                OnToggleTough?.Invoke(_tough);
+            }
+        }
+    #endregion
 
-    public Subject takingDamage { get; set; }
+    public dynamic Owner { get; private set; }
 
-    private void Start()
+    #region Events
+    public event UnityAction Defeated;
+    public event UnityAction<bool> OnToggleTough;
+    public event UnityAction HealthChanged;
+    #endregion
+
+    public Health(Identity owner, AlterEgoData data)
     {
-        takingDamage = new Subject(this);
+        Owner = owner;
+        CurrentHealth = BaseHP = data.baseHP;
+    }
 
-        if (!isPlayer)
-        {
-            data = GetComponent<CardUI>().card.data;
-            if (data is MinionData)
-                currHealth = baseHP = (data as MinionData).baseHealth;
-            else
-                currHealth = baseHP = (data as Ally).baseHp;
-        }
+    public Health(Villain owner)
+    {
+        Owner = owner;
+        CurrentHealth = BaseHP = owner.BaseHP;
+
+
+    }
+
+    public Health(Card owner, CardData data)
+    {
+        Owner = owner;
+
+        if (Owner is MinionCard)
+            CurrentHealth = BaseHP = (data as MinionCardData).baseHealth;
         else
-        {
-            var identity = GetComponent<Player>().identity.alterEgo;
-            currHealth = baseHP = identity.baseHP;
-        }
+            CurrentHealth = BaseHP = (data as AllyCardData).BaseHP;
     }
 
     public void TakeDamage(int damage)
     {
-        _damage = damage;
-        Task _subject = Task.Factory.StartNew(() => takingDamage.Notify());
-        Task.WaitAll(_subject);
-
-        if (_damage > 0)
+        if (damage > 0)
         {
-            if (tough)
+            if (Tough)
             {
-               tough = false;
-               return;
+                Tough = false;
+                return;
             }
 
-            currHealth -= _damage;
+            CurrentHealth -= damage;
 
-            if (currHealth <= 0)
+            if (CurrentHealth <= 0)
             {
-                //GetComponent<IDestructable>().WhenDefeated(); func in event trigger
+                CurrentHealth = 0;
+                Defeated?.Invoke();
             }
         }
-
-        gameObject.SendMessage("Refresh");
     }
-
     public void RecoverHealth(int healing)
     {
-        currHealth += healing;
+        CurrentHealth += healing;
 
-        if (currHealth > baseHP)
-            currHealth = baseHP;
-
-        GetComponent<HealthUI>().Refresh();
+        if (CurrentHealth > BaseHP)
+            CurrentHealth = BaseHP;
     }
-
     public void IncreaseMaxHealth(int amount)
     {
-        baseHP += 3;
-        RecoverHealth(3);
-        GetComponent<HealthUI>().Refresh();
+        BaseHP += amount;
+        RecoverHealth(amount);
     }
-
-    public int BaseHP
-    {
-        get
-        {
-            return baseHP;
-        }
-        set
-        {
-            baseHP = value;
-        }
-    }
-
-    public int Damage
-    {
-        get { return _damage; }
-    }
+    public bool Damaged() => CurrentHealth < BaseHP;
 }

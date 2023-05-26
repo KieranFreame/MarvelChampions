@@ -4,20 +4,10 @@ using UnityEngine;
 
 public class SchemeAction : Action
 {
-    public Schemer owner;
-    public int scheme;
-
-    public SchemeAction(int scheme = 0, Schemer owner = null) : base("SchemeAction")
+    public SchemeAction(int scheme, GameObject owner)
     {
-        this.owner = owner;
-
-        if (this.owner != null)
-            value = owner._scheme;
-        else
-            value = scheme;
+        Owner = owner;
+        Value = scheme;
+        Targets.Add(TargetType.TargetScheme);
     }
-
-    public SchemeAction(ActionData data) : base(data) { }
-
-    public override void Execute() => SchemeSystem.instance.InitiateScheme(this);
 }

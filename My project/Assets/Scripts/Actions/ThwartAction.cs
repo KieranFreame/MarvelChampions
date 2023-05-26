@@ -4,20 +4,13 @@ using UnityEngine;
 
 public class ThwartAction : Action
 {
-    [HideInInspector]
-    public Thwarter owner;
-    public int thwart;
+    public bool IgnoreCrisis { get; private set; } = false;
 
-    public ThwartAction(ActionData data) : base (data){}
-
-    public ThwartAction(int _thwart = 0, Thwarter owner = null) : base("ThwartAction")
+    public ThwartAction(int _thwart = 0, string requirement = "", bool ignoreCrisis = false)
     {
-        this.owner = owner;
-
-        if (this.owner == null)
-            value = _thwart;
-        else
-            value = owner._thwart;
+        Value = _thwart;
+        Targets.Add(TargetType.TargetScheme);
+        Requirement = requirement;
+        IgnoreCrisis = ignoreCrisis;
     }
-    public override void Execute() => ThwartSystem.instance.InitiateThwart(this);
 }

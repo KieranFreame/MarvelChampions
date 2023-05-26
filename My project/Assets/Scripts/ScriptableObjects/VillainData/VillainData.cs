@@ -6,7 +6,5 @@ using UnityEngine;
 public class VillainData : ScriptableObject
 {
     public string villainName;
-    public List<VillainStage> stages = new List<VillainStage>();
-
-    public EncounterSet villainSet;
+    public List<VillainStage> stages = new();
 }

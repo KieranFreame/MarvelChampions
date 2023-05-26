@@ -4,14 +4,11 @@ using UnityEngine;
 
 public class DrawCardsAction : Action
 {
-    public Player drawer;
+    public Player Drawer { get; private set; }
 
-    public DrawCardsAction(ActionData data) : base(data) { }
-
-    public DrawCardsAction(int amount, Player drawer = null) : base ("DrawCardsAction", amount)
+    public DrawCardsAction(int amount, Player drawer = null) : base ()
     {
-        this.drawer = drawer;
+        this.Drawer = drawer;
+        Value = amount;
     }
-
-    public override void Execute() => DrawCardSystem.instance.DrawCards(this);
 }

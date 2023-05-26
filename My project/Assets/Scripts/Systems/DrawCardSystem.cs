@@ -16,37 +16,36 @@ public class DrawCardSystem : MonoBehaviour
             Destroy(this);
     }
     #endregion
+
     #region Fields
-    public int amount { get; set; }
-    public Player player { get; set; }
+    public int Amount { get; set; }
+    public Player Player { get; set; }
+    [SerializeField] private Transform PlayerHand;
     #endregion
 
     public void DrawCards (DrawCardsAction action)
     {
-        this.amount = action.value;
-        
-        if (action.drawer == null)
-            player = TurnManager.instance.currPlayer;
-        else
-            player = action.drawer;
+        Player = (action.Drawer == null ? TurnManager.instance.CurrPlayer : action.Drawer);
 
-        var targetParent = player.transform.GetComponent<PlayerTransforms>().handTransform;
+        Amount = (Player.Deck.deck.Count < action.Value ? Player.Deck.deck.Count :action.Value);
 
-        for (int i = 0; i < amount; i++)
+        for (int i = 0; i < Amount; i++)
         {
-            var inst = Instantiate(CardFactory.instance.CreateCard(player.deck.deck[0]), targetParent);
-            inst.GetComponent<CardUI>().card = player.deck.deck[0];
+            //Spawns gameObject using prefab
+            GameObject inst = Instantiate(PrefabFactory.instance.CreatePlayerCard(Player.Deck.deck[0] as PlayerCardData), PlayerHand);
+            inst.name = Player.Deck.deck[0].cardName;
 
-            if (inst.GetComponent<CardUI>().card.abilityLoader.actions.Count > 0)
-                SubjectManager.instance.AttachObserver(inst.GetComponent<CardUI>().card.abilityLoader.observer);
+            inst.GetComponent<PlayerCard>().LoadCardData(Player.Deck.deck[0], Player.gameObject);
+            Player.Hand.cards.Add(inst.GetComponent<PlayerCard>());
+
+            Player.Deck.Deal(1);
         }
 
-        player.deck.Deal(amount);
+        if (Player.Deck.deck.Count == 0)
+            Player.Deck.ResetDeck();
     }
-
-    public void DrawCardsTest()
+    public Player GetPlayer
     {
-        DrawCardsAction test = new DrawCardsAction(1);
-        test.Execute();
+        get { return Player; }
     }
 }

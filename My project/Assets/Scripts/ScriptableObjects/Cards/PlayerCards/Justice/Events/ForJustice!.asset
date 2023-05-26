@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
+  m_Name: ForJustice!
+  m_EditorClassIdentifier: 
+  cardID: JUSTICE-E-001
+  cardName: For Justice!
+  cardDesc: Remove 3 threat from a scheme. If a scientific resource was used to pay
+    for this card, remove 4 threat instead
+  cardType: 1
+  cardTraits: []
+  cardCost: 2
+  isUnique: 0
+  cardAspect: 1
+  cardResources: 03000000
