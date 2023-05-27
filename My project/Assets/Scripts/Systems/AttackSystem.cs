@@ -30,6 +30,27 @@ public class AttackSystem : MonoBehaviour //PlayerAttackSystem
     #endregion
 
     #region Methods
+    private void ResetSystem()
+    {
+        if (Action.Owner is Villain || Action.Owner is MinionCard)
+            Target = TurnManager.instance.CurrPlayer.CharStats.Health;
+        else
+            Target = null;
+
+        Excess = 0;
+    }
+    private void CheckKeywords()
+    {
+        if (Action.Keywords.Contains(Keywords.Piercing))
+            Target.Tough = false;
+
+        if (Action.Keywords.Contains(Keywords.Overkill))
+            if (Target.Owner is not Identity && Target.Owner is not Villain)
+                Excess = Action.Value - Target.CurrentHealth;
+    }
+    #endregion
+
+    #region Coroutines
     public IEnumerator InitiateAttack(AttackAction action)
     {
         Action = action;
@@ -55,26 +76,6 @@ public class AttackSystem : MonoBehaviour //PlayerAttackSystem
         OnAttackComplete?.Invoke(Action);
     }
 
-    private void ResetSystem()
-    {
-        if (Action.Owner is Villain || Action.Owner is MinionCard)
-            Target = TurnManager.instance.CurrPlayer.CharStats.Health;
-        else
-            Target = null;
-
-        Excess = 0;
-    }
-    private void CheckKeywords()
-    {
-        if (Action.Keywords.Contains(Keywords.Piercing))
-            Target.Tough = false;
-
-        if (Action.Keywords.Contains(Keywords.Overkill))
-            if (Target.Owner is not Player && Target.Owner is not Villain)
-                Excess = Action.Value - Target.CurrentHealth;
-    }
-    #endregion
-
     private IEnumerator FriendlyAttack()
     {
         List<ICharacter> targets = new() { FindObjectOfType<Villain>() };
@@ -87,8 +88,11 @@ public class AttackSystem : MonoBehaviour //PlayerAttackSystem
 
     private IEnumerator EnemyAttack()
     {
-        BoostSystem.instance.BoostCardCount = 1;
-        BoostSystem.instance.DealBoostCards();
+        if (Action.Owner is Villain || Action.Keywords.Contains(Keywords.Villainous))
+        {
+            BoostSystem.instance.BoostCardCount = 1;
+            BoostSystem.instance.DealBoostCards();
+        }
 
         yield return StartCoroutine(DefendSystem.instance.GetDefender(TurnManager.instance.CurrPlayer, defender =>
         {
@@ -99,4 +103,5 @@ public class AttackSystem : MonoBehaviour //PlayerAttackSystem
         if (Action.Owner is Villain || Action.Keywords.Contains(Keywords.Villainous))
             yield return BoostSystem.instance.FlipCard(boost => { Action.Value += boost; });
     }
+    #endregion
 }

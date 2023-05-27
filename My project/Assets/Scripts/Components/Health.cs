@@ -50,7 +50,6 @@ public class Health : IStat
 
 
     }
-
     public Health(Card owner, CardData data)
     {
         Owner = owner;

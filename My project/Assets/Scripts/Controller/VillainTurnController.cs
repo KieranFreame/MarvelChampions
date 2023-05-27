@@ -48,7 +48,10 @@ public class VillainTurnController : MonoBehaviour
         foreach (Player p in TurnManager.Players)
         {
             if (p.Identity.ActiveIdentity is Hero)
+            {
+                Debug.Log("Villain attacks!");
                 yield return StartCoroutine(ActiveVillain.CharStats.InitiateAttack());
+            }
             else
                 yield return StartCoroutine(ActiveVillain.CharStats.InitiateScheme());
         }

@@ -22,7 +22,7 @@ public class Player : MonoBehaviour, ICharacter
     private void Awake()
     {
         Identity = new Identity(this, a:alterEgoData, h:heroData);
-        CharStats = new(Identity, heroData, alterEgoData);
+        CharStats = new(this, heroData, alterEgoData);
 
         GetComponentInChildren<AlterEgoUI>().LoadUI(this);
     }

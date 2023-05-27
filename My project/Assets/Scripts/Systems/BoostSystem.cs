@@ -33,7 +33,7 @@ public class BoostSystem : MonoBehaviour
             _villain.EncounterDeck.Deal();
         }
 
-        BoostCardCount = 0;
+        BoostCardCount = 1;
     }
 
     public IEnumerator FlipCard(System.Action<int> callback)

@@ -37,7 +37,7 @@ public class CaptainMarvel : IdentityEffect
     {
         yield return owner.StartCoroutine(PayCostSystem.instance.GetResources(Resource.Energy, 1));
 
-        owner.GetComponent<Health>().RecoverHealth(1);
+        owner.CharStats.Health.RecoverHealth(1);
         DrawCardSystem.instance.DrawCards(new(1));
 
         hasActivated = true;

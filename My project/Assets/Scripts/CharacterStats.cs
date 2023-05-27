@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CharacterStats
 {
+    //For accessing coroutines
+    private dynamic Owner;
     public Attacker Attacker { get; private set; }
     public Schemer Schemer { get; private set; }
     public Thwarter Thwarter { get; private set; }
@@ -11,17 +13,19 @@ public class CharacterStats
     public Defender Defender { get; private set; }
     public Recovery Recovery { get; private set; }
 
-    public CharacterStats(Identity owner, HeroData hData, AlterEgoData aData)
+    public CharacterStats(Player owner, HeroData hData, AlterEgoData aData)
     {
-        Attacker = new Attacker(owner, hData);
-        Thwarter = new Thwarter(owner, hData);
-        Defender = new Defender(owner, hData);
-        Health = new Health(owner, aData);
-        Recovery = new Recovery(owner, Health, aData);
+        Owner = owner;
+        Attacker = new Attacker(owner.Identity, hData);
+        Thwarter = new Thwarter(owner.Identity, hData);
+        Defender = new Defender(owner.Identity, hData);
+        Health = new Health(owner.Identity, aData);
+        Recovery = new Recovery(owner.Identity, Health, aData);
     }
 
     public CharacterStats(Villain owner)
     {
+        Owner = owner;
         Attacker = new Attacker(owner);
         Schemer = new Schemer(owner);
         Health = new Health(owner);
@@ -29,6 +33,7 @@ public class CharacterStats
 
     public CharacterStats(Card owner, CardData data)
     {
+        Owner = owner;
         Attacker = new Attacker(owner, data);
         Health = new Health(owner, data);
 
@@ -45,8 +50,7 @@ public class CharacterStats
         if (attack == null)
             yield break;
 
-        /*yield return StartCoroutine()*/
-        AttackSystem.instance.InitiateAttack(attack);
+        yield return Owner.StartCoroutine(AttackSystem.instance.InitiateAttack(attack));
 
         if (Attacker.Owner is AllyCard)
             Health.TakeDamage(1);
