@@ -29,12 +29,9 @@ public class Identity : IAttached, IExhaust
     private readonly HeroUI heroUI;
     private readonly AlterEgoUI alterEgoUI;
 
-    
-
     #region Events
     public event UnityAction FlippedToHero;
     public event UnityAction FlippedToAlterEgo;
-    public event UnityAction SetupComplete;
     #endregion
 
     public Identity(Player p, HeroData h, AlterEgoData a)
@@ -52,9 +49,6 @@ public class Identity : IAttached, IExhaust
         IdentityActions.Flipping += Flip;
         IdentityActions.Activating += Activate;
         TurnManager.OnEndPlayerPhase += EndPlayerPhase;
-
-        SetupComplete?.Invoke();
-        alterEgoUI.LoadUI(this);
     }
     protected virtual void OnDisable()
     {

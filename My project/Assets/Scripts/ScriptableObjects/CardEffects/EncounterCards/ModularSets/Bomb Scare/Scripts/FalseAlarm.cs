@@ -14,9 +14,9 @@ public class FalseAlarm : CardEffect
     {
         Player player = FindObjectOfType<Player>();
 
-        if (player.Identity.CharStats.Thwarter.Confused)
+        if (player.CharStats.Thwarter.Confused)
             owner.Surge(player);
         else
-            player.Identity.CharStats.Thwarter.Confused = true;
+            player.CharStats.Thwarter.Confused = true;
     }
 }

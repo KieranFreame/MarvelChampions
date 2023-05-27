@@ -30,17 +30,13 @@ public class MinionUI : EncounterCardUI
         {
             TryGetComponent(out minionCard);
             minionCard.SetupComplete += LoadData;
+            return;
         }
-
-        _attacker ??= minionCard.CharStats.Attacker;
-        _schemer ??= minionCard.CharStats.Schemer;
-        _health ??= minionCard.CharStats.Health;
 
         _attacker.OnToggleStun += ToggleStun;
         _schemer.OnToggleConfuse += ToggleConfuse;
         _health.OnToggleTough += ToggleTough;
         _health.HealthChanged += HealthChanged;
-
     }
     protected void OnDisable()
     {
@@ -52,6 +48,15 @@ public class MinionUI : EncounterCardUI
     protected override void LoadData()
     {
         base.LoadData();
+
+        _attacker = minionCard.CharStats.Attacker;
+        _schemer = minionCard.CharStats.Schemer;
+        _health = minionCard.CharStats.Health;
+
+        _attacker.OnToggleStun += ToggleStun;
+        _schemer.OnToggleConfuse += ToggleConfuse;
+        _health.OnToggleTough += ToggleTough;
+        _health.HealthChanged += HealthChanged;
 
         minionScheme.text = minionCard.BaseScheme.ToString();
         minionAttack.text = minionCard.BaseAttack.ToString();

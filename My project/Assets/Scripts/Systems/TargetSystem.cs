@@ -100,12 +100,11 @@ public class TargetSystem : MonoBehaviour
         StopAllCoroutines();
     }
 
-    public IEnumerator SelectTarget<T>(List<T> candidates, TargetType targets, Action<T> callback)
+    //For Selecting Components
+    public IEnumerator SelectTarget<T>(List<T> candidates, Action<T> callback)
     {
         T comp = default;
         stopCoroutines = false;
-
-        List<dynamic> _targs = GetCandidates(targets);
 
         ClearFields();
 
@@ -122,50 +121,89 @@ public class TargetSystem : MonoBehaviour
 
                 raycaster.Raycast(pointerEventData, results);
 
-                var candidate = results.Find(x => _targs.Contains(x.gameObject));
+                results.Find(x => x.gameObject.TryGetComponent(out comp));
 
-                if (candidates.Contains(comp))
+                if (comp != null)
                 {
-                    callback(comp);
-                    yield break;
+                    if (candidates.Contains(comp))
+                    {
+                        callback(comp);
+                        yield break;
+                    }
                 }
             }
 
             yield return null;
         } 
     }
-
-    private List<dynamic> GetCandidates(TargetType target)
+    //For getting IStat classes (Attacker, Thwarter, Schemer, Health, Defender, Recovery)
+    public IEnumerator SelectTarget<T>(List<T> candidates, Action<ICharacter> callback) where T : IStat
     {
-        List<dynamic> candidates = new();
+        ICharacter selection = default;
+        stopCoroutines = false;
 
-        switch (target)
+        ClearFields();
+
+        while (!stopCoroutines)
         {
-            case TargetType.TargetVillain:
-                candidates.AddRange(FindObjectsOfType<Villain>());
-                break;
-            case TargetType.TargetMinion:
-                candidates.AddRange(FindObjectsOfType<MinionCard>());
-                break;
-            case TargetType.TargetAlly:
-                candidates.AddRange(FindObjectsOfType<AllyCard>());
-                break;
-            case TargetType.TargetScheme:
-                candidates.AddRange(FindObjectsOfType<SchemeCard>());
-                break;
-            case TargetType.TargetHero:
-                if (FindObjectOfType<Player>().Identity.ActiveIdentity is Hero)
-                    candidates.Add(FindObjectOfType<Player>().Identity.ActiveIdentity);
-                break;
-            case TargetType.TargetAlterEgo:
-                if (FindObjectOfType<Player>().Identity.ActiveIdentity is AlterEgo)
-                    candidates.Add(FindObjectOfType<Player>().Identity.ActiveIdentity);
-                break;
-            default:
-                break;
-        }
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                pointerEventData = new PointerEventData(eventSystem)
+                {
+                    position = Input.mousePosition
+                };
 
-        return candidates;
+                List<RaycastResult> results = new();
+
+                raycaster.Raycast(pointerEventData, results);
+
+                results.Find(x => x.gameObject.TryGetComponent(out selection));
+
+                if (selection != null)
+                {
+                    switch (typeof(T).ToString())
+                    {
+                        case "Attacker":
+                            if ((candidates as List<Attacker>).Contains(selection.CharStats.Attacker))
+                            {
+                                callback(selection);
+                                yield break;
+                            }
+                            break;
+                        case "Thwarter":
+                            if ((candidates as List<Thwarter>).Contains(selection.CharStats.Thwarter))
+                            {
+                                callback(selection);
+                                yield break;
+                            }
+                            break;
+                        case "Health":
+                            if ((candidates as List<Health>).Contains(selection.CharStats.Health))
+                            {
+                                callback(selection);
+                                yield break;
+                            }
+                            break;
+                        case "Defender":
+                            if ((candidates as List<Defender>).Contains(selection.CharStats.Defender))
+                            {
+                                callback(selection);
+                                yield break;
+                            }
+                            break;
+                        case "Recovery":
+                            if ((candidates as List<Recovery>).Contains(selection.CharStats.Recovery)){
+                                callback(selection);
+                                yield break;
+                            }
+                            break;
+                    }
+
+                }
+            }
+
+            yield return null;
+        }
     }
 
     #region Properties
@@ -227,17 +265,6 @@ public class TargetSystem : MonoBehaviour
             {
                 case TargetType.TargetAlly:
                     candidates.AddRange(TurnManager.instance.CurrPlayer.CardsInPlay.Allies); //only want active allies, exclude allies in hand
-                    break;
-                case TargetType.TargetFriendly:
-                    candidates.AddRange(TurnManager.instance.CurrPlayer.CardsInPlay.Allies); //only want active allies, exclude allies in hand
-                    candidates.AddRange(TurnManager.Players);
-                    break;
-                case TargetType.TargetEnemy:
-                    candidates.AddRange(FindObjectsOfType<MinionCard>());
-                    candidates.Add(FindObjectOfType<Villain>());
-                    break;
-                case TargetType.TargetIdentity:
-                    candidates.Add(FindObjectOfType<Player>());
                     break;
                 case TargetType.TargetVillain:
                     candidates.Add(FindObjectOfType<Villain>());

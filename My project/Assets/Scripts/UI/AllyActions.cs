@@ -34,12 +34,12 @@ public class AllyActions : PlayerCardActions
 
     public void Attack()
     {
-        (card as AllyCard).CharStats.InitiateAttack();
+        StartCoroutine((card as AllyCard).CharStats.InitiateAttack());
         gameObject.SetActive(false);
     }
     public void Thwart()
     {
-        (card as AllyCard).CharStats.InitiateThwart();
+        StartCoroutine((card as AllyCard).CharStats.InitiateThwart());
         gameObject.SetActive(false);
     }
     

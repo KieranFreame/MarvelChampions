@@ -7,7 +7,7 @@ public class Mockingbird : PlayerCardEffect
 {
     public override void OnEnterPlay(Player owner, Card card)
     {
-        var action = new ApplyStatusAction(Status.Stunned, owner.gameObject, new List<TargetType> { TargetType.TargetEnemy });
+        var action = new ApplyStatusAction(Status.Stunned, owner.gameObject, new List<TargetType> { TargetType.TargetMinion, TargetType.TargetVillain });
         card.StartCoroutine(ApplyStatusSystem.instance.ApplyStatus(action));
     }
 }

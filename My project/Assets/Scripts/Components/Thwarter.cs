@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Thwarter : IConfusable
+public class Thwarter : IConfusable, IStat
 {
     #region Properties
     private int _currThwart;

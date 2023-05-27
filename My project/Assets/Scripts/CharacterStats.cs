@@ -17,7 +17,7 @@ public class CharacterStats
         Thwarter = new Thwarter(owner, hData);
         Defender = new Defender(owner, hData);
         Health = new Health(owner, aData);
-        Recovery = new Recovery(owner, aData);
+        Recovery = new Recovery(owner, Health, aData);
     }
 
     public CharacterStats(Villain owner)
@@ -51,7 +51,6 @@ public class CharacterStats
         if (Attacker.Owner is AllyCard)
             Health.TakeDamage(1);
     }
-
     public IEnumerator InitiateScheme()
     {
         SchemeAction scheme = Schemer.Scheme();
@@ -62,7 +61,6 @@ public class CharacterStats
         /*yield return StartCoroutine()*/
         SchemeSystem.instance.InitiateScheme(scheme);
     }
-
     public IEnumerator InitiateThwart()
     {
         ThwartAction thwart = Thwarter.Thwart();
@@ -75,9 +73,16 @@ public class CharacterStats
         if (Thwarter.Owner is AllyCard)
             Health.TakeDamage(1);
     }
-
     public void InitiateRecover()
     {
         Recovery.Recover();
+    }
+
+    public IConfusable Confusable
+    {
+        get
+        {
+            return Thwarter as IConfusable ?? Schemer;
+        }
     }
 }

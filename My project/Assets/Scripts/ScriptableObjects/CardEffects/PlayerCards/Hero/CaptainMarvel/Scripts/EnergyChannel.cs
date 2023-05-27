@@ -62,7 +62,7 @@ public class EnergyChannel : PlayerCardEffect
 
     private void DealDamage()
     {
-        var action = new AttackAction(attack: (counters * 2 <= 10 ? counters * 2 : 10), target:TargetType.TargetEnemy);
+        var action = new AttackAction(attack: (counters * 2 <= 10 ? counters * 2 : 10), new List<TargetType>() { TargetType.TargetMinion, TargetType.TargetVillain }, owner : _owner);
         AttackSystem.instance.InitiateAttack(action);
 
         _owner.Deck.Discard(_card);

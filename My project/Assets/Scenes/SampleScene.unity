@@ -1281,7 +1281,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   alteregoPortrait: {fileID: 1816370866}
-  alteregoREC: {fileID: 1198066216}
+  recovery: {fileID: 1198066216}
   health: {fileID: 943275325}
 --- !u!114 &245991823
 MonoBehaviour:
@@ -5792,7 +5792,7 @@ GameObject:
   - component: {fileID: 1198066217}
   - component: {fileID: 1198066216}
   m_Layer: 5
-  m_Name: Text
+  m_Name: RecoveryText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

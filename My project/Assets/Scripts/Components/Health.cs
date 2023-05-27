@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Health
+public class Health : IStat
 {
     #region Properties
         public int BaseHP { get; private set; }

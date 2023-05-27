@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, ICharacter
 {
     #region Fields
     public HeroData heroData;
@@ -19,15 +19,20 @@ public class Player : MonoBehaviour
     public PlayerEncounterCards EncounterCards { get; private set; } = new();
 
     #endregion
-    private void OnEnable()
+    private void Awake()
     {
         Identity = new Identity(this, a:alterEgoData, h:heroData);
         CharStats = new(Identity, heroData, alterEgoData);
 
+        GetComponentInChildren<AlterEgoUI>().LoadUI(this);
+    }
+
+    private void OnEnable()
+    {
         TurnManager.OnEndPlayerPhase += DrawToHandSize;
         TurnManager.OnEndPlayerPhase += Identity.EndPlayerPhase;
-        
     }
+
     private void OnDisable()
     {
         TurnManager.OnEndPlayerPhase -= DrawToHandSize;

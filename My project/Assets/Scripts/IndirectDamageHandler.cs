@@ -22,7 +22,7 @@ public class IndirectDamageHandler : MonoBehaviour
 
     private IndirectDamageUI UI;
 
-    public static void HandleIndirectDamage(List<Health> candidates, int damage)
+    public static void HandleIndirectDamage(List<Health> candidates,int damage)
     {
         inst._candidates = candidates;
         inst._damageToApply = damage;
@@ -37,9 +37,9 @@ public class IndirectDamageHandler : MonoBehaviour
 
         while (_damageToApply > 0)
         {
-            yield return StartCoroutine(TargetSystem.instance.SelectTarget(_candidates, health =>
+            yield return StartCoroutine(TargetSystem.instance.SelectTarget(_candidates, character =>
             {
-                h = health;
+                h = character.CharStats.Health;
                 UI.gameObject.SetActive(true);
             }));
 

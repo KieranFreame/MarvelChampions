@@ -33,13 +33,13 @@ public class ApplyStatusSystem : MonoBehaviour
             switch (targetComponents[_action.Status].GetType().Name)
             {
                 case nameof(Attacker):
-                    _action.Owner.GetComponent<Attacker>().Stunned = true;
+                    _action.Owner.CharStats.Attacker.Stunned = true;
                     yield break;
                 case nameof(Health):
-                    _action.Owner.GetComponent<Health>().Tough = true;
+                    _action.Owner.CharStats.Health.Tough = true;
                     yield break;
                 case nameof(IConfusable):
-                    _action.Owner.GetComponent<IConfusable>().Confused = true;
+                    _action.Owner.CharStats.Thwarter.Confused = true;
                     yield break;
             }
         }
@@ -51,16 +51,47 @@ public class ApplyStatusSystem : MonoBehaviour
 
     private IEnumerator ApplyStatusEffect(Type targetComp)
     {
+        List<ICharacter> targets = new();
+
+        foreach (TargetType t in _action.Targets)
+        {
+            switch (t)
+            {
+                case TargetType.TargetHero:
+                case TargetType.TargetAlterEgo:
+                    targets.Add(FindObjectOfType<Player>());
+                    break;
+                case TargetType.TargetVillain:
+                    targets.Add(FindObjectOfType<Villain>());
+                    break;
+                case TargetType.TargetMinion:
+                    targets.AddRange(FindObjectsOfType<MinionCard>());
+                    break;
+                case TargetType.TargetAlly:
+                    targets.AddRange(FindObjectsOfType<AllyCard>());
+                    break;
+            }
+        }
+
         switch (targetComp.Name)
         {
             case nameof(Attacker):
-                yield return StartCoroutine(TargetSystem.instance.GetTarget<Attacker>(_action, attacker => { attacker.Stunned = true; }));
+                if (targets.Count == 1)
+                    targets[0].CharStats.Attacker.Stunned = true;
+                else
+                    yield return StartCoroutine(TargetSystem.instance.SelectTarget(targets, target => {target.CharStats.Attacker.Stunned = true;}));
                 break;
             case nameof(Health):
-                yield return StartCoroutine(TargetSystem.instance.GetTarget<Health>(_action, health => { health.Tough = true; }));
+                if (targets.Count == 1)
+                    targets[0].CharStats.Health.Tough = true;
+                else
+                    yield return StartCoroutine(TargetSystem.instance.SelectTarget(targets, target => { target.CharStats.Health.Tough = true; }));
                 break;
             case nameof(IConfusable):
-                yield return StartCoroutine(TargetSystem.instance.GetTarget<IConfusable>(_action, confusable => { confusable.Confused = true; }));
+                if (targets.Count == 1)
+                    targets[0].CharStats.Confusable.Confused = true;
+                else
+                    yield return StartCoroutine(TargetSystem.instance.SelectTarget(targets, target => { target.CharStats.Confusable.Confused = true; }));
                 break;
         }
     }

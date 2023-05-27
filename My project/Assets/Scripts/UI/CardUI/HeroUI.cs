@@ -31,10 +31,12 @@ public class HeroUI : MonoBehaviour
 
     private void OnEnable()
     {
-        _attacker ??= GetComponent<Player>().Identity.CharStats.Attacker;
-        _thwarter ??= GetComponent<Player>().Identity.CharStats.Thwarter; 
-        _defender ??= GetComponent<Player>().Identity.CharStats.Defender;
-        _health ??= GetComponent<Player>().Identity.CharStats.Health;
+        Player p = FindObjectOfType<Player>();
+
+        _attacker ??= p.CharStats.Attacker;
+        _thwarter ??= p.CharStats.Thwarter; 
+        _defender ??= p.CharStats.Defender;
+        _health ??= p.CharStats.Health;
 
         _attacker.AttackChanged += AttackChanged;
         _health.HealthChanged += HealthChanged;
@@ -44,6 +46,11 @@ public class HeroUI : MonoBehaviour
         _attacker.OnToggleStun += ToggleStun;
         _thwarter.OnToggleConfuse += ToggleConfuse;
         _health.OnToggleTough += ToggleTough;
+
+        AttackChanged();
+        ThwartChanged();
+        DefenceChanged();
+        HealthChanged();
     }
 
     private void OnDisable()

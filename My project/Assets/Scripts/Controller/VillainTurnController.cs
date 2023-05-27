@@ -7,16 +7,6 @@ public class VillainTurnController : MonoBehaviour
 {
     public static VillainTurnController instance;
 
-    #region StateMachine
-    private readonly List<IState> states = new();
-    private readonly StateMachine stateMachine = new();
-
-    public void ChangeState(int index)
-    {
-        stateMachine.ChangeState(states[index]);
-    }
-    #endregion
-
     private void Awake()
     {
         //Singleton
@@ -24,23 +14,13 @@ public class VillainTurnController : MonoBehaviour
             instance = this;
         else
             Destroy(this);
-
-        _owner = FindObjectOfType<Villain>().GetComponent<Villain>();
-
-        //State Machine
-        states.Add(new VillainIdleState()); //0
-        states.Add(new AccelerateState()); //1
-        states.Add(new VillainActivateState()); //2
-        states.Add(new MinionActivateState()); //3
-        states.Add(new DealEncounterCardState()); //4
-        states.Add(new RevealEncounterCardState()); //5
-        //states.Add(new RotateFirstPlayerState()); //6
-
-        stateMachine.ChangeState(states[0]);
     }
 
     private void OnEnable()
     {
+        ActiveVillain ??= FindObjectOfType<Villain>();
+        mainScheme ??= FindObjectOfType<MainSchemeCard>();
+
         TurnManager.OnStartVillainPhase += StartVillainPhase;
     }
 
@@ -51,224 +31,86 @@ public class VillainTurnController : MonoBehaviour
 
     public int HazardCount { get; set; }
 
-    #region Events
-    public event UnityAction Accelerate;
-    //public event UnityAction VillainAttack;
-    //public event UnityAction VillainScheme;
-
-    public event UnityAction OnRevealCards;
-    #endregion
-
     #region Fields
-    [SerializeField] private Transform _minionTransform;
-    public int EncounterCardCount { get; set; }
-    private Villain _owner;
+    public List<MinionCard> MinionsInPlay { get; private set; } = new();
+    private Villain ActiveVillain;
+    MainSchemeCard mainScheme;
     #endregion
 
-    public Transform MinionTransform
-    {
-        get => _minionTransform;
-    }
+    private void StartVillainPhase() => StartCoroutine(VillainPhase());
 
-    public void StartVillainPhase()
+    private IEnumerator VillainPhase()
     {
-        stateMachine.ChangeState(states[1]);
-    }
+        Debug.Log("Step 1: Accelerating");
+        yield return StartCoroutine(mainScheme.Accelerate());
 
-    private void Update()
-    {
-        stateMachine.Update();
-    }
-
-    #region States
-    abstract class BaseControllerState : BaseState
-    {
-        protected VillainTurnController owner = instance;
-        protected Villain villain = instance._owner;
-    }
-    class VillainIdleState : BaseControllerState //0
-    {
-        public override void Enter()
+        Debug.Log("Step 2: The Villain Activates");
+        foreach (Player p in TurnManager.Players)
         {
-            TurnManager.instance.EndVillainPhase();
+            if (p.Identity.ActiveIdentity is Hero)
+                yield return StartCoroutine(ActiveVillain.CharStats.InitiateAttack());
+            else
+                yield return StartCoroutine(ActiveVillain.CharStats.InitiateScheme());
         }
 
-        public override void Exit()
+        Debug.Log("Step 3: The Minions Activate");
+        if (MinionsInPlay.Count > 0)
         {
-            Debug.Log("Villain Phase Has Started");
-        }
-    } 
-    class AccelerateState : BaseControllerState //1
-    {
-        public override void Enter()
-        {
-            Debug.Log("Accelerating");
-            owner.Accelerate?.Invoke();
-            owner.ChangeState(2);
-        }
-    }
-    class VillainActivateState : BaseControllerState //2
-    {
-        bool activating;
-
-        public override void Enter()
-        {
-            Debug.Log("Villain is Activating");
-
-            AttackSystem.OnActivationComplete += ActivationComplete;
-            SchemeSystem.OnActivationComplete += ActivationComplete;
-
             foreach (Player p in TurnManager.Players)
             {
-                owner.StartCoroutine(p.Identity.ActiveIdentity is AlterEgo ? VillainScheme() : VillainAttack());
+                yield return StartCoroutine(ActivateMinions(p));
             }
         }
 
-        private IEnumerator VillainScheme()
-        {
-            activating = true;
+        Debug.Log("Step 4: Encounter Cards are dealt out");
+        DealEncounterCards();
 
-            //villain.InitiateScheme();
+        Debug.Log("Step 5: Encounter Cards are revealed");
+        yield return StartCoroutine(RevealEncounterCards());
 
-            while (activating)
-                yield return null;
+        Debug.Log("Step 6: Change the first player");
+        //ChangeFirstPlayer
 
-            if (owner.MinionTransform.childCount > 0)
-                owner.ChangeState(3);
-            else
-                owner.ChangeState(4);
-        }
-        
-        private IEnumerator VillainAttack()
-        {
-            activating = true;
-
-            //villain.InitiateAttack();
-
-            while (activating)
-                yield return null;
-
-            if (owner.MinionTransform.childCount > 0)
-                owner.ChangeState(3);
-            else
-                owner.ChangeState(4);
-        }
-
-        private void ActivationComplete() => activating = false;
-
-        public override void Exit()
-        {
-            AttackSystem.OnActivationComplete -= ActivationComplete;
-            SchemeSystem.OnActivationComplete -= ActivationComplete;
-            
-        }
-
+        Debug.Log("Step 7: Return to Player Phase");
+        TurnManager.instance.EndVillainPhase();
     }
-    class MinionActivateState : BaseControllerState //3
+
+    private IEnumerator ActivateMinions(Player p)
     {
-        bool activating;
-
-        public override void Enter()
+        foreach (MinionCard m in MinionsInPlay)
         {
-            Debug.Log("Minions are Activating");
+            if (p.Identity.ActiveIdentity is Hero)
+                yield return StartCoroutine(m.CharStats.InitiateAttack());
+            else
+                yield return StartCoroutine(m.CharStats.InitiateScheme());
+        }
 
-            AttackSystem.OnActivationComplete += ActivationComplete;
-            SchemeSystem.OnActivationComplete += ActivationComplete;
+        yield return null;
+    }
 
-            List<MinionCard> minions = new();
-            minions.AddRange(owner.MinionTransform.GetComponentsInChildren<MinionCard>());
+    private void DealEncounterCards()
+    {
+        int cardsToDeal = TurnManager.Players.Count + HazardCount;
 
+        while (cardsToDeal > 0)
+        {
             foreach (Player p in TurnManager.Players)
             {
-                if (p.Identity.ActiveIdentity is AlterEgo)
-                    owner.StartCoroutine(MinionScheme(minions));
-                else
-                    owner.StartCoroutine(MinionAttack(minions));                 
+                p.EncounterCards.AddCard(ActiveVillain.EncounterDeck.deck[0]);
+                ActiveVillain.EncounterDeck.Deal();
+                cardsToDeal--;
+
+                if (cardsToDeal == 0)
+                    break;
             }
-            
-        }
-
-        private IEnumerator MinionScheme(List<MinionCard> minions)
-        {
-            foreach (MinionCard m in minions)
-            {
-                activating = true;
-
-                //m.InitiateScheme();
-
-                while (activating)
-                    yield return null;
-            }
-
-            owner.ChangeState(4);
-        }
-        
-        private IEnumerator MinionAttack(List<MinionCard> minions)
-        {
-            foreach (MinionCard m in minions)
-            {
-                activating = true;
-
-                //m.InitiateAttack();
-
-                while (activating)
-                    yield return null;
-            }
-
-            owner.ChangeState(4);
-        }
-
-        private void ActivationComplete() => activating = false;
-
-        public override void Exit()
-        {
-            AttackSystem.OnActivationComplete -= ActivationComplete;
-            SchemeSystem.OnActivationComplete -= ActivationComplete;
-        }
-    }
-    class DealEncounterCardState : BaseControllerState //4
-    {
-        public override void Enter()
-        {
-            Debug.Log("Dealing Encounter Cards");
-            
-            owner.EncounterCardCount = TurnManager.Players.Count + owner.HazardCount;
-
-            while (owner.EncounterCardCount > 0)
-            {
-                foreach (Player p in TurnManager.Players)
-                {
-                    //p.EncounterCards.AddCards(owner.GetComponentInChildren<Villain>().EncounterDeck.deck[0]);
-                    owner.GetComponentInChildren<Villain>().EncounterDeck.Deal();
-                    owner.EncounterCardCount--;
-
-                    if (owner.EncounterCardCount == 0)
-                        break;
-                }
-            }
-
-            owner.ChangeState(5);
         }
     }
 
-    class RevealEncounterCardState : BaseControllerState //5
+    private IEnumerator RevealEncounterCards()
     {
-        public override void Enter()
+        foreach (Player p in TurnManager.Players)
         {
-            Debug.Log("Revealing Encounter Cards");
-
-            owner.OnRevealCards?.Invoke();
-            owner.ChangeState(0); //temp, 6
+            yield return StartCoroutine(p.EncounterCards.RevealEncounterCards());
         }
     }
-
-    /* class RotateFirstPlayerState : BaseControllerState //6
-    {
-        public override void Execute()
-        {
-            TurnManager.instance.ChangeFirstPlayer();
-            owner.ChangeState(0);
-        }
-    }*/
-    #endregion
 }

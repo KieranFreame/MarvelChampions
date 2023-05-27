@@ -27,7 +27,7 @@ public class GangUp : EncounterCardEffect
         yield return _card.StartCoroutine(_owner.CharStats.InitiateAttack());
 
         List<MinionCard> minions = new();
-        minions.AddRange(VillainTurnController.instance.MinionTransform.GetComponentsInChildren<MinionCard>());
+        minions.AddRange(VillainTurnController.instance.MinionsInPlay);
 
         foreach (MinionCard m in minions)
         {

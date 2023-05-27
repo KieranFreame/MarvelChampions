@@ -32,24 +32,24 @@ public class IdentityActions : MonoBehaviour
 
         atk.gameObject.SetActive(player.Identity.ActiveIdentity is Hero && !player.Identity.Exhausted);
         thw.gameObject.SetActive(player.Identity.ActiveIdentity is Hero && !player.Identity.Exhausted);
-        rec.gameObject.SetActive(player.Identity.ActiveIdentity is AlterEgo && player.Identity.CharStats.Health.Damaged() && !player.Identity.Exhausted);
+        rec.gameObject.SetActive(player.Identity.ActiveIdentity is AlterEgo && player.CharStats.Health.Damaged() && !player.Identity.Exhausted);
         eff.gameObject.SetActive(player.Identity.ActiveEffect.CanActivate());
         flip.gameObject.SetActive(!player.Identity.HasFlipped);
     }
 
     public void Attack()
     {
-        player.Identity.CharStats.InitiateAttack();
+        StartCoroutine(player.CharStats.InitiateAttack());
         gameObject.SetActive(false);
     }
     public void Thwart()
     {
-        player.Identity.CharStats.InitiateThwart();
+        StartCoroutine(player.CharStats.InitiateThwart());
         gameObject.SetActive(false);
     }
     public void Recover()
     {
-        player.Identity.CharStats.InitiateRecover();
+        player.CharStats.InitiateRecover();
         gameObject.SetActive(false);
     }
     public void Flip()

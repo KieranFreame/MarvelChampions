@@ -36,12 +36,7 @@ public class BoostSystem : MonoBehaviour
         BoostCardCount = 0;
     }
 
-    public void FlipBoostCards()
-    {
-        StartCoroutine(FlipCard());
-    }
-
-    private IEnumerator FlipCard()
+    public IEnumerator FlipCard(System.Action<int> callback)
     {
         int value = 0; 
 
@@ -57,6 +52,8 @@ public class BoostSystem : MonoBehaviour
 
         OnBoostCardsResolved?.Invoke(value);
         _boostCards.Clear();
+
+        callback(value);
     }
 
     public bool IsBoost(CardData card)

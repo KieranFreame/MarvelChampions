@@ -31,7 +31,7 @@ public class Stampede : EncounterCardEffect
 
     private void SetDefender()
     {
-        charHP = (DefendSystem.instance.Target != null) ? DefendSystem.instance.Target.CurrentHealth : TurnManager.instance.CurrPlayer.Identity.CharStats.Health.CurrentHealth;
+        charHP = (DefendSystem.instance.Target != null) ? DefendSystem.instance.Target.CurrentHealth : TurnManager.instance.CurrPlayer.CharStats.Health.CurrentHealth;
     }
 
     private void AttackComplete()

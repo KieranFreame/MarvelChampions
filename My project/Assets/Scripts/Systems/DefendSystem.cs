@@ -47,7 +47,7 @@ public class DefendSystem : MonoBehaviour
 
     #region Methods
 
-    public IEnumerator GetDefender(Player targetOwner)
+    public IEnumerator GetDefender(Player targetOwner, System.Action<Health> callback)
     {
         _targetOwner = targetOwner;
 
@@ -55,6 +55,8 @@ public class DefendSystem : MonoBehaviour
 
         while (StateMachine.currentState != States[0])
             yield return null;
+
+        callback(_target);
     }
 
     #endregion
@@ -87,7 +89,7 @@ public class DefendSystem : MonoBehaviour
             candidates.RemoveAll(x => (x.Owner as IExhaust).Exhausted);
 
             if (owner._targetOwner.Identity.ActiveIdentity is Hero && !owner._targetOwner.Identity.Exhausted)
-                candidates.Add(owner._targetOwner.Identity.CharStats.Health);
+                candidates.Add(owner._targetOwner.CharStats.Health);
 
             if (candidates.Count > 0)
             {
@@ -104,9 +106,9 @@ public class DefendSystem : MonoBehaviour
         {
             CancelButton.ToggleCancelBtn(true, DefenderSelectionCanceled);
 
-            yield return owner.StartCoroutine(TargetSystem.instance.SelectTarget(candidates, health =>
+            yield return owner.StartCoroutine(TargetSystem.instance.SelectTarget(candidates, character =>
             {
-                owner._target = health;
+                owner._target = character.CharStats.Health;
             }));
 
             owner.ChangeState(2);

@@ -10,11 +10,6 @@ public class MinionCard : EncounterCard, ICharacter
     public int BaseHP { get => (Data as MinionCardData).baseHealth; }
     public CharacterStats CharStats { get; set; }
 
-    private void OnEnable()
-    {
-        CharStats.Health.Defeated += OnDefeated;
-    }
-
     private void OnDisable()
     {
         CharStats.Health.Defeated -= OnDefeated;
@@ -35,6 +30,7 @@ public class MinionCard : EncounterCard, ICharacter
     {
         MinionCardData data = _data as MinionCardData;
         CharStats = new(this, data);
+        CharStats.Health.Defeated += OnDefeated;
         base.LoadCardData(data, owner);
     }
 }

@@ -10,13 +10,13 @@ public class PhotonicBlast : PlayerCardEffect
     {
         _owner = owner;
 
-        if (_owner.Identity.CharStats.Attacker.Stunned)
+        if (_owner.CharStats.Attacker.Stunned)
         {
-            _owner.Identity.CharStats.Attacker.Stunned = false;
+            _owner.CharStats.Attacker.Stunned = false;
             return;
         }
 
-        var action = new AttackAction(5, target: TargetType.TargetEnemy, owner:_owner);
+        var action = new AttackAction(5, new List<TargetType>() { TargetType.TargetMinion, TargetType.TargetVillain}, owner:_owner);
         AttackSystem.instance.InitiateAttack(action);
 
         if (PayCostSystem.instance.Resources.Contains(Resource.Energy))

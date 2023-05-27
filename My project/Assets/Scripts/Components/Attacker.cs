@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Attacker
+public class Attacker : IStat
 {
     #region Properties
     private int _currAttack;

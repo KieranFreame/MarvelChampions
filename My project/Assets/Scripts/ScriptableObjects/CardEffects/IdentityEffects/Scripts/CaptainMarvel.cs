@@ -15,12 +15,12 @@ public class CaptainMarvel : IdentityEffect
 
     public override bool CanActivate()
     {
-        if (owner.GetComponent<Health>().CurrentHealth == owner.GetComponent<Health>().BaseHP)
+        if (!owner.CharStats.Health.Damaged())
         {
             return false;
         }
 
-        if (owner.Hand.cards.FirstOrDefault(x => x.Resources.Contains(Resource.Energy)) == null)
+        if (owner.Hand.cards.FirstOrDefault(x => x.Resources.Contains(Resource.Energy)) == null) //need to account for Permanents
         {
             return false;
         }

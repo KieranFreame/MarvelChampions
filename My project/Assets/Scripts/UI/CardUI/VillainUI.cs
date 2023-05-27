@@ -103,7 +103,7 @@ public class VillainUI : MonoBehaviour
     #region Stat Funcs
     private void AttackChanged() { villainAttack.text = villain.CharStats.Attacker.Stunned ? "S" : villain.CharStats.Attacker.CurrentAttack.ToString(); }
     private void SchemeChanged() { villainScheme.text = villain.CharStats.Schemer.Confused ? "C" : villain.CharStats.Schemer.CurrentScheme.ToString(); }
-    private void HealthChanged() { villainHealth.text = villain.CharStats.Health.Tough ? "T" : villain.CharStats.Health.ToString(); }
+    private void HealthChanged() { villainHealth.text = villain.CharStats.Health.Tough ? "T" : villain.CharStats.Health.CurrentHealth.ToString(); }
     #endregion
 
     #region Status Funcs

@@ -25,7 +25,7 @@ public class Explosion : EncounterCardEffect
         {
             List<Health> targets = new()
             {
-                FindObjectOfType<Player>().Identity.CharStats.Health,
+                FindObjectOfType<Player>().CharStats.Health,
             };
 
             targets.AddRange(FindObjectOfType<Player>().CardsInPlay.GetHealth());

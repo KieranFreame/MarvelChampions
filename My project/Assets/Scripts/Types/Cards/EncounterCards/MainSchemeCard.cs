@@ -30,6 +30,7 @@ public class MainSchemeCard : SchemeCard
 
     public IEnumerator Accelerate()
     {
+        Debug.Log(name + ": Accelerating by " + Acceleration + " threat.");
         GetComponent<Threat>().GainThreat(Acceleration);
         
         foreach (StepOne func in AfterStepOne)

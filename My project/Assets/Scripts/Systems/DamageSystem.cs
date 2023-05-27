@@ -75,9 +75,9 @@ public class DamageSystem : MonoBehaviour
 
         IEnumerator SelectTarget()
         {
-            yield return owner.StartCoroutine(TargetSystem.instance.SelectTarget(owner.DamageAction.DamageTargets, health =>
+            yield return owner.StartCoroutine(TargetSystem.instance.SelectTarget(owner.DamageAction.DamageTargets, character =>
             {
-                owner.DamageAction.DamageTargets.Add(health);
+                owner.DamageAction.DamageTargets.Add(character.CharStats.Health);
             }));
             owner.ChangeState(2);
         }

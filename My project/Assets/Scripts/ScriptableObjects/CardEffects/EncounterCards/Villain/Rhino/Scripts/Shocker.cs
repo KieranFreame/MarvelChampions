@@ -10,8 +10,8 @@ public class Shocker : EncounterCardEffect
         List<Health> players = new();
 
         foreach (Player p in TurnManager.Players)
-            players.Add(p.Identity.CharStats.Health);
+            players.Add(p.CharStats.Health);
 
-        _card.StartCoroutine(DamageSystem.ApplyDamage(new DamageAction(players, 1, false)));
+        _card.StartCoroutine(DamageSystem.ApplyDamage(new(players, 1, true)));
     }
 }

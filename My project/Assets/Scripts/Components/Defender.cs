@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Defender
+public class Defender : IStat
 {
     #region Properties
     private int _defence;

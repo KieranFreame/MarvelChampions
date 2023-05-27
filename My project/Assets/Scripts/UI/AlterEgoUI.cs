@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class AlterEgoUI : MonoBehaviour
 {
     #region UIElements
-    private Identity owner;
     public Image alteregoPortrait;
     public Text recovery;
     public Text health;
@@ -19,7 +18,7 @@ public class AlterEgoUI : MonoBehaviour
 
     private void OnEnable()
     {
-        if (owner is null) return;
+        if (_health is null || _recovery is null) return;
 
         _health.HealthChanged += HealthChanged;
         _health.OnToggleTough += ToggleTough;
@@ -32,10 +31,8 @@ public class AlterEgoUI : MonoBehaviour
         _recovery.RecoveryChanged -= RecoveryChanged;
     }
 
-    public void LoadUI(Identity _owner)
+    public void LoadUI(Player owner)
     {
-        owner = _owner;
-
         _health = owner.CharStats.Health;
         _recovery = owner.CharStats.Recovery;
 
@@ -44,7 +41,8 @@ public class AlterEgoUI : MonoBehaviour
         _recovery.RecoveryChanged += RecoveryChanged;
 
         //alteregoPortrait.sprite = alterego.art;
-        health.text = owner.BaseHP.ToString();
+        HealthChanged();
+        RecoveryChanged();
     }
 
     private void ToggleTough(bool tough)

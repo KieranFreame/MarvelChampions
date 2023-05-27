@@ -12,7 +12,6 @@ public class StatelessVTC : MonoBehaviour
     readonly List<MinionCard> minionsInPlay = new();
     MainSchemeCard mainScheme;
     Villain ActiveVillain { get; set; }
-
     public int HazardCount { get; set; }
 
     private void OnEnable()

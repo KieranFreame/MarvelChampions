@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Schemer : IConfusable
+public class Schemer : IConfusable, IStat
 {
     private int _scheme;
     public int BaseScheme { get; private set; }
