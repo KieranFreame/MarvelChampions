@@ -54,7 +54,7 @@ public class IndirectDamageHandler : MonoBehaviour
 
         foreach (DamageAction d in _actions)
         {
-            yield return StartCoroutine(DamageSystem.ApplyDamage(d));
+            yield return StartCoroutine(DamageSystem.instance.ApplyDamage(d));
         }
     }
 }

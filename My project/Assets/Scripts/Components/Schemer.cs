@@ -35,7 +35,7 @@ public class Schemer : IConfusable, IStat
             return null;
         }
 
-        var scheme = new SchemeAction(_scheme, Owner.gameObject);
+        var scheme = new SchemeAction(_scheme, Owner);
         return scheme;
     }
 

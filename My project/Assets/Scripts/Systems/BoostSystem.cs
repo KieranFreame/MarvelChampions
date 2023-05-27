@@ -15,7 +15,7 @@ public class BoostSystem : MonoBehaviour
             Destroy(this);
     }
 
-    public int BoostCardCount { get; set; }
+    public int BoostCardCount { get; set; } = 1;
     private Villain _villain;
     private readonly List<CardData> _boostCards = new();
 

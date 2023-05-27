@@ -64,12 +64,12 @@ public class AttackSystem : MonoBehaviour //PlayerAttackSystem
 
         CheckKeywords();
 
-        yield return StartCoroutine(DamageSystem.ApplyDamage(new DamageAction(Action, Target)));
+        yield return StartCoroutine(DamageSystem.instance.ApplyDamage(new DamageAction(Action, Target)));
 
         if (Excess > 0)
         {
             var overkillTarget = Action.Owner is Villain ? FindObjectOfType<Player>().CharStats.Health : FindObjectOfType<Villain>().CharStats.Health;
-            yield return StartCoroutine(DamageSystem.ApplyDamage(new DamageAction(overkillTarget, Excess)));
+            yield return StartCoroutine(DamageSystem.instance.ApplyDamage(new DamageAction(overkillTarget, Excess)));
         }
 
         OnActivationComplete?.Invoke();

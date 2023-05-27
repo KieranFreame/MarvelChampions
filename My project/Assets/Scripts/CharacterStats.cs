@@ -62,8 +62,7 @@ public class CharacterStats
         if (scheme == null)
             yield break;
 
-        /*yield return StartCoroutine()*/
-        SchemeSystem.instance.InitiateScheme(scheme);
+        yield return Owner.StartCoroutine(SchemeSystem.instance.InitiateScheme(scheme));
     }
     public IEnumerator InitiateThwart()
     {

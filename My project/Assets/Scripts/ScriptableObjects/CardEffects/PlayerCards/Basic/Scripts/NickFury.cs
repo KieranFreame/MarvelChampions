@@ -36,7 +36,7 @@ public class NickFury : PlayerCardEffect
                 List<Health> enemies = new() { FindObjectOfType<Villain>().CharStats.Health };
                 //enemies.AddRange(FindObjectsOfType<MinionCard>());
                 
-                _card.StartCoroutine(DamageSystem.ApplyDamage(new(enemies, 4, false)));
+                _card.StartCoroutine(DamageSystem.instance.ApplyDamage(new(enemies, 4, false)));
                 break;
         }
     }

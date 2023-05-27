@@ -25,7 +25,7 @@ public class Daredevil : PlayerCardEffect
         List<Health> enemies = new() { FindObjectOfType<Villain>().CharStats.Health };
         //enemies.AddRange(FindObjectsOfType<Health>());
         
-        _card.StartCoroutine(DamageSystem.ApplyDamage(new DamageAction(enemies, 1)));
+        _card.StartCoroutine(DamageSystem.instance.ApplyDamage(new DamageAction(enemies, 1)));
     }
 
     public override void OnExitPlay()

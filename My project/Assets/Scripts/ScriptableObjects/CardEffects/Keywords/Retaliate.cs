@@ -43,7 +43,7 @@ public class Retaliate
         action.Owner.TryGetComponent(out Health target);
 
         if (target != null)
-            _owner.StartCoroutine(DamageSystem.ApplyDamage(new DamageAction(target, _damage)));
+            _owner.StartCoroutine(DamageSystem.instance.ApplyDamage(new DamageAction(target, _damage)));
     }
 
     private void WhenDefeated()

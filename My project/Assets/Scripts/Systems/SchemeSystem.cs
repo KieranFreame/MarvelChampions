@@ -31,7 +31,7 @@ public class SchemeSystem : MonoBehaviour
         Action = action;
         Target = null;
 
-        if (Action.Owner.GetComponent<Villain>() != null || Action.Keywords.Contains(Keywords.Villainous))
+        if (Action.Owner is Villain || Action.Keywords.Contains(Keywords.Villainous))
         {
             BoostSystem.instance.DealBoostCards();
             yield return StartCoroutine(BoostSystem.instance.FlipCard(boost => { Action.Value += boost; }));
