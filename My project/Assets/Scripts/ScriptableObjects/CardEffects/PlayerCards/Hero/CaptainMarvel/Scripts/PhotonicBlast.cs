@@ -17,7 +17,7 @@ public class PhotonicBlast : PlayerCardEffect
         }
 
         var action = new AttackAction(5, new List<TargetType>() { TargetType.TargetMinion, TargetType.TargetVillain}, owner:_owner);
-        AttackSystem.instance.InitiateAttack(action);
+        _owner.StartCoroutine(AttackSystem.instance.InitiateAttack(action));
 
         if (PayCostSystem.instance.Resources.Contains(Resource.Energy))
             DrawCardSystem.instance.DrawCards(new DrawCardsAction(1));

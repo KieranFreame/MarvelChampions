@@ -21,10 +21,9 @@ public class CrowdControl : CardEffect
         TargetSystem.CheckPatrolAndCrisis += Crisis;
     }
 
-    private void Crisis()
+    private void Crisis(List<Threat> candidates)
     {
-        if (TargetSystem.instance.candidates.Contains(mainScheme))
-            TargetSystem.instance.candidates.Remove(mainScheme);
+        candidates.RemoveAll(x => x == mainScheme);
     }
 
     public override void WhenDefeated()

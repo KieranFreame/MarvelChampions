@@ -8,6 +8,6 @@ public class HydraMercenary : EncounterCardEffect
     Guard _guard;
     public override void OnEnterPlay(Villain owner, Card card)
     {
-        _guard = new(owner, card);
+        _guard = new(owner, card as MinionCard);
     }
 }

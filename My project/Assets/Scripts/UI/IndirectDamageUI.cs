@@ -9,7 +9,7 @@ public class IndirectDamageUI : MonoBehaviour
     private int totalDamage = 0;
     private bool finished = false;
 
-    private Health health;
+    private ICharacter target;
 
     private void OnEnable()
     {
@@ -21,9 +21,9 @@ public class IndirectDamageUI : MonoBehaviour
         damageText.text = totalDamage.ToString();
     }
 
-    public IEnumerator SetIndirectDamage(Health h, System.Action<int> callback)
+    public IEnumerator SetIndirectDamage(ICharacter h, System.Action<int> callback)
     {
-        health = h;
+        target = h;
 
         while (!finished)
             yield return null;
@@ -37,12 +37,12 @@ public class IndirectDamageUI : MonoBehaviour
     public void IncreaseDamage()
     {
         totalDamage++;
-        Mathf.Clamp(totalDamage, 0, health.CurrentHealth);
+        Mathf.Clamp(totalDamage, 0, target.CharStats.Health.CurrentHealth);
     }
 
     public void DecreaseDamage()
     {
         totalDamage--;
-        Mathf.Clamp(totalDamage, 0, health.CurrentHealth);
+        Mathf.Clamp(totalDamage, 0, target.CharStats.Health.CurrentHealth);
     }
 }

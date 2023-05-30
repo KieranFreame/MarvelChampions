@@ -27,14 +27,14 @@ public class NickFury : PlayerCardEffect
         switch (value)
         {
             case 1: //Thwart 2
-                ThwartSystem.InitiateThwart(new(2));
+                _owner.StartCoroutine(ThwartSystem.instance.InitiateThwart(new(2)));
                 break;
             case 2: //Draw 3
                 DrawCardSystem.instance.DrawCards(new(3));
                 break;
             case 3: //Damage 4
-                List<Health> enemies = new() { FindObjectOfType<Villain>().CharStats.Health };
-                //enemies.AddRange(FindObjectsOfType<MinionCard>());
+                List<ICharacter> enemies = new() { FindObjectOfType<Villain>() };
+                enemies.AddRange(FindObjectsOfType<MinionCard>());
                 
                 _card.StartCoroutine(DamageSystem.instance.ApplyDamage(new(enemies, 4, false)));
                 break;

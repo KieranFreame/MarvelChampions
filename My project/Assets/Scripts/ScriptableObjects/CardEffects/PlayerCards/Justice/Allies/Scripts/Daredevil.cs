@@ -19,11 +19,11 @@ public class Daredevil : PlayerCardEffect
 
     private void OnThwartComplete()
     {
-        if (ThwartSystem.instance.ThwartAction.Owner != _card)
+        if (ThwartSystem.instance.Action.Owner != _card)
             return;
 
-        List<Health> enemies = new() { FindObjectOfType<Villain>().CharStats.Health };
-        //enemies.AddRange(FindObjectsOfType<Health>());
+        List<ICharacter> enemies = new() { FindObjectOfType<Villain>() };
+        enemies.AddRange(FindObjectsOfType<MinionCard>());
         
         _card.StartCoroutine(DamageSystem.instance.ApplyDamage(new DamageAction(enemies, 1)));
     }

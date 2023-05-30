@@ -22,7 +22,7 @@ public class CosmicFlight : PlayerCardEffect, IModifyDamage
     
     public IEnumerator OnTakeDamage(DamageAction action, System.Action<DamageAction> callback)
     {
-        if (action.DamageTargets.Contains(_owner.GetComponent<Health>()))
+        if (action.DamageTargets.Contains(_owner))
         {
             yield return _card.StartCoroutine(ConfirmActivateUI.MakeChoice(_card, decision =>
             {

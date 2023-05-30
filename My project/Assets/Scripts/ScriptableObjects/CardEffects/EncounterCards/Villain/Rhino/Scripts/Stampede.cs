@@ -22,7 +22,7 @@ public class Stampede : EncounterCardEffect
         }
         else //identity is Hero;
         {
-            _owner.CharStats.InitiateAttack();
+            _owner.StartCoroutine(_owner.CharStats.InitiateAttack());
 
             DefendSystem.instance.OnDefenderSelected += SetDefender;
             AttackSystem.OnActivationComplete += AttackComplete;
@@ -31,7 +31,7 @@ public class Stampede : EncounterCardEffect
 
     private void SetDefender()
     {
-        charHP = (DefendSystem.instance.Target != null) ? DefendSystem.instance.Target.CurrentHealth : TurnManager.instance.CurrPlayer.CharStats.Health.CurrentHealth;
+        charHP = (DefendSystem.instance.Target != null) ? DefendSystem.instance.Target.CharStats.Health.CurrentHealth : TurnManager.instance.CurrPlayer.CharStats.Health.CurrentHealth;
     }
 
     private void AttackComplete()
@@ -40,9 +40,9 @@ public class Stampede : EncounterCardEffect
 
         if (target != null) //defending ally was defeated
         {
-            if (target.CurrentHealth < charHP) //target has taken damage
+            if (target.CharStats.Health.CurrentHealth < charHP) //target has taken damage
             {
-                target.Owner.CharStats.Attacker.Stunned = true;
+                target.CharStats.Attacker.Stunned = true;
             }
         }
 

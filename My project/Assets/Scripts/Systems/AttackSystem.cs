@@ -21,7 +21,7 @@ public class AttackSystem : MonoBehaviour //PlayerAttackSystem
     #region Fields
     public int Excess { get; set; } = 0;
     public AttackAction Action { get; set; }
-    public Health Target { get; set; }
+    public ICharacter Target { get; set; }
     #endregion
 
     #region Events
@@ -33,7 +33,7 @@ public class AttackSystem : MonoBehaviour //PlayerAttackSystem
     private void ResetSystem()
     {
         if (Action.Owner is Villain || Action.Owner is MinionCard)
-            Target = TurnManager.instance.CurrPlayer.CharStats.Health;
+            Target = TurnManager.instance.CurrPlayer;
         else
             Target = null;
 
@@ -42,11 +42,11 @@ public class AttackSystem : MonoBehaviour //PlayerAttackSystem
     private void CheckKeywords()
     {
         if (Action.Keywords.Contains(Keywords.Piercing))
-            Target.Tough = false;
+            Target.CharStats.Health.Tough = false;
 
         if (Action.Keywords.Contains(Keywords.Overkill))
-            if (Target.Owner is not Identity && Target.Owner is not Villain)
-                Excess = Action.Value - Target.CurrentHealth;
+            if (Target is not Player && Target is not Villain)
+                Excess = Action.Value - Target.CharStats.Health.CurrentHealth;
     }
     #endregion
 
@@ -68,7 +68,7 @@ public class AttackSystem : MonoBehaviour //PlayerAttackSystem
 
         if (Excess > 0)
         {
-            var overkillTarget = Action.Owner is Villain ? FindObjectOfType<Player>().CharStats.Health : FindObjectOfType<Villain>().CharStats.Health;
+            ICharacter overkillTarget = Action.Owner is Villain ? FindObjectOfType<Player>() : FindObjectOfType<Villain>();
             yield return StartCoroutine(DamageSystem.instance.ApplyDamage(new DamageAction(overkillTarget, Excess)));
         }
 
@@ -78,19 +78,26 @@ public class AttackSystem : MonoBehaviour //PlayerAttackSystem
 
     private IEnumerator FriendlyAttack()
     {
-        List<ICharacter> targets = new() { FindObjectOfType<Villain>() };
-        targets.AddRange(FindObjectsOfType<MinionCard>());
-        yield return StartCoroutine(TargetSystem.instance.SelectTarget(targets, target =>
+        List<ICharacter> enemies = new() { FindObjectOfType<Villain>() };
+        enemies.AddRange(FindObjectsOfType<MinionCard>());
+
+        if (enemies.Count > 1)
         {
-            Target = target.CharStats.Health;
-        }));
+            yield return StartCoroutine(TargetSystem.instance.SelectTarget(enemies, target =>
+            {
+                Target = target;
+            }, true));
+
+            yield break;
+        }
+
+        Target = enemies[0];
     }
 
     private IEnumerator EnemyAttack()
     {
         if (Action.Owner is Villain || Action.Keywords.Contains(Keywords.Villainous))
         {
-            BoostSystem.instance.BoostCardCount = 1;
             BoostSystem.instance.DealBoostCards();
         }
 

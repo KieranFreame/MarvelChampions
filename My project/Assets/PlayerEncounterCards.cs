@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerEncounterCards
 {
     public List<CardData> EncounterCards = new();
     private bool resolved = false;
+
+    public event UnityAction AllCardsRevealed;
 
     public PlayerEncounterCards()
     {
@@ -28,6 +31,8 @@ public class PlayerEncounterCards
 
             EncounterCards.RemoveAt(0);
         }
+
+        AllCardsRevealed?.Invoke();
     }
 
     private void Resolved(Card redundant)

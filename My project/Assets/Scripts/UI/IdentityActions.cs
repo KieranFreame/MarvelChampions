@@ -39,17 +39,17 @@ public class IdentityActions : MonoBehaviour
 
     public void Attack()
     {
-        StartCoroutine(player.CharStats.InitiateAttack());
+        player.Attack();
         gameObject.SetActive(false);
     }
     public void Thwart()
     {
-        StartCoroutine(player.CharStats.InitiateThwart());
+        player.Thwart();
         gameObject.SetActive(false);
     }
     public void Recover()
     {
-        player.CharStats.InitiateRecover();
+        player.Recover();
         gameObject.SetActive(false);
     }
     public void Flip()

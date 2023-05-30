@@ -35,6 +35,7 @@ public class VillainTurnController : MonoBehaviour
     public List<MinionCard> MinionsInPlay { get; private set; } = new();
     private Villain ActiveVillain;
     MainSchemeCard mainScheme;
+    private bool goToNextPlayer = false;
     #endregion
 
     private void StartVillainPhase() => StartCoroutine(VillainPhase());
@@ -99,8 +100,7 @@ public class VillainTurnController : MonoBehaviour
         {
             foreach (Player p in TurnManager.Players)
             {
-                p.EncounterCards.AddCard(ActiveVillain.EncounterDeck.deck[0]);
-                ActiveVillain.EncounterDeck.Deal();
+                p.EncounterCards.AddCard(ActiveVillain.EncounterDeck.DealCard());
                 cardsToDeal--;
 
                 if (cardsToDeal == 0)
@@ -113,7 +113,16 @@ public class VillainTurnController : MonoBehaviour
     {
         foreach (Player p in TurnManager.Players)
         {
-            yield return StartCoroutine(p.EncounterCards.RevealEncounterCards());
+            p.EncounterCards.AllCardsRevealed += Finished;
+            StartCoroutine(p.EncounterCards.RevealEncounterCards());
+
+            while (!goToNextPlayer)
+                yield return null;
+
+            goToNextPlayer = false;
+            p.EncounterCards.AllCardsRevealed -= Finished;
         }
     }
+
+    public void Finished() => goToNextPlayer = true;
 }

@@ -26,8 +26,7 @@ public class HydraBomber : EncounterCardEffect
         {
             case 1:
                 var p = FindObjectOfType<Player>();
-                var h = p.CharStats.Health;
-                _card.StartCoroutine(DamageSystem.instance.ApplyDamage(new DamageAction(h, 2)));
+                _card.StartCoroutine(DamageSystem.instance.ApplyDamage(new DamageAction(p, 2)));
                 break;
             case 2:
                 FindObjectOfType<MainSchemeCard>().GetComponent<Threat>().GainThreat(1);

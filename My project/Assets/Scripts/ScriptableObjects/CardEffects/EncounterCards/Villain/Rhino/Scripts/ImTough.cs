@@ -16,6 +16,6 @@ public class ImTough : CardEffect
             return;
         }
 
-        owner.GetComponent<Health>().Tough = true;
+        owner.CharStats.Health.Tough = true;
     }
 }

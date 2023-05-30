@@ -17,12 +17,12 @@ public class IndirectDamageHandler : MonoBehaviour
     }
 
     private int _damageToApply = 0;
-    private List<Health> _candidates = new();
+    private List<ICharacter> _candidates = new();
     private List<DamageAction> _actions = new();
 
     private IndirectDamageUI UI;
 
-    public static void HandleIndirectDamage(List<Health> candidates,int damage)
+    public static void HandleIndirectDamage(List<ICharacter> candidates,int damage)
     {
         inst._candidates = candidates;
         inst._damageToApply = damage;
@@ -33,13 +33,13 @@ public class IndirectDamageHandler : MonoBehaviour
 
     private IEnumerator IndirectDamage()
     {
-        Health h = null;
+        ICharacter h = null;
 
         while (_damageToApply > 0)
         {
             yield return StartCoroutine(TargetSystem.instance.SelectTarget(_candidates, character =>
             {
-                h = character.CharStats.Health;
+                h = character;
                 UI.gameObject.SetActive(true);
             }));
 

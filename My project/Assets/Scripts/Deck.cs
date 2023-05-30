@@ -53,14 +53,13 @@ public class Deck
         deck.AddRange(cardToAdd);
         Shuffle();
     }
-    public void Deal(int amount = 1)
+    public CardData DealCard()
     {
-        for (int i = 0; i < amount; i++)
-        {
-            var cardToDeal = deck[0];
-            limbo.Add(cardToDeal);
-            deck.Remove(cardToDeal);
-        }  
+        CardData cardToDeal = deck[0];
+        limbo.Add(cardToDeal);
+        deck.Remove(cardToDeal);
+
+        return cardToDeal;
     }
     public void Discard(Card discard)
     {

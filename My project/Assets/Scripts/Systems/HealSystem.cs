@@ -26,11 +26,13 @@ public class HealSystem : MonoBehaviour
 
             playerHealth.RecoverHealth(action.heal);
             yield break;
-        }*/
+        }
 
-        yield return StartCoroutine(TargetSystem.instance.GetTarget<Health>(action, health =>
+        yield return StartCoroutine(TargetSystem.instance.SelectTarget(action, character =>
         {
-            health.RecoverHealth(action.Value);
-        }));
+            character.CharStats.Health.RecoverHealth(action.Value);
+        }));*/
+
+        yield break;
     }
 }

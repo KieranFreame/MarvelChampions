@@ -25,12 +25,11 @@ public class RevealCardSystem : MonoBehaviour
 
     public void DealEncounterCard(Transform targetParent)
     {
-        var inst = Instantiate(PrefabFactory.instance.CreateEncounterCard(_villain.EncounterDeck.deck[0] as EncounterCardData), targetParent);
+        CardData draw = _villain.EncounterDeck.DealCard();
+        var inst = Instantiate(PrefabFactory.instance.CreateEncounterCard(draw as EncounterCardData), targetParent);
         inst.name = _villain.EncounterDeck.deck[0].cardName;
 
-        inst.GetComponent<EncounterCard>().LoadCardData(_villain.EncounterDeck.deck[0], _villain.gameObject);
-
-        _villain.EncounterDeck.Deal();
+        inst.GetComponent<EncounterCard>().LoadCardData(draw, _villain.gameObject);
     }
 
     public GameObject CreateEncounterCard(EncounterCardData card, bool faceDown)

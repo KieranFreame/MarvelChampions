@@ -8,6 +8,6 @@ public class Advance : EncounterCardEffect
     public override void OnEnterPlay(Villain owner, Card card)
     {
         _owner = owner;
-        _owner.CharStats.InitiateScheme();
+        _owner.StartCoroutine(_owner.CharStats.InitiateScheme());
     }
 }

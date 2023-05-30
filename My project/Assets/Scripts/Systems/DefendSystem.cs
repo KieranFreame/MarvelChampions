@@ -41,13 +41,13 @@ public class DefendSystem : MonoBehaviour
     #endregion
 
     #region Fields
-    private Health _target;
+    public ICharacter Target { get; set; }
     private Player _targetOwner;
     #endregion
 
     #region Methods
 
-    public IEnumerator GetDefender(Player targetOwner, System.Action<Health> callback)
+    public IEnumerator GetDefender(Player targetOwner, System.Action<ICharacter> callback)
     {
         _targetOwner = targetOwner;
 
@@ -56,16 +56,9 @@ public class DefendSystem : MonoBehaviour
         while (StateMachine.currentState != States[0])
             yield return null;
 
-        callback(_target);
+        callback(Target);
     }
 
-    #endregion
-
-    #region Properties
-    public Health Target
-    {
-        get => _target;
-    }
     #endregion
 
     #region States
@@ -76,20 +69,19 @@ public class DefendSystem : MonoBehaviour
 
     class GetTargetState : BaseDefendSystemState //1
     {
-        private readonly List<Health> candidates = new();
+        private readonly List<ICharacter> candidates = new();
 
         public override void Enter()
         {
             Debug.Log("Select Defender");
-                    
-            foreach (AllyCard a in owner._targetOwner.GetComponent<Player>().CardsInPlay.Allies)
-                candidates.Add(a.CharStats.Health);
+
+            candidates.AddRange(owner._targetOwner.GetComponent<Player>().CardsInPlay.Allies);
 
             candidates.RemoveAll(x => x == null);
-            candidates.RemoveAll(x => (x.Owner as IExhaust).Exhausted);
+            candidates.RemoveAll(x => (x as AllyCard).Exhausted);
 
             if (owner._targetOwner.Identity.ActiveIdentity is Hero && !owner._targetOwner.Identity.Exhausted)
-                candidates.Add(owner._targetOwner.CharStats.Health);
+                candidates.Add(owner._targetOwner);
 
             if (candidates.Count > 0)
             {
@@ -108,7 +100,7 @@ public class DefendSystem : MonoBehaviour
 
             yield return owner.StartCoroutine(TargetSystem.instance.SelectTarget(candidates, character =>
             {
-                owner._target = character.CharStats.Health;
+                owner.Target = character;
             }));
 
             owner.ChangeState(2);
@@ -116,7 +108,7 @@ public class DefendSystem : MonoBehaviour
 
         private void DefenderSelectionCanceled()
         {
-            owner._target = null;
+            owner.Target = null;
             owner.StopAllCoroutines();
             CancelButton.ToggleCancelBtn(false, DefenderSelectionCanceled);
             owner.ChangeState(2);
@@ -137,16 +129,16 @@ public class DefendSystem : MonoBehaviour
     {
         public override void Enter()
         {
-            if (owner._target != null)
+            if (owner.Target != null)
             {
-                if (owner._target.Owner is Identity)
+                if (owner.Target is Player)
                 {
-                    int defence = owner._target.Owner.CharStats.Defen.Defend();
+                    int defence = owner.Target.CharStats.Defender.Defend();
                     AttackSystem.instance.Action.Value -= defence;
                 }
                 else
                 {
-                    owner._target.Owner.Exhaust();
+                    (owner.Target as AllyCard).Exhaust();
                 }
             }
 

@@ -7,10 +7,8 @@ public class Shocker : EncounterCardEffect
 {
     public override void OnEnterPlay(Villain owner, Card card)
     {
-        List<Health> players = new();
-
-        foreach (Player p in TurnManager.Players)
-            players.Add(p.CharStats.Health);
+        List<ICharacter> players = new(); 
+        players.AddRange(TurnManager.Players);
 
         card.StartCoroutine(DamageSystem.instance.ApplyDamage(new(players, 1, true)));
     }

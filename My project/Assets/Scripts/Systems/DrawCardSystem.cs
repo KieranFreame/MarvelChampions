@@ -18,34 +18,26 @@ public class DrawCardSystem : MonoBehaviour
     #endregion
 
     #region Fields
-    public int Amount { get; set; }
-    public Player Player { get; set; }
+    private Player _player;
     [SerializeField] private Transform PlayerHand;
     #endregion
 
     public void DrawCards (DrawCardsAction action)
     {
-        Player = (action.Drawer == null ? TurnManager.instance.CurrPlayer : action.Drawer);
+        _player = (action.Drawer == null ? TurnManager.instance.CurrPlayer : action.Drawer);
 
-        Amount = (Player.Deck.deck.Count < action.Value ? Player.Deck.deck.Count :action.Value);
-
-        for (int i = 0; i < Amount; i++)
+        for (int i = 0; i < action.Value; i++)
         {
-            //Spawns gameObject using prefab
-            GameObject inst = Instantiate(PrefabFactory.instance.CreatePlayerCard(Player.Deck.deck[0] as PlayerCardData), PlayerHand);
-            inst.name = Player.Deck.deck[0].cardName;
+            CardData draw = _player.Deck.DealCard();
 
-            inst.GetComponent<PlayerCard>().LoadCardData(Player.Deck.deck[0], Player.gameObject);
-            Player.Hand.cards.Add(inst.GetComponent<PlayerCard>());
+            GameObject inst = Instantiate(PrefabFactory.instance.CreatePlayerCard(draw as PlayerCardData), PlayerHand);
+            inst.name = draw.cardName;
 
-            Player.Deck.Deal(1);
+            inst.GetComponent<PlayerCard>().LoadCardData(draw, _player.gameObject);
+            _player.Hand.cards.Add(inst.GetComponent<PlayerCard>());
+
+            if (_player.Deck.deck.Count == 0)
+                _player.Deck.ResetDeck();
         }
-
-        if (Player.Deck.deck.Count == 0)
-            Player.Deck.ResetDeck();
-    }
-    public Player GetPlayer
-    {
-        get { return Player; }
     }
 }

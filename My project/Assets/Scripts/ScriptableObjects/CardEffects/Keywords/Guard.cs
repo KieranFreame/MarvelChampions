@@ -5,25 +5,24 @@ using UnityEngine;
 public class Guard
 {
     private dynamic _owner;
-    private Card _card;
-    public Guard(dynamic owner, Card card)
+    private MinionCard _card;
+    public Guard(dynamic owner, MinionCard card)
     {
         _owner = owner;
         _card = card;
 
         TargetSystem.CheckGuard += Effect;
-        _card.GetComponent<Health>().Defeated += WhenDefeated;
+        _card.CharStats.Health.Defeated += WhenDefeated;
     }
 
-    private void Effect()
+    private void Effect(List<ICharacter> candidates)
     {
-        if (TargetSystem.instance.candidates.Contains(_owner.GetComponent<Health>()))
-            TargetSystem.instance.candidates.Remove(_owner.GetComponent<Health>());
+        candidates.RemoveAll(x => x == _owner);
     }
 
     private void WhenDefeated()
     {
         TargetSystem.CheckGuard -= Effect;
-        _card.GetComponent<Health>().Defeated -= WhenDefeated;
+        _card.CharStats.Health.Defeated -= WhenDefeated;
     }
 }

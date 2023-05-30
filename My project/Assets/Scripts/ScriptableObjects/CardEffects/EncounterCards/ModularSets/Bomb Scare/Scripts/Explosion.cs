@@ -23,12 +23,12 @@ public class Explosion : EncounterCardEffect
         }
         else
         {
-            List<Health> targets = new()
+            List<ICharacter> targets = new()
             {
-                FindObjectOfType<Player>().CharStats.Health,
+                FindObjectOfType<Player>(),
             };
 
-            targets.AddRange(FindObjectOfType<Player>().CardsInPlay.GetHealth());
+            targets.AddRange(FindObjectOfType<Player>().CardsInPlay.Allies);
 
             IndirectDamageHandler.HandleIndirectDamage(targets, bombScare.GetComponent<Threat>().CurrentThreat);
         }

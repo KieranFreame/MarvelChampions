@@ -18,7 +18,7 @@ public class ArmoredRhinoSuit : EncounterCardEffect, IModifyDamage
 
     public IEnumerator OnTakeDamage(DamageAction action, System.Action<DamageAction> callback)
     {
-        if (action.DamageTargets.Contains(_owner.CharStats.Health))
+        if (action.DamageTargets.Contains(_owner))
         {
             damageTaken += action.Value;
             action.Value = 0;

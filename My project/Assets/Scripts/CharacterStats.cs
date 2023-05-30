@@ -5,7 +5,7 @@ using UnityEngine;
 public class CharacterStats
 {
     //For accessing coroutines
-    private dynamic Owner;
+    private readonly dynamic Owner;
     public Attacker Attacker { get; private set; }
     public Schemer Schemer { get; private set; }
     public Thwarter Thwarter { get; private set; }
@@ -50,10 +50,10 @@ public class CharacterStats
         if (attack == null)
             yield break;
 
-        yield return Owner.StartCoroutine(AttackSystem.instance.InitiateAttack(attack));
+        yield return AttackSystem.instance.InitiateAttack(attack);
 
-        if (Attacker.Owner is AllyCard)
-            Health.TakeDamage(1);
+        if (Owner is AllyCard)
+            Health.TakeDamage((Owner as AllyCard).attackConsq);
     }
     public IEnumerator InitiateScheme()
     {
@@ -71,10 +71,10 @@ public class CharacterStats
         if (thwart == null)
             yield break;
 
-        ThwartSystem.InitiateThwart(thwart);
+        yield return ThwartSystem.instance.InitiateThwart(thwart);
 
-        if (Thwarter.Owner is AllyCard)
-            Health.TakeDamage(1);
+        if (Owner is AllyCard)
+            Health.TakeDamage((Owner as AllyCard).thwartConsq);
     }
     public void InitiateRecover()
     {

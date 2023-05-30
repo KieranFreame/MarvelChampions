@@ -76,8 +76,7 @@ public class Villain : MonoBehaviour, ICharacter
     {
         Debug.Log("Surging");
 
-        p.EncounterCards.AddCard(EncounterDeck.deck[0]);
-        EncounterDeck.Deal();
+        p.EncounterCards.AddCard(EncounterDeck.DealCard());
     }
 
     #region Properties

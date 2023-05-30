@@ -7,29 +7,29 @@ public class DamageAction : Action
 {
     public bool Indirect { get; private set; } = false;
     public bool TargetAll { get; private set; } = false;
-    public List<Health> DamageTargets { get; private set; } = new List<Health>();
+    public List<ICharacter> DamageTargets { get; private set; } = new List<ICharacter>();
 
-    public DamageAction(AttackAction action, Health target)
+    public DamageAction(AttackAction action, ICharacter target)
     {
         Owner = action.Owner;
         Value = action.Value;
         DamageTargets.Add(target);
     }
 
-    public DamageAction(AttackAction action, List<Health> targets)
+    public DamageAction(AttackAction action, List<ICharacter> targets)
     {
         Owner = action.Owner;
         Value = action.Value;
         DamageTargets = targets;
     }
 
-    public DamageAction(Health target, int damage)
+    public DamageAction(ICharacter target, int damage)
     {
         DamageTargets.Add(target);
         Value = damage;
     }
     
-    public DamageAction(List<Health> targets, int damage, bool targetAll = false) //AOE Damage
+    public DamageAction(List<ICharacter> targets, int damage, bool targetAll = false) //AOE Damage
     {
         DamageTargets = targets;
         Value = damage;

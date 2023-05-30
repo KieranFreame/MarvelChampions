@@ -1,26 +1,49 @@
-using System.Collections;
-using System.Collections.Generic;
+using System.Collections.Specialized;
 using UnityEngine;
 
 
 [CreateAssetMenu(fileName = "CrisisInterdiction", menuName = "MarvelChampions/Card Effects/Captain Marvel/Crisis Interdiction")]
-public class CrisisInterdiction : CardEffect
+public class CrisisInterdiction : PlayerCardEffect
 {
+    Threat prevTarget;
+
     public override void OnEnterPlay(Player owner, Card card)
     {
-        var action = new ThwartAction(2);
-        ThwartSystem.InitiateThwart(action);
+        _owner = owner;
 
-        if (owner.Identity.IdentityTraits.Contains("Aerial".ToLower()))
+        _owner.StartCoroutine(ThwartSystem.instance.InitiateThwart(new(2)));
+
+        if (_owner.Identity.IdentityTraits.Contains("Aerial".ToLower()))
         {
             ThwartSystem.OnThwartComplete += SecondThwart;
         }
     }
 
-    public void SecondThwart()
+    private void SecondThwart()
     {
-        var action = new ThwartAction(2, requirement:"norepeat");
-        ThwartSystem.InitiateThwart(action);
+        TargetSystem.instance.candidates.CollectionChanged += CandidateAdded;
+        prevTarget = ThwartSystem.instance.Target;
+
+        _owner.StartCoroutine(ThwartSystem.instance.InitiateThwart(new(2)));
+
         ThwartSystem.OnThwartComplete -= SecondThwart;
+        ThwartSystem.OnThwartComplete += CleanUp;
+    }
+
+    private void CandidateAdded(object sender, NotifyCollectionChangedEventArgs e)
+    {
+        switch (e.Action)
+        {
+            case NotifyCollectionChangedAction.Add:
+                if (e.NewItems.Contains(prevTarget))
+                    e.NewItems.Remove(prevTarget);
+                break;
+        }
+    }
+
+    private void CleanUp()
+    {
+        TargetSystem.instance.candidates.CollectionChanged -= CandidateAdded;
+        ThwartSystem.OnThwartComplete -= CleanUp;
     }
 }

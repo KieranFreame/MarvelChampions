@@ -28,10 +28,9 @@ public class BoostSystem : MonoBehaviour
 
     public void DealBoostCards()
     {
-        for (int i = 0; i < BoostCardCount; i++){
-            _boostCards.Add(_villain.EncounterDeck.deck[0]);
-            _villain.EncounterDeck.Deal();
-        }
+        for (int i = 0; i < BoostCardCount; i++)
+            _boostCards.Add(_villain.EncounterDeck.DealCard());
+        
 
         BoostCardCount = 1;
     }

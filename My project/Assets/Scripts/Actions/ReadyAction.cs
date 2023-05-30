@@ -4,14 +4,16 @@ using UnityEngine;
 
 public class ReadyAction : Action
 {
-    public ReadyAction(List<TargetType> targets, GameObject owner)
+    List<IExhaust> targets;
+
+    public ReadyAction(List<IExhaust> _targets, GameObject owner)
     {
         Owner = owner;
-        Targets.AddRange(targets);
+        targets = _targets;
     }
 
-    public IEnumerator Execute()
+    public void Execute()
     {
-        yield return Owner.StartCoroutine(TargetSystem.instance.GetTarget<IExhaust>(this, exhaust => { exhaust.Ready(); }));
+        Owner.StartCoroutine(TargetSystem.instance.SelectTarget(targets, target => { target.Ready(); }));
     }
 }

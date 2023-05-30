@@ -15,7 +15,7 @@ public class Retaliate
     {
         _owner = owner;
         _damage = damage;
-        _health = (_owner is Villain) ? (_owner as Villain).GetComponent<Health>() : (_owner as Player).GetComponent<Health>();
+        _health = _owner.CharStats.Health;
 
         _health.Defeated += WhenDefeated;
 
@@ -25,11 +25,11 @@ public class Retaliate
     /// <summary>
     /// Use for Allies & Minions
     /// </summary>
-    public Retaliate(Card owner, int damage) //Allies & Minions
+    public Retaliate(ICharacter owner, int damage) //Allies & Minions
     {
         _owner = owner;
         _damage = damage;
-        _health = (_owner as Card).GetComponent<Health>();
+        _health = _owner.CharStats.Health;
 
         _health.Defeated += WhenDefeated;
         AttackSystem.OnAttackComplete += Effect;
@@ -37,13 +37,11 @@ public class Retaliate
 
     private void Effect(Action action)
     {
-        if (AttackSystem.instance.Target != _owner.GetComponent<Health>())
+        if (AttackSystem.instance.Target != _owner.CharStats.Health)
             return;
 
-        action.Owner.TryGetComponent(out Health target);
-
-        if (target != null)
-            _owner.StartCoroutine(DamageSystem.instance.ApplyDamage(new DamageAction(target, _damage)));
+        if (action.Owner != null)
+            _owner.StartCoroutine(DamageSystem.instance.ApplyDamage(new(action.Owner, _damage)));
     }
 
     private void WhenDefeated()

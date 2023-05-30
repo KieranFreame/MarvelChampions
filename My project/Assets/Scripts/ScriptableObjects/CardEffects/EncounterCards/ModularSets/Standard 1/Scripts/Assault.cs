@@ -11,7 +11,7 @@ public class Assault : EncounterCardEffect
         var player = FindObjectOfType<Player>();
 
         if (player.Identity.ActiveIdentity is Hero)
-            _owner.CharStats.InitiateAttack();
+            _owner.StartCoroutine(_owner.CharStats.InitiateAttack());
         else
             owner.Surge(player);
     }

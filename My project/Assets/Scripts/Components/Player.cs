@@ -26,13 +26,11 @@ public class Player : MonoBehaviour, ICharacter
 
         GetComponentInChildren<AlterEgoUI>().LoadUI(this);
     }
-
     private void OnEnable()
     {
         TurnManager.OnEndPlayerPhase += DrawToHandSize;
         TurnManager.OnEndPlayerPhase += Identity.EndPlayerPhase;
     }
-
     private void OnDisable()
     {
         TurnManager.OnEndPlayerPhase -= DrawToHandSize;
@@ -67,4 +65,7 @@ public class Player : MonoBehaviour, ICharacter
             DrawCardSystem.instance.DrawCards(new DrawCardsAction(1));
         }
     }
+    public void Attack() => StartCoroutine(CharStats.InitiateAttack());
+    public void Thwart() => StartCoroutine(CharStats.InitiateThwart());
+    public void Recover() => CharStats.InitiateRecover();
 }

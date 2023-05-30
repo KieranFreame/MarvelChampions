@@ -36,7 +36,7 @@ public class DamageSystem : MonoBehaviour
         {
             yield return StartCoroutine(TargetSystem.instance.SelectTarget(DamageAction.DamageTargets, character =>
             {
-                DamageAction.DamageTargets.Add(character.CharStats.Health);
+                DamageAction.DamageTargets.Add(character);
             }));
         }
 
@@ -55,10 +55,12 @@ public class DamageSystem : MonoBehaviour
             })));
         }
 
-        foreach (Health h in DamageAction.DamageTargets)
-            h.TakeDamage(DamageAction.Value);
+        foreach (ICharacter c in DamageAction.DamageTargets)
+            c.CharStats.Health.TakeDamage(DamageAction.Value);
 
         OnDamageApplied?.Invoke();
+
+        yield break;
     }
 }
 
