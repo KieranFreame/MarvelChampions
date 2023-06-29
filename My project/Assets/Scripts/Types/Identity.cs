@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using static UnityEngine.UI.GridLayoutGroup;
 
-public class Identity : IAttached, IExhaust
+public class Identity : IExhaust
 {
     //Identity Parameters
     [SerializeField] private HeroData _HeroData;
@@ -67,12 +68,12 @@ public class Identity : IAttached, IExhaust
 
         HasFlipped = true;
     }
-    private void FlipToHero()
+    public void FlipToHero()
     {
         ActiveIdentity = Hero;
         IdentityName = Hero.Name;
 
-        IdentityTraits.Clear();
+        IdentityTraits.ToList().RemoveAll(x => AlterEgo.Traits.Contains(x));
 
         foreach (string trait in Hero.Traits)
             IdentityTraits.Add(trait);
@@ -84,12 +85,12 @@ public class Identity : IAttached, IExhaust
 
         FlippedToHero?.Invoke();
     }
-    private void FlipToAlterEgo()
+    public void FlipToAlterEgo()
     {
         ActiveIdentity = AlterEgo;
         IdentityName = AlterEgo.Name;
 
-        IdentityTraits.Clear();
+        IdentityTraits.ToList().RemoveAll(x => Hero.Traits.Contains(x));
 
         foreach (string trait in AlterEgo.Traits)
         {
@@ -130,7 +131,4 @@ public class Identity : IAttached, IExhaust
             Exhausted = true;
         }
     }
-
-    #region Testing
-    #endregion
 }

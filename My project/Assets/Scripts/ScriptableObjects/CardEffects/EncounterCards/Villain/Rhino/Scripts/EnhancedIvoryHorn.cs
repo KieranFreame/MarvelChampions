@@ -1,33 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Enhanced Ivory Horn", menuName = "MarvelChampions/Card Effects/Rhino/Enhanced Ivory Horn")]
 public class EnhancedIvoryHorn : EncounterCardEffect
 {
-    public override void OnEnterPlay(Villain owner, Card card)
+    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
         _owner = owner;
-        _card = card;
+        Card = card;
 
         _owner.CharStats.Attacker.CurrentAttack += 1;
+        await Task.Yield();
     }
 
-    public override void Activate()
+    public override bool CanActivate()
     {
-        _card.StartCoroutine(RemoveCard());
+        return true;
     }
 
-    private IEnumerator RemoveCard()
+    public override async Task Activate()
     {
-        yield return PayCostSystem.instance.GetResources(Resource.Physical, 3);
+        await PayCostSystem.instance.GetResources(Resource.Physical, 3);
 
-        if (PayCostSystem.instance.Resources.Count >= 3) //check if action was cancelled
-            _owner.EncounterDeck.Discard(_card);
-    }
-
-    public override void OnExitPlay()
-    {
-        _owner.CharStats.Attacker.CurrentAttack -= 1;
+        if (PayCostSystem.instance.Resources.Count >= 3)
+        {
+            _owner.CharStats.Attacker.CurrentAttack -= 1;
+            ScenarioManager.inst.EncounterDeck.Discard(Card);
+        }
     }
 }

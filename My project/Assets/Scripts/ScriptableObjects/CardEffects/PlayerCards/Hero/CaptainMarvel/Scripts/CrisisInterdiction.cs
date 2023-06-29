@@ -1,33 +1,47 @@
 using System.Collections.Specialized;
+using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
-
+using System.Threading.Tasks;
 
 [CreateAssetMenu(fileName = "CrisisInterdiction", menuName = "MarvelChampions/Card Effects/Captain Marvel/Crisis Interdiction")]
 public class CrisisInterdiction : PlayerCardEffect
 {
     Threat prevTarget;
 
-    public override void OnEnterPlay(Player owner, Card card)
+    public override bool CanBePlayed()
+    {
+        return FindObjectsOfType<Threat>().Any(x => x.CurrentThreat > 0);
+    }
+
+    public override async Task OnEnterPlay(Player owner, PlayerCard card)
     {
         _owner = owner;
 
-        _owner.StartCoroutine(ThwartSystem.instance.InitiateThwart(new(2)));
+        await ThwartSystem.instance.InitiateThwart(new(2));
 
-        if (_owner.Identity.IdentityTraits.Contains("Aerial".ToLower()))
+        if (_owner.Identity.IdentityTraits.Contains("Aerial"))
         {
+            prevTarget = ThwartSystem.instance.Target;
+            List<SchemeCard> schemes = new();
+            schemes.AddRange(FindObjectsOfType<SchemeCard>());
+
+            //If there are no schemes, or the previous scheme is the only target.
+            if (schemes.Count() == 0 || (schemes.Count() == 1 && schemes[0] == prevTarget))
+                return;
+
             ThwartSystem.OnThwartComplete += SecondThwart;
         }
     }
 
-    private void SecondThwart()
+    private async void SecondThwart()
     {
         TargetSystem.instance.candidates.CollectionChanged += CandidateAdded;
-        prevTarget = ThwartSystem.instance.Target;
-
-        _owner.StartCoroutine(ThwartSystem.instance.InitiateThwart(new(2)));
+        
+        await ThwartSystem.instance.InitiateThwart(new(2));
 
         ThwartSystem.OnThwartComplete -= SecondThwart;
-        ThwartSystem.OnThwartComplete += CleanUp;
+        TargetSystem.instance.candidates.CollectionChanged -= CandidateAdded;
     }
 
     private void CandidateAdded(object sender, NotifyCollectionChangedEventArgs e)
@@ -39,11 +53,5 @@ public class CrisisInterdiction : PlayerCardEffect
                     e.NewItems.Remove(prevTarget);
                 break;
         }
-    }
-
-    private void CleanUp()
-    {
-        TargetSystem.instance.candidates.CollectionChanged -= CandidateAdded;
-        ThwartSystem.OnThwartComplete -= CleanUp;
     }
 }

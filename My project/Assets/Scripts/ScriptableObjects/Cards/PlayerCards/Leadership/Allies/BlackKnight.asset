@@ -12,9 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88ea0e913420b64499ffc02f6cd7188f, type: 3}
   m_Name: BlackKnight
   m_EditorClassIdentifier: 
-  _cardName: Black Knight
-  _cardDesc: Black Knight's attacks gain piercing
-  _cardType: 0
+  cardID: 
+  cardName: 
+  cardDesc: 
+  cardType: 0
+  cardTraits: []
+  cardArt: {fileID: 0}
   cardCost: 3
+  isUnique: 1
   cardAspect: 2
+  cardResources: 
   alterEgo: Dane Whitman
+  BaseATK: 0
+  ATKConsq: 0
+  BaseTHW: 0
+  THWConsq: 0
+  BaseHP: 0

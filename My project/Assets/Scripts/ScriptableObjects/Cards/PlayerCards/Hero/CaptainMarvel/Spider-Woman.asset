@@ -23,6 +23,7 @@ MonoBehaviour:
   isUnique: 1
   cardAspect: 5
   cardResources: 04000000
+  effect: {fileID: 11400000, guid: 61c0ffe9a6aca7f4688cfc6600fe8883, type: 2}
   alterEgo: Jessica Drew
   BaseATK: 2
   ATKConsq: 1

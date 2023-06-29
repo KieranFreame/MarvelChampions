@@ -20,3 +20,4 @@ MonoBehaviour:
   cardArt: {fileID: 0}
   boostIcons: 0
   boostDescription: 
+  effect: {fileID: 11400000, guid: 3a8693527ff878f46949b8a0bec8ef63, type: 2}

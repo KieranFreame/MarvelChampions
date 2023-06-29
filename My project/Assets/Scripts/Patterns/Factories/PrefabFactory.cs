@@ -2,54 +2,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PrefabFactory : MonoBehaviour
+public class PrefabFactory
 {
-    public static PrefabFactory instance;
-
-    public void Awake()
-    {
-        if (instance == null)
-            instance = this;
-        else
-            Destroy(this);
-    }
-
-    [Header("Player Card Prefabs")]
-    [SerializeField] private GameObject allyPrefab;
-    [SerializeField] private GameObject permanentPrefab;
-    [SerializeField] private GameObject eventPrefab;
-    [SerializeField] private GameObject resourcePrefab;
-
-    [Header("Encounter Card Prefabs")]
-    [SerializeField] private GameObject minionPrefab;
-    [SerializeField] private GameObject sideSchemePrefab;
-    [SerializeField] private GameObject mainSchemePrefab;
-    [SerializeField] private GameObject treacheryPrefab;
-    [SerializeField] private GameObject attachmentPrefab;
+    public static PrefabFactory instance = new();
 
     public GameObject CreatePlayerCard(PlayerCardData card)
     {
-        switch (card.cardType)
+        return card.cardType switch
         {
-            case CardType.Ally: return allyPrefab;
-            case CardType.Upgrade: 
-            case CardType.Support:
-                return permanentPrefab;
-            case CardType.Event: return eventPrefab;
-            case CardType.Resource: return resourcePrefab;
-            default: return null;
+            CardType.Ally => Resources.Load<GameObject>("Prefabs/AllyTemplate"),
+            CardType.Upgrade => Resources.Load<GameObject>("Prefabs/UpgradeTemplate"),
+            CardType.Support => Resources.Load<GameObject>("Prefabs/SupportTemplate"),
+            CardType.Event => Resources.Load<GameObject>("Prefabs/EventTemplate"),
+            CardType.Resource => Resources.Load<GameObject>("Prefabs/ResourceTemplate"),
+            _ => null,
         };
+        ;
     }
     public GameObject CreateEncounterCard(EncounterCardData card)
     {
         return card.cardType switch
         {
-            CardType.Minion => minionPrefab,
-            CardType.Scheme => sideSchemePrefab,
-            CardType.Treachery => treacheryPrefab,
-            CardType.Attachment => attachmentPrefab,
-            //EncounterCardType.MainScheme => mainSchemePrefab,
+            CardType.Minion => Resources.Load<GameObject>("Prefabs/MinionTemplate"),
+            CardType.SideScheme => Resources.Load<GameObject>("Prefabs/SideSchemeTemplate"),
+            CardType.Treachery => Resources.Load<GameObject>("Prefabs/TreacheryTemplate"),
+            CardType.Attachment => Resources.Load<GameObject>("Prefabs/AttachmentTemplate"),
+            CardType.Obligation => Resources.Load<GameObject>("Prefabs/ObligationTemplate"),
+            CardType.MainScheme => Resources.Load<GameObject>("Prefabs/MainSchemeTemplate"),
             _ => null,
         };
+    }
+
+    public static PrefabFactory Instance
+    {
+        get => instance;
     }
 }

@@ -12,25 +12,19 @@ public class MinionCard : EncounterCard, ICharacter
 
     private void OnDisable()
     {
-        CharStats.Health.Defeated -= OnDefeated;
+        CharStats.Health.Defeated -= WhenDefeated;
     }
 
-    private void Start()
+    protected override void WhenDefeated()
     {
-        if (Data != null)
-            LoadCardData(Data, FindObjectOfType<Villain>().gameObject);
+        VillainTurnController.instance.MinionsInPlay.Remove(this);
+        base.WhenDefeated();
     }
-
-    private void OnDefeated()
-    {
-        Destroy(gameObject); //temp;
-    }
-
-    public override void LoadCardData(CardData _data, GameObject owner)
+    public override void LoadCardData(EncounterCardData _data, Villain owner)
     {
         MinionCardData data = _data as MinionCardData;
         CharStats = new(this, data);
-        CharStats.Health.Defeated += OnDefeated;
+        CharStats.Health.Defeated += WhenDefeated;
         base.LoadCardData(data, owner);
     }
 }

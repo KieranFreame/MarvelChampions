@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
+using static UnityEngine.UI.GridLayoutGroup;
 
 public class RevealEncounterCardSystem : MonoBehaviour
 {
@@ -12,29 +14,7 @@ public class RevealEncounterCardSystem : MonoBehaviour
         //Singleton
         if (instance == null) { instance = this; }
         else { Destroy(this); }
-
-        //State Machine
-        _states.Add(new IdleState());
-        _states.Add(new CardTypeState());
-        _states.Add(new MoveCardState());
-        _states.Add(new ResolveEffectState());
-        _states.Add(new CardRevealedState());
-
-        ChangeState(0);
     }
-
-    #region State Machine
-    private readonly StateMachine _stateMachine = new();
-    private readonly List<IState> _states = new();
-    public void ChangeState(int index)
-    {
-        _stateMachine.ChangeState(_states[index]);
-    }
-    #endregion
-
-    #region Fields
-    private EncounterCard _cardToPlay;
-    #endregion
 
     #region Transforms
     [SerializeField] private Transform _minionTransform;
@@ -46,87 +26,55 @@ public class RevealEncounterCardSystem : MonoBehaviour
     public static event UnityAction<EncounterCard> OnEncounterCardRevealed;
     #endregion
 
-    #region Methods
-    public void InitiateRevealCard(EncounterCard cardToPlay)
-    {
-        _cardToPlay = cardToPlay;
-        Debug.Log("Revealing " + cardToPlay.CardName);
-        ChangeState(1);
-    }
+    #region Delegates
+    public List<ICancelEffect> EffectCancelers { get; private set; } = new();
     #endregion
 
-    #region States
-    abstract class BaseRevealECState : BaseState
-    {
-        protected RevealEncounterCardSystem owner = instance;
-    }
+    private bool canceled = false;
 
-    class CardTypeState : BaseRevealECState //1
+    #region Methods
+    public async Task InitiateRevealCard(EncounterCard cardToPlay)
     {
-        public override void Enter()
+        Debug.Log("Revealing " + cardToPlay.CardName);
+        await Task.Delay(3000);
+
+        if (cardToPlay.Data.cardType is not CardType.Treachery)
+            MoveCard(cardToPlay);
+
+        canceled = false;
+
+        for (int i = EffectCancelers.Count - 1; i >= 0; i--)
         {
-            owner.StartCoroutine(RevealCard());
+            canceled = await EffectCancelers[i].CancelEffect(cardToPlay);
+
+            if (canceled)
+                break;
         }
 
-        IEnumerator RevealCard()
-        {
-            yield return new WaitForSeconds(3);
+        if (!canceled)
+            await cardToPlay.OnRevealCard();
 
-            if (owner._cardToPlay.CardType is CardType.Treachery)
-                owner.ChangeState(3);
-            else
-                owner.ChangeState(2);
-        }
+        if (cardToPlay.Data.cardType is CardType.Treachery || (cardToPlay.Data.cardType == CardType.Obligation && ScenarioManager.inst.EncounterDeck.Contains(cardToPlay.Data)))
+            ScenarioManager.inst.EncounterDeck.Discard(cardToPlay);
+
+        OnEncounterCardRevealed?.Invoke(cardToPlay);
     }
 
-    class MoveCardState : BaseRevealECState //2
+    private void MoveCard(EncounterCard cardToPlay)
     {
-        public override void Enter()
+        switch (cardToPlay.Data.cardType)
         {
-            switch (owner._cardToPlay.CardType)
-            {
-                case CardType.Minion:
-                    owner._cardToPlay.transform.SetParent(owner._minionTransform);
-                    break;
-                case CardType.Scheme:
-                    owner._cardToPlay.transform.SetParent(owner._sideSchemeTransform);
-                    ScenarioManager.sideSchemes.Add(owner._cardToPlay as SchemeCard);
-                    break;
-                case CardType.Attachment:
-                    owner._cardToPlay.transform.SetParent(owner._attachmentTransform);
-                    break;
-            }
-
-            owner.ChangeState(3);
-        }
-    }
-
-    class ResolveEffectState : BaseRevealECState //3
-    {
-        public override void Enter()
-        {
-            owner._cardToPlay.OnRevealCard();
-            ChangeState();
-        }
-
-        private void ChangeState()
-        {
-            if (owner._cardToPlay.CardType == CardType.Treachery)
-            {
-                FindObjectOfType<Villain>().EncounterDeck.Discard(owner._cardToPlay);
-            }
-
-            owner.ChangeState(4);
-        }    
-        
-    }
-
-    class CardRevealedState : BaseRevealECState //4
-    {
-        public override void Enter()
-        {
-            OnEncounterCardRevealed?.Invoke(owner._cardToPlay);
-            owner.ChangeState(0);
+            case CardType.Minion:
+                cardToPlay.transform.SetParent(_minionTransform);
+                VillainTurnController.instance.MinionsInPlay.Add(cardToPlay as MinionCard);
+                break;
+            case CardType.SideScheme:
+                cardToPlay.transform.SetParent(_sideSchemeTransform);
+                ScenarioManager.sideSchemes.Add(cardToPlay as SchemeCard);
+                break;
+            case CardType.Attachment:
+                cardToPlay.transform.SetParent(_attachmentTransform);
+                break;
         }
     }
     #endregion

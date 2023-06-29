@@ -6,7 +6,7 @@ public class ApplyStatusAction : Action
 {
     public Status Status { get; private set; }
 
-    public ApplyStatusAction(Status status, GameObject owner = null, List<TargetType> targets = null)
+    public ApplyStatusAction(Status status, ICharacter owner = null, List<TargetType> targets = null)
     {
         Owner = owner;
         Targets = targets;

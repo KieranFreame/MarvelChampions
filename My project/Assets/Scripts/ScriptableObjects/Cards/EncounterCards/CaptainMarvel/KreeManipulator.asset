@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd59bffae62c9843892e230b19351f6, type: 3}
+  m_Name: KreeManipulator
+  m_EditorClassIdentifier: 
+  cardID: DANVERS-T-001
+  cardName: Kree Manipulator
+  cardDesc: Surge. Place 1 threat on the main scheme.
+  cardType: 7
+  cardTraits: []
+  cardArt: {fileID: 0}
+  boostIcons: 0
+  boostDescription: If the villain is making an undefended attack, place 1 threat
+    on the main scheme.
+  effect: {fileID: 11400000, guid: d025b246b34e5e84ebdcc8533a226dd1, type: 2}

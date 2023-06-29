@@ -14,11 +14,14 @@ public class AlterEgoUI : MonoBehaviour
     #region Components
     Health _health;
     Recovery _recovery;
+    Sprite _art;
     #endregion
 
     private void OnEnable()
     {
         if (_health is null || _recovery is null) return;
+
+        alteregoPortrait.sprite = _art;
 
         _health.HealthChanged += HealthChanged;
         _health.OnToggleTough += ToggleTough;
@@ -40,7 +43,7 @@ public class AlterEgoUI : MonoBehaviour
         _health.OnToggleTough += ToggleTough;
         _recovery.RecoveryChanged += RecoveryChanged;
 
-        //alteregoPortrait.sprite = alterego.art;
+        alteregoPortrait.sprite = _art = owner.Identity.AlterEgo.Art;
         HealthChanged();
         RecoveryChanged();
     }

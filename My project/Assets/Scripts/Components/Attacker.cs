@@ -28,23 +28,24 @@ public class Attacker : IStat
         }
     }
     #endregion
-    public dynamic Owner { get; private set; }
+    public ICharacter Owner { get; private set; }
+    public List<Keywords> Keywords { get; private set; } = new();
     #region Events
     public event UnityAction<bool> OnToggleStun;
     public event UnityAction AttackChanged;
     #endregion
 
     #region Constructors
-    public Attacker(Card owner, CardData data)
+    public Attacker(ICard owner, CardData data)
     {
-        Owner = owner;
+        Owner = owner as ICharacter;
 
         if (Owner is MinionCard)
             CurrentAttack = BaseATK = (data as MinionCardData).baseAttack;
         else
             CurrentAttack = BaseATK = (data as AllyCardData).BaseATK;
     }
-    public Attacker(Identity owner, HeroData data)
+    public Attacker(Player owner, HeroData data)
     {
         Owner = owner;
         CurrentAttack = BaseATK = data.baseATK;
@@ -57,9 +58,9 @@ public class Attacker : IStat
     }
     #endregion
 
-    public AttackAction Attack()
+    public AttackAction Attack(AttackAction action = null)
     {
-        if (Owner is IExhaust)
+        if (Owner is IExhaust && action == null)
         {
             if ((Owner as IExhaust).Exhausted)
                 return null;
@@ -73,9 +74,8 @@ public class Attacker : IStat
             return null;
         }
 
-        var attack = new AttackAction(CurrentAttack, _keywords:new List<Keywords>(), owner:Owner);
-        return attack;
+        return action ?? new AttackAction(CurrentAttack, _keywords:Keywords, owner:Owner);
     }
 
-    private void AdvanceStage(int newStage) => BaseATK = Owner.BaseAttack;
+    private void AdvanceStage(int newStage) => CurrentAttack += (Owner as Villain).BaseAttack - BaseATK;
 }

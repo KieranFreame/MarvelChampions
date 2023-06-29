@@ -1,39 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Caught Off Guard", menuName = "MarvelChampions/Card Effects/Standard I/Caught Off Guard")]
 public class CaughtOffGuard : EncounterCardEffect
 {
-    Player player;
+    Player _player;
 
-    public override void OnEnterPlay(Villain owner, Card card)
+    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
         _owner = owner;
-        _card = card;
-
-        player = FindObjectOfType<Player>();
+        Card = card;
+        _player = player;
 
         if (player.CardsInPlay.Permanents.Count == 0)
             _owner.Surge(player);
         else
-            _card.StartCoroutine(DiscardUpgradeOrSupport());
+            await DiscardUpgradeOrSupport();
         
     }
 
-    private IEnumerator DiscardUpgradeOrSupport()
+    private async Task DiscardUpgradeOrSupport()
     {
         List<PlayerCard> playerCards = new();
 
-        playerCards.AddRange(player.CardsInPlay.Permanents);
+        playerCards.AddRange(_player.CardsInPlay.Permanents);
 
-        yield return _card.StartCoroutine(TargetSystem.instance.SelectTarget(playerCards, playerCard =>
+        PlayerCard p = await TargetSystem.instance.SelectTarget(playerCards);
+
+        if ((p.Data.cardType is CardType.Upgrade || p.Data.cardType is CardType.Support) && p.InPlay)
         {
-            if (playerCard.CardType is CardType.Upgrade || playerCard.CardType is CardType.Support && playerCard.InPlay)
-            {
-                player.CardsInPlay.Permanents.Remove(playerCard);
-                player.Deck.Discard(playerCard);
-            }
-        }));
+            _player.CardsInPlay.Permanents.Remove(p);
+            _player.Deck.Discard(p);
+        }
     }
 }

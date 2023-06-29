@@ -21,5 +21,6 @@ MonoBehaviour:
   cardArt: {fileID: 0}
   boostIcons: 0
   boostDescription: 
+  effect: {fileID: 11400000, guid: 40510eb3c7bb4c543bb1c60ff9d2066f, type: 2}
   ATKModifier: 0
   THWSCHModifier: 0

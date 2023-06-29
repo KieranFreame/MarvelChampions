@@ -18,10 +18,12 @@ MonoBehaviour:
   cardType: 0
   cardTraits:
   - Defender
+  cardArt: {fileID: 0}
   cardCost: 4
   isUnique: 1
   cardAspect: 3
   cardResources: 02000000
+  effect: {fileID: 11400000, guid: d45b4eaa8ac4c4e4f9b5b893aca24b0d, type: 2}
   alterEgo: Luke Cage
   BaseATK: 2
   ATKConsq: 1

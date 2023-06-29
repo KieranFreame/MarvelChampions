@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using static UnityEngine.UI.GridLayoutGroup;
@@ -51,64 +52,59 @@ public class AttackSystem : MonoBehaviour //PlayerAttackSystem
     #endregion
 
     #region Coroutines
-    public IEnumerator InitiateAttack(AttackAction action)
+    public async Task InitiateAttack(AttackAction action)
     {
         Action = action;
 
         ResetSystem();
 
         if (Target == null)
-            yield return StartCoroutine(FriendlyAttack());
+            await FriendlyAttack();
         else
-            yield return StartCoroutine(EnemyAttack());
+            await EnemyAttack();
 
         CheckKeywords();
 
-        yield return StartCoroutine(DamageSystem.instance.ApplyDamage(new DamageAction(Action, Target)));
+        await DamageSystem.instance.ApplyDamage(new DamageAction(Action, Target));
 
         if (Excess > 0)
         {
             ICharacter overkillTarget = Action.Owner is Villain ? FindObjectOfType<Player>() : FindObjectOfType<Villain>();
-            yield return StartCoroutine(DamageSystem.instance.ApplyDamage(new DamageAction(overkillTarget, Excess)));
+            await DamageSystem.instance.ApplyDamage(new DamageAction(overkillTarget, Excess));
         }
 
         OnActivationComplete?.Invoke();
         OnAttackComplete?.Invoke(Action);
     }
 
-    private IEnumerator FriendlyAttack()
+    private async Task FriendlyAttack()
     {
         List<ICharacter> enemies = new() { FindObjectOfType<Villain>() };
         enemies.AddRange(FindObjectsOfType<MinionCard>());
 
         if (enemies.Count > 1)
         {
-            yield return StartCoroutine(TargetSystem.instance.SelectTarget(enemies, target =>
-            {
-                Target = target;
-            }, true));
-
-            yield break;
+            Target = await TargetSystem.instance.SelectTarget(enemies, true);
+            return;
         }
 
         Target = enemies[0];
+        TargetSystem.SingleTarget(enemies[0]);
     }
 
-    private IEnumerator EnemyAttack()
+    private async Task EnemyAttack()
     {
         if (Action.Owner is Villain || Action.Keywords.Contains(Keywords.Villainous))
         {
             BoostSystem.instance.DealBoostCards();
         }
 
-        yield return StartCoroutine(DefendSystem.instance.GetDefender(TurnManager.instance.CurrPlayer, defender =>
-        {
-            if (defender != null)
-                Target = defender;
-        }));
+        Target = await DefendSystem.instance.GetDefender(TurnManager.instance.CurrPlayer);
+
+        Target ??= TurnManager.instance.CurrPlayer;
 
         if (Action.Owner is Villain || Action.Keywords.Contains(Keywords.Villainous))
-            yield return BoostSystem.instance.FlipCard(boost => { Action.Value += boost; });
+           Action.Value += await BoostSystem.instance.FlipCard();
     }
     #endregion
 }

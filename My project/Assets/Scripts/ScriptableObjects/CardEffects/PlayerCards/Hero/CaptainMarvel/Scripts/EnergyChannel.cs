@@ -1,20 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Energy Channel", menuName = "MarvelChampions/Card Effects/Captain Marvel/Energy Channel")]
 public class EnergyChannel : PlayerCardEffect
 {
-    private int counters = 0;
+    private Counters counters;
     [SerializeField, TextArea] private string effectA;
     [SerializeField, TextArea] private string effectB;
 
-    public override void OnEnterPlay(Player owner, Card card)
+    public override async Task OnEnterPlay(Player owner, PlayerCard card)
     {
         _owner = owner;
-        _card = card;
+        Card = card;
 
-        if (counters != 0) { counters = 0; }
+        counters = Card.gameObject.AddComponent<Counters>();
+        await Task.Yield();
     }
 
     public override bool CanActivate()
@@ -22,49 +24,45 @@ public class EnergyChannel : PlayerCardEffect
         return true;
     }
 
-    public override void Activate()
+    public override async Task Activate()
     {
-        if (counters == 0) //can't deal damage so default to adding counters
+        if (counters.CountersLeft == 0) //can't deal damage so default to adding counters
         {
-            _card.StartCoroutine(AddCounters());
+            await AddCounters();
             return;
         }
 
-        UIManager.ChooseEffect(new List<string> { effectA, effectB });
-        ChooseEffectUI.EffectSelected += ChosenEffect;
-    }
+        if (counters.CountersLeft >= 5)
+        {
+            await DealDamage();
+            return;
+        }
 
-    private void ChosenEffect(int effectIndex)
-    {
-        ChooseEffectUI.EffectSelected -= ChosenEffect;
+        int effectIndex = await ChooseEffectUI.ChooseEffect(new List<string> { effectA, effectB });
 
         switch (effectIndex)
         {
             case 1:
-                _card.StartCoroutine(AddCounters());
+                await AddCounters();
                 break;
             case 2:
-                DealDamage();
+                await DealDamage();
                 break;
         }
     }
 
-    private IEnumerator AddCounters()
+    private async Task AddCounters()
     {
-        Debug.Log("Adding Counters to Energy Channel");
-
-        yield return _card.StartCoroutine(PayCostSystem.instance.GetResources(Resource.Energy));
-        counters += PayCostSystem.instance.Resources.Count;
-
-        //TODO: Add functionality to display counters (Another script)
-        Debug.Log("Added " + PayCostSystem.instance.Resources.Count.ToString() + " counters to Energy Channel");
+        await PayCostSystem.instance.GetResources(Resource.Energy, 5);
+        counters.AddCounters(PayCostSystem.instance.Resources.Count);
     }
 
-    private void DealDamage()
+    private async Task DealDamage()
     {
-        var action = new AttackAction(attack: (counters * 2 <= 10 ? counters * 2 : 10), new List<TargetType>() { TargetType.TargetMinion, TargetType.TargetVillain }, owner : _owner);
-        _owner.StartCoroutine(AttackSystem.instance.InitiateAttack(action));
+        var action = new AttackAction(attack: (counters.CountersLeft <= 10 ? counters.CountersLeft * 2 : 10), new List<TargetType>() { TargetType.TargetMinion, TargetType.TargetVillain }, owner : _owner);
+        await AttackSystem.instance.InitiateAttack(action);
 
-        _owner.Deck.Discard(_card);
+        _owner.CardsInPlay.Permanents.Remove(Card);
+        _owner.Deck.Discard(Card);
     }
 }

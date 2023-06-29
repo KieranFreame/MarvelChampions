@@ -17,8 +17,10 @@ MonoBehaviour:
   cardDesc: 'When Revealed: Place an additional 1 threat here per player'
   cardType: 8
   cardTraits: []
+  cardArt: {fileID: 0}
   boostIcons: 2
   boostDescription: 
+  effect: {fileID: 11400000, guid: 4a15bab5dca778245b5ae923d95944b8, type: 2}
   IsMainScheme: 0
   StartingThreat: 2
   MaximumThreat: 0

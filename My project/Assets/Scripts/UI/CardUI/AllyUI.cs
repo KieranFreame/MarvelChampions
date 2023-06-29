@@ -74,6 +74,16 @@ public class AllyUI : PlayerCardUI
 
         base.LoadData();
     }
+
+    public override void LoadData(PlayerCardData data)
+    {
+        cardThwText.text = (data as AllyCardData).BaseTHW.ToString();
+        cardAtkText.text = (data as AllyCardData).BaseATK.ToString();
+        cardHPText.text = (data as AllyCardData).BaseHP.ToString();
+
+        base.LoadData(data);
+    }
+
     #region Stat Funcs
     private void AttackChanged() { cardAtkText.text = allyCard.CharStats.Attacker.CurrentAttack.ToString(); }
     private void ThwartChanged() { cardThwText.text = allyCard.CharStats.Thwarter.CurrentThwart.ToString(); }

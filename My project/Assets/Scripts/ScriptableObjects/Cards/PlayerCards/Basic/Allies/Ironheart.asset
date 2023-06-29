@@ -18,10 +18,12 @@ MonoBehaviour:
   cardType: 0
   cardTraits:
   - Champion
+  cardArt: {fileID: 0}
   cardCost: 2
   isUnique: 1
   cardAspect: 4
   cardResources: 01000000
+  effect: {fileID: 11400000, guid: b017f6c0904946a4db0e9bfdde1af40b, type: 2}
   alterEgo: Riri Williams
   BaseATK: 1
   ATKConsq: 1

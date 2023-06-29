@@ -6,11 +6,11 @@ public class IdleState : BaseState
 {
     public override void Enter()
     {
-        UIManager.InStateMachine = false;
+        UIManager.MakingSelection = false;
     }
 
     public override void Exit()
     {
-        UIManager.InStateMachine = true;
+        UIManager.MakingSelection = true;
     }
 }

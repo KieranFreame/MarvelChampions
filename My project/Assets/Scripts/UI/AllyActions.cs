@@ -18,7 +18,7 @@ public class AllyActions : PlayerCardActions
     {
         base.OnEnable();
 
-        if (UIManager.InStateMachine) return;
+        if (UIManager.MakingSelection) return;
 
         if (card.CurrZone == Zone.Ally)
         {
@@ -32,14 +32,14 @@ public class AllyActions : PlayerCardActions
         }
     }
 
-    public void Attack()
+    public async void Attack()
     {
-        (card as AllyCard).Attack();
+        await (card as AllyCard).CharStats.InitiateAttack();
         gameObject.SetActive(false);
     }
-    public void Thwart()
+    public async void Thwart()
     {
-        (card as AllyCard).Thwart();
+        await (card as AllyCard).CharStats.InitiateThwart();
         gameObject.SetActive(false);
     }
     

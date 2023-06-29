@@ -1,24 +1,24 @@
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
+using System.Threading.Tasks;
 
 public class MainSchemeCard : SchemeCard
 {
-    [SerializeField] SchemeCardData temp_data;
+    public List<IStepOne> AfterStepOne = new();
 
-    public delegate IEnumerator StepOne();
-    public List<StepOne> AfterStepOne = new();
-
-    public override void LoadCardData(CardData data, GameObject owner)
+    public override void LoadCardData(EncounterCardData data, Villain owner)
     {
-        GetComponent<Threat>().SetThreat(temp_data.StartingThreat, temp_data.Acceleration, temp_data.MaximumThreat);
+        Data = data;
+        Threat threat = GetComponent<Threat>();
+        threat.SetThreat((data as SchemeCardData).StartingThreat, (data as SchemeCardData).Acceleration, (data as SchemeCardData).MaximumThreat);
         base.LoadCardData(data, owner);
     }
 
     private void Start()
     {
         GetComponent<Threat>().WhenCompleted += WhenCompleted;
-        LoadCardData(temp_data, gameObject);
+        //LoadCardData(temp_data, FindObjectOfType<Villain>());
     }
 
     protected override void WhenDefeated()
@@ -28,17 +28,17 @@ public class MainSchemeCard : SchemeCard
 
     private void WhenCompleted() { Debug.Log("Main Scheme has reached Maximum Threat! You Lose!"); }
 
-    public IEnumerator Accelerate()
+    public async Task Accelerate()
     {
         Debug.Log(name + ": Accelerating by " + Acceleration + " threat.");
         GetComponent<Threat>().GainThreat(Acceleration);
         
-        foreach (StepOne func in AfterStepOne)
+        foreach (IStepOne subscriber in AfterStepOne)
         {
-            yield return func;
+            await subscriber.Execute();
         }
     }
 
-    public int Acceleration { get => temp_data.Acceleration; }
-    public int MaximumThreat { get => temp_data.MaximumThreat; }
+    public int Acceleration { get => (Data as SchemeCardData).Acceleration; }
+    public int MaximumThreat { get => (Data as SchemeCardData).MaximumThreat; }
 }

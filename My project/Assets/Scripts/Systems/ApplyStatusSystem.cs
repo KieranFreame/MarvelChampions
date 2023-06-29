@@ -1,9 +1,8 @@
 using System;
-using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class ApplyStatusSystem : MonoBehaviour
 {
@@ -24,7 +23,7 @@ public class ApplyStatusSystem : MonoBehaviour
             Destroy(this);
     }
 
-    public IEnumerator ApplyStatus(ApplyStatusAction action)
+    public async Task ApplyStatus(ApplyStatusAction action)
     {
         _action = action;
 
@@ -34,22 +33,22 @@ public class ApplyStatusSystem : MonoBehaviour
             {
                 case nameof(Attacker):
                     _action.Owner.CharStats.Attacker.Stunned = true;
-                    yield break;
+                    break;
                 case nameof(Health):
                     _action.Owner.CharStats.Health.Tough = true;
-                    yield break;
+                    break;
                 case nameof(IConfusable):
                     _action.Owner.CharStats.Thwarter.Confused = true;
-                    yield break;
+                    break;
             }
         }
         else
         {
-            yield return StartCoroutine(ApplyStatusEffect(targetComponents[_action.Status]));
+            await ApplyStatusEffect(targetComponents[_action.Status]);
         }
     }
 
-    private IEnumerator ApplyStatusEffect(Type targetComp)
+    private List<ICharacter> PopulateTargets()
     {
         List<ICharacter> targets = new();
 
@@ -73,25 +72,42 @@ public class ApplyStatusSystem : MonoBehaviour
             }
         }
 
+        return targets;
+    }
+    private async Task ApplyStatusEffect(Type targetComp)
+    {
+        List<ICharacter> targets = PopulateTargets();
+
         switch (targetComp.Name)
         {
             case nameof(Attacker):
                 if (targets.Count == 1)
                     targets[0].CharStats.Attacker.Stunned = true;
                 else
-                    yield return StartCoroutine(TargetSystem.instance.SelectTarget(targets, target => {target.CharStats.Attacker.Stunned = true;}));
+                {
+                    ICharacter target = await TargetSystem.instance.SelectTarget(targets);
+                    target.CharStats.Attacker.Stunned = true;
+                }
+
                 break;
             case nameof(Health):
                 if (targets.Count == 1)
                     targets[0].CharStats.Health.Tough = true;
                 else
-                    yield return StartCoroutine(TargetSystem.instance.SelectTarget(targets, target => { target.CharStats.Health.Tough = true; }));
+                {
+                    ICharacter target = await TargetSystem.instance.SelectTarget(targets);
+                    target.CharStats.Health.Tough = true;
+                }
+                    
                 break;
             case nameof(IConfusable):
                 if (targets.Count == 1)
                     targets[0].CharStats.Confusable.Confused = true;
                 else
-                    yield return StartCoroutine(TargetSystem.instance.SelectTarget(targets, target => { target.CharStats.Confusable.Confused = true; }));
+                {
+                    ICharacter target = await TargetSystem.instance.SelectTarget(targets);
+                    target.CharStats.Confusable.Confused = true;
+                }
                 break;
         }
     }

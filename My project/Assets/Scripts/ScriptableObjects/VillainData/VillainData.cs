@@ -6,5 +6,7 @@ using UnityEngine;
 public class VillainData : ScriptableObject
 {
     public string villainName;
+    public string deckPath;
+    public Sprite villainArt;
     public List<VillainStage> stages = new();
 }

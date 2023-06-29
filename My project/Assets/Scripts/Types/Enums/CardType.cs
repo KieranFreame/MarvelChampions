@@ -12,6 +12,7 @@ public enum CardType
     Minion,
     Attachment,
     Treachery,
-    Scheme,
+    SideScheme,
+    MainScheme,
     Obligation,
 }

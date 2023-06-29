@@ -12,6 +12,12 @@ public class Hand
         cards = new List<PlayerCard>();
     }
 
+    public void AddToHand(PlayerCard card)
+    {
+        cards.Add(card);
+        card.Data.effect?.OnDrawn(card.Owner, card);
+    }
+
     public bool Contains(PlayerCard card)
     {
         return cards.Contains(card);
@@ -19,7 +25,10 @@ public class Hand
 
     public void Remove(PlayerCard card)
     {
-        if (Contains(card))
+        if (cards.Contains(card))
+        {
+            card.Effect?.OnDiscard();
             cards.Remove(card);
+        }
     }
 }

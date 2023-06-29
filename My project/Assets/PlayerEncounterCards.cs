@@ -1,43 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class PlayerEncounterCards
 {
     public List<CardData> EncounterCards = new();
-    private bool resolved = false;
 
-    public event UnityAction AllCardsRevealed;
-
-    public PlayerEncounterCards()
-    {
-        RevealEncounterCardSystem.OnEncounterCardRevealed += Resolved;
-    }
-
-    public IEnumerator RevealEncounterCards()
+    public async Task RevealEncounterCards()
     {
         while (EncounterCards.Count > 0)
         {
             GameObject card = (EncounterCards[0] is EncounterCardData) ?
                 RevealCardSystem.instance.CreateEncounterCard(EncounterCards[0] as EncounterCardData, true) : PrefabFactory.instance.CreatePlayerCard(EncounterCards[0] as PlayerCardData);
 
-            resolved = false;
-
-            RevealEncounterCardSystem.instance.InitiateRevealCard(card.GetComponent<EncounterCard>());
-
-            while (!resolved)
-                yield return null;
+            await RevealEncounterCardSystem.instance.InitiateRevealCard(card.GetComponent<EncounterCard>());
 
             EncounterCards.RemoveAt(0);
         }
-
-        AllCardsRevealed?.Invoke();
-    }
-
-    private void Resolved(Card redundant)
-    {
-        resolved = true;
     }
 
     public void AddCard(CardData card) => EncounterCards.Add(card);

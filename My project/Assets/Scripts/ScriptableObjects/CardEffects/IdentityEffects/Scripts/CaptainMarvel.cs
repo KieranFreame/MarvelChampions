@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Captain Marvel", menuName = "MarvelChampions/Identity Effects/Captain Marvel/Hero")]
@@ -30,12 +31,12 @@ public class CaptainMarvel : IdentityEffect
 
     public override void Activate()
     {
-        owner.StartCoroutine(Effect());
+        Effect();
     }
 
-    private IEnumerator Effect()
+    private async void Effect()
     {
-        yield return owner.StartCoroutine(PayCostSystem.instance.GetResources(Resource.Energy, 1));
+        await PayCostSystem.instance.GetResources(Resource.Energy, 1);
 
         owner.CharStats.Health.RecoverHealth(1);
         DrawCardSystem.instance.DrawCards(new(1));

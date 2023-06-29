@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 public class ThwartSystem : MonoBehaviour
@@ -24,14 +25,17 @@ public class ThwartSystem : MonoBehaviour
     public Threat Target { get; private set; }
     #endregion
 
-    public IEnumerator InitiateThwart(ThwartAction action)
+    public async Task InitiateThwart(ThwartAction action)
     {
         instance.Action = action;
 
         List<Threat> targets = new(); 
         targets.AddRange(FindObjectsOfType<Threat>());
 
-        yield return StartCoroutine(TargetSystem.instance.SelectTarget(targets, threat => { Target = threat; }));
+        if (targets.Count > 1)
+            Target = await TargetSystem.instance.SelectTarget(targets);
+        else
+            Target = targets[0];
 
         Target.RemoveThreat(Action.Value);
 

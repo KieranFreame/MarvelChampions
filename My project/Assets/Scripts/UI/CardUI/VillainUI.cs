@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 public class VillainUI : MonoBehaviour
 {
-    private Villain villain;
-
     [Header("UI Elements")]
     [SerializeField] private Image villainProfile;
     [SerializeField] private Text villainStage;
@@ -31,15 +29,8 @@ public class VillainUI : MonoBehaviour
 
     private void OnEnable()
     {
-        if (villain == null) {
-            villain = GetComponent<Villain>();
-            villain.SetupComplete += SetUI;
+        if (_attacker == null)
             return;
-        }
-
-        _attacker ??= villain.CharStats.Attacker;
-        _schemer ??= villain.CharStats.Schemer;
-        _health ??= villain.CharStats.Health;
 
         _attacker.OnToggleStun += ToggleStun;
         _attacker.AttackChanged += AttackChanged;
@@ -63,9 +54,9 @@ public class VillainUI : MonoBehaviour
     }
 
     #region Setup
-    private void SetUI()
+    public void SetUI(Villain owner)
     {
-        switch (GetComponent<Villain>().Stage)
+        switch (owner.Stage)
         {
             case 1:
                 villainStage.text = "I";
@@ -78,13 +69,15 @@ public class VillainUI : MonoBehaviour
                 break;
         }
 
-        villainScheme.text = villain.BaseScheme.ToString();
-        villainAttack.text = villain.BaseAttack.ToString();
-        villainHealth.text = villain.BaseHP.ToString();
+        villainProfile.sprite = owner.Art;
 
-        _attacker ??= villain.CharStats.Attacker;
-        _schemer ??= villain.CharStats.Schemer;
-        _health ??= villain.CharStats.Health;
+        villainScheme.text = owner.BaseScheme.ToString();
+        villainAttack.text = owner.BaseAttack.ToString();
+        villainHealth.text = owner.BaseHP.ToString();
+
+        _attacker = owner.CharStats.Attacker;
+        _schemer = owner.CharStats.Schemer;
+        _health = owner.CharStats.Health;
 
         _attacker.OnToggleStun += ToggleStun;
         _attacker.AttackChanged += AttackChanged;
@@ -94,16 +87,13 @@ public class VillainUI : MonoBehaviour
 
         _health.OnToggleTough += ToggleTough;
         _health.HealthChanged += HealthChanged;
-
-        villain.SetupComplete -= SetUI;
     }
-
     #endregion
 
     #region Stat Funcs
-    private void AttackChanged() { villainAttack.text = villain.CharStats.Attacker.Stunned ? "S" : villain.CharStats.Attacker.CurrentAttack.ToString(); }
-    private void SchemeChanged() { villainScheme.text = villain.CharStats.Schemer.Confused ? "C" : villain.CharStats.Schemer.CurrentScheme.ToString(); }
-    private void HealthChanged() { villainHealth.text = villain.CharStats.Health.Tough ? "T" : villain.CharStats.Health.CurrentHealth.ToString(); }
+    private void AttackChanged() { villainAttack.text = _attacker.Stunned ? "S" : _attacker.CurrentAttack.ToString(); }
+    private void SchemeChanged() { villainScheme.text = _schemer.Confused ? "C" : _schemer.CurrentScheme.ToString(); }
+    private void HealthChanged() { villainHealth.text = _health.Tough ? "T" : _health.CurrentHealth.ToString(); }
     #endregion
 
     #region Status Funcs

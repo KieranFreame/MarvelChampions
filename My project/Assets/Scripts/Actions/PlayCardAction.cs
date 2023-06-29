@@ -7,7 +7,7 @@ public class PlayCardAction : Action
     public List<PlayerCard> Candidates { get; private set; } = new List<PlayerCard>();
     public PlayerCard CardToPlay { get; private set; }
 
-    public PlayCardAction(GameObject owner, List<PlayerCard> candidates, PlayerCard cardToPlay) : base ()
+    public PlayCardAction(ICharacter owner, List<PlayerCard> candidates, PlayerCard cardToPlay) : base ()
     {
         Owner = owner;
         Candidates = candidates;

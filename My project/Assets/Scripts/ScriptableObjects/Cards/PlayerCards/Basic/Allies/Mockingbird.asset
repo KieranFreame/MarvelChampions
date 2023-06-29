@@ -18,10 +18,12 @@ MonoBehaviour:
   cardType: 0
   cardTraits:
   - S.H.I.E.L.D
+  cardArt: {fileID: 0}
   cardCost: 3
   isUnique: 1
   cardAspect: 4
   cardResources: 03000000
+  effect: {fileID: 11400000, guid: 0c6f297e6188cef4dab8d1b0aa145f74, type: 2}
   alterEgo: Bobbi Morse
   BaseATK: 1
   ATKConsq: 1

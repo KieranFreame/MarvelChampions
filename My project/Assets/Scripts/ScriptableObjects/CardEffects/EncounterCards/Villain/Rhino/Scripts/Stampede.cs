@@ -1,52 +1,55 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Stampede", menuName = "MarvelChampions/Card Effects/Rhino/Stampede")]
 public class Stampede : EncounterCardEffect
 {
+    ICharacter _target;
     int charHP;
 
     /// <summary>
     /// When Revealed (Alter-Ego): This card gains surge.
     /// When Revealed(Hero): Rhino attacks you.If a character is damaged by this attack, that character is stunned.
     /// </summary>
-    public override void OnEnterPlay(Villain owner, Card card)
+    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
         _owner = owner;
-        var identity = FindObjectOfType<Player>().Identity.ActiveIdentity;
+        _target = player;
+        var identity = player.Identity.ActiveIdentity;
 
         if (identity is AlterEgo)
         {
-            _owner.Surge(FindObjectOfType<Player>());
+            _owner.Surge(player);
         }
         else //identity is Hero;
         {
-            _owner.StartCoroutine(_owner.CharStats.InitiateAttack());
-
-            DefendSystem.instance.OnDefenderSelected += SetDefender;
-            AttackSystem.OnActivationComplete += AttackComplete;
+            TargetSystem.TargetAcquired += SetDefender;
+            await _owner.CharStats.InitiateAttack();
         } 
     }
 
-    private void SetDefender()
+    private void SetDefender(dynamic target)
     {
-        charHP = (DefendSystem.instance.Target != null) ? DefendSystem.instance.Target.CharStats.Health.CurrentHealth : TurnManager.instance.CurrPlayer.CharStats.Health.CurrentHealth;
-    }
+        TargetSystem.TargetAcquired -= SetDefender;
+        AttackSystem.OnAttackComplete += AttackComplete;
 
-    private void AttackComplete()
-    {
-        var target = AttackSystem.instance.Target;
-
-        if (target != null) //defending ally was defeated
+        if (target != null)
         {
-            if (target.CharStats.Health.CurrentHealth < charHP) //target has taken damage
-            {
-                target.CharStats.Attacker.Stunned = true;
-            }
+            _target = target as ICharacter;
         }
 
-        DefendSystem.instance.OnDefenderSelected -= SetDefender;
-        AttackSystem.OnActivationComplete -= AttackComplete;
+        charHP = _target.CharStats.Health.CurrentHealth;
+    }
+
+    private void AttackComplete(Action action)
+    {
+        AttackSystem.OnAttackComplete -= AttackComplete;
+
+        if (_target.CharStats.Health.CurrentHealth < charHP && _target.CharStats.Health.CurrentHealth != 0) //target has taken damage, but is not defeated
+        {
+            _target.CharStats.Attacker.Stunned = true;
+        }
     }
 }

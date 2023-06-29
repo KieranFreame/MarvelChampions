@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Hydra Bomber", menuName = "MarvelChampions/Card Effects/Bomb Scare/Hydra Bomber")]
 public class HydraBomber : EncounterCardEffect
 {
+    Player target;
     [SerializeField] private string takeDamage;
     [SerializeField] private string placeThreat;
     
@@ -12,21 +14,15 @@ public class HydraBomber : EncounterCardEffect
     /// When Revealed: Choose to either take 2 damage, or place 1 threat on the main scheme
     /// </summary>
 
-    public override void OnEnterPlay(Villain owner, Card card)
+    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
-        UIManager.ChooseEffect(new List<string> { takeDamage, placeThreat });
-        ChooseEffectUI.EffectSelected += ChosenEffect;
-    }
-
-    private void ChosenEffect(int effectIndex)
-    {
-        ChooseEffectUI.EffectSelected -= ChosenEffect;
+        target = player;
+        int effectIndex = await ChooseEffectUI.ChooseEffect(new List<string> { takeDamage, placeThreat });
 
         switch (effectIndex)
         {
             case 1:
-                var p = FindObjectOfType<Player>();
-                _card.StartCoroutine(DamageSystem.instance.ApplyDamage(new DamageAction(p, 2)));
+                await DamageSystem.instance.ApplyDamage(new DamageAction(target, 2));
                 break;
             case 2:
                 FindObjectOfType<MainSchemeCard>().GetComponent<Threat>().GainThreat(1);

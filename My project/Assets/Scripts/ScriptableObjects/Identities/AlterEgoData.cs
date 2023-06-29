@@ -8,6 +8,7 @@ public class AlterEgoData : ScriptableObject
     [Header("CardDetails")]
     public string alterEgoName;
     public List<string> alterEgoTags;
+    public Sprite alterEgoArt;
 
     [Header("Stats")]
     public int baseREC;

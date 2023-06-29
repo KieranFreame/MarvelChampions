@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Daredevil", menuName = "MarvelChampions/Card Effects/Justice/Daredevil")]
@@ -9,27 +10,29 @@ public class Daredevil : PlayerCardEffect
     /// After Daredevil thwarts, deal 1 damage to an enemy.
     /// </summary>
 
-    public override void OnEnterPlay(Player owner, Card card)
+    public override async Task OnEnterPlay(Player owner, PlayerCard card)
     {
         _owner = owner;
-        _card = card;
+        Card = card;
 
-        ThwartSystem.OnThwartComplete += OnThwartComplete;
+        (Card as AllyCard).CharStats.ThwartInitiated += ThwartInitiated;
+        await Task.Yield();
     }
 
-    private void OnThwartComplete()
+    private void ThwartInitiated() => ThwartSystem.OnThwartComplete += OnThwartComplete;
+
+    private async void OnThwartComplete()
     {
-        if (ThwartSystem.instance.Action.Owner != _card)
-            return;
+        ThwartSystem.OnThwartComplete -= OnThwartComplete;
 
         List<ICharacter> enemies = new() { FindObjectOfType<Villain>() };
         enemies.AddRange(FindObjectsOfType<MinionCard>());
         
-        _card.StartCoroutine(DamageSystem.instance.ApplyDamage(new DamageAction(enemies, 1)));
+        await DamageSystem.instance.ApplyDamage(new DamageAction(enemies, 1));
     }
 
     public override void OnExitPlay()
     {
-        ThwartSystem.OnThwartComplete -= OnThwartComplete;
+        (Card as AllyCard).CharStats.ThwartInitiated -= ThwartInitiated;
     }
 }

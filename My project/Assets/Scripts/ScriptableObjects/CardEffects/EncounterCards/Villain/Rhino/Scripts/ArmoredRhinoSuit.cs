@@ -1,36 +1,39 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 
 [CreateAssetMenu(fileName = "Armored Rhino Suit", menuName = "MarvelChampions/Card Effects/Rhino/Armored Rhino Suit")]
 public class ArmoredRhinoSuit : EncounterCardEffect, IModifyDamage
 {
-    private int damageTaken = 0;
+    private Counters counters;
 
-    public override void OnEnterPlay(Villain owner, Card card)
+    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
         _owner = owner;
-        _card = card;
+        Card = card;
 
+        counters = Card.gameObject.AddComponent<Counters>();
         DamageSystem.instance.Modifiers.Add(this);
+        await Task.Yield();
     }
 
-    public IEnumerator OnTakeDamage(DamageAction action, System.Action<DamageAction> callback)
+    public async Task<DamageAction> OnTakeDamage(DamageAction action, ICharacter target)
     {
-        if (action.DamageTargets.Contains(_owner))
+        if (target == _owner as ICharacter)
         {
-            damageTaken += action.Value;
+            counters.AddCounters(action.Value);
             action.Value = 0;
-            callback(action);
 
-            if (damageTaken >= 5)
+            if (counters.CountersLeft >= 5)
             {
                 DamageSystem.instance.Modifiers.Remove(this);
-                _owner.EncounterDeck.Discard(_card);
+                ScenarioManager.inst.EncounterDeck.Discard(Card);
             }
         }
 
-        yield break;
+        await Task.Yield();
+        return action;
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -51,12 +52,15 @@ public class Thwarter : IConfusable, IStat
     }
     #endregion
 
-    public ThwartAction Thwart()
+    public ThwartAction Thwart(ThwartAction action = null)
     {
-        if ((Owner as IExhaust).Exhausted)
-            return null;
+        if (Owner is IExhaust && action == null)
+        {
+            if ((Owner as IExhaust).Exhausted)
+                return null;
 
-        (Owner as IExhaust).Exhaust();
+            (Owner as IExhaust).Exhaust();
+        }
 
         if (Confused)
         {
@@ -64,6 +68,6 @@ public class Thwarter : IConfusable, IStat
             return null;
         }
 
-        return new ThwartAction(_thwart:CurrentThwart);
+        return action ?? new ThwartAction(_thwart:CurrentThwart);
     }
 }

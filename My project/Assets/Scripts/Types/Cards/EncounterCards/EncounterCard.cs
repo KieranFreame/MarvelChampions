@@ -1,28 +1,49 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class EncounterCard : Card
+public class EncounterCard : MonoBehaviour, ICard
 {
+    public Villain Owner { get; private set; }
     public int BoostIcons { get; set; }
+    public EncounterCardData Data { get; set; }
+    public EncounterCardEffect Effect { get; set; }
+    public Zone CurrZone { get; set; }
+    public Zone PrevZone { get; set; }
+    public bool InPlay { get; set; }
+    public bool FaceUp { get; set; }
+    public string CardName { get => Data.cardName; }
+    public string CardDesc { get => Data.cardDesc; }
 
     public event UnityAction OnBoost;
+    public event UnityAction SetupComplete;
 
     protected virtual void WhenDefeated()
     {
-        Owner.GetComponent<Villain>().EncounterDeck?.Discard(this);
+        Effect.OnExitPlay();
+        ScenarioManager.inst.EncounterDeck.Discard(this);
     }
-    public void OnRevealCard()
+    public async Task OnRevealCard()
     {
-        Effect?.OnEnterPlay(Owner.GetComponent<Villain>(), this);
+        await Effect.OnEnterPlay(Owner, this, FindObjectOfType<Player>());
     }
     public void OnBoostCard() => OnBoost?.Invoke();
-    public override void LoadCardData(CardData data, GameObject owner)
+    public virtual void LoadCardData(EncounterCardData data, Villain owner)
     {
         //EncounterCard
-        BoostIcons = (data as EncounterCardData).boostIcons;
+        Owner = owner;
+        BoostIcons = data.boostIcons;
 
-        base.LoadCardData(data, owner);
+        Data = data;
+        GetComponent<CardUI>().CardArt = Data.cardArt;
+
+        Effect = Data.effect;
+
+        SetupComplete?.Invoke();
     }
+
+    public void Flip() { return; }
 }

@@ -19,8 +19,10 @@ MonoBehaviour:
   cardTraits:
   - Criminal
   - Elite
+  cardArt: {fileID: 0}
   boostIcons: 2
   boostDescription: 
+  effect: {fileID: 11400000, guid: d039b1558921ae34fbdb1f0867ad2e72, type: 2}
   baseAttack: 3
   baseScheme: 2
   baseHealth: 4

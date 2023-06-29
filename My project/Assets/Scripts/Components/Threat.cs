@@ -80,7 +80,7 @@ public class Threat : MonoBehaviour
     
     public void SetThreat(int startThreat, int acceleration, int maxThreat) //MainScheme
     {
-        SetThreat(startThreat);
+        CurrentThreat = StartingThreat = startThreat;
         Acceleration = acceleration * TurnManager.Players.Count;
         MaxThreat = maxThreat * TurnManager.Players.Count;
 

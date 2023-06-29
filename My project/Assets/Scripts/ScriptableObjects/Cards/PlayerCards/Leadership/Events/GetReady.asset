@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
+  m_Name: GetReady
+  m_EditorClassIdentifier: 
+  cardID: LEADERSHIP-E-001
+  cardName: Get Ready
+  cardDesc: Ready an Ally
+  cardType: 1
+  cardTraits: []
+  cardArt: {fileID: 0}
+  cardCost: 0
+  isUnique: 0
+  cardAspect: 2
+  cardResources: 02000000
+  effect: {fileID: 11400000, guid: 04a70b1cb6f16914a8a8af7a1e7cd947, type: 2}

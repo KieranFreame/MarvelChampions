@@ -18,10 +18,12 @@ MonoBehaviour:
   cardType: 0
   cardTraits:
   - Defender
+  cardArt: {fileID: 0}
   cardCost: 4
   isUnique: 1
   cardAspect: 1
   cardResources: 02000000
+  effect: {fileID: 11400000, guid: 02927b4d4bef4e144a1b6e9d7ace636a, type: 2}
   alterEgo: Matt Murdock
   BaseATK: 2
   ATKConsq: 1

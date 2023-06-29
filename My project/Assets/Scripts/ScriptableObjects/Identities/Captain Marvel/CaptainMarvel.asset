@@ -17,6 +17,7 @@ MonoBehaviour:
   - Avenger
   - Soldier
   keywords: 
+  heroArt: {fileID: 21300000, guid: 958837c714120ae4face5783b21322bf, type: 3}
   baseATK: 2
   baseTHW: 2
   baseDEF: 2

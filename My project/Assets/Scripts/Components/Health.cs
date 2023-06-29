@@ -47,10 +47,10 @@ public class Health : IStat
     {
         Owner = owner;
         CurrentHealth = BaseHP = owner.BaseHP;
-
+        owner.StageAdvanced += AdvanceStage;
 
     }
-    public Health(Card owner, CardData data)
+    public Health(ICard owner, CardData data)
     {
         Owner = owner;
 
@@ -91,5 +91,6 @@ public class Health : IStat
         BaseHP += amount;
         RecoverHealth(amount);
     }
+    private void AdvanceStage(int amount) => CurrentHealth = BaseHP = Owner.BaseHP;
     public bool Damaged() => CurrentHealth < BaseHP;
 }

@@ -5,7 +5,8 @@ using UnityEngine.Events;
 
 public class Hero
 {
-    public string Name { get; protected set; }
+    public string Name { get; private set; }
+    public Sprite Art { get; private set; }
     public List<string> Traits { get; protected set; } = new List<string>();
     public List<Keywords> Keywords { get; protected set; } = new List<Keywords>();
     public int BaseHandSize { get; protected set; }
@@ -15,6 +16,7 @@ public class Hero
     {
         //Identity
         Name = data.heroName;
+        Art = data.heroArt;
         Traits = data.heroTraits;
         BaseHandSize = data.baseHandSize;
         Keywords = data.keywords;

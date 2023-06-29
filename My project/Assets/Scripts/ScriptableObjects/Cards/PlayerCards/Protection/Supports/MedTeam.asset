@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
+  m_Name: MedTeam
+  m_EditorClassIdentifier: 
+  cardID: PROTECTION-S-001
+  cardName: Med Team
+  cardDesc: Uses 3 Counters. Exhaust Med Team and remove 1 counter; heal 2 damage
+    from a friendly character.
+  cardType: 3
+  cardTraits:
+  - S.H.I.E.L.D.
+  cardArt: {fileID: 0}
+  cardCost: 3
+  isUnique: 0
+  cardAspect: 3
+  cardResources: 03000000
+  effect: {fileID: 11400000, guid: 5d6938857517a1a44bf6a24154ca813a, type: 2}

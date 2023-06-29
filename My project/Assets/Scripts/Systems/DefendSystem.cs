@@ -3,7 +3,8 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using static UnityEngine.UI.GridLayoutGroup;
+using System.Threading.Tasks;
+using System.Threading;
 
 public class DefendSystem : MonoBehaviour
 {
@@ -16,13 +17,6 @@ public class DefendSystem : MonoBehaviour
             instance = this;
         else
             Destroy(this);
-
-        //State Machine
-        States.Add(new IdleState()); //0
-        States.Add(new GetTargetState()); //1
-        States.Add(new ApplyDefendState()); //2
-
-        ChangeState(0);
     }
 
     #region Events
@@ -30,120 +24,62 @@ public class DefendSystem : MonoBehaviour
     public event UnityAction OnDefenderSelected;
     #endregion
 
-    #region StateMachine
-    public StateMachine StateMachine { get; private set; } = new StateMachine();
-    public List<IState> States { get; set; } = new List<IState>();
-
-    public void ChangeState(int index)
-    {
-        StateMachine.ChangeState(States[index]);
-    }
-    #endregion
-
     #region Fields
     public ICharacter Target { get; set; }
-    private Player _targetOwner;
+    private readonly List<ICharacter> candidates = new();
     #endregion
 
     #region Methods
 
-    public IEnumerator GetDefender(Player targetOwner, System.Action<ICharacter> callback)
+    public async Task<ICharacter> GetDefender(Player targetOwner)
     {
-        _targetOwner = targetOwner;
+        candidates.Clear();
 
-        ChangeState(1);
+        Debug.Log("Select Defender");
 
-        while (StateMachine.currentState != States[0])
-            yield return null;
+        candidates.AddRange(targetOwner.CardsInPlay.Allies);
 
-        callback(Target);
-    }
+        candidates.RemoveAll(x => x == null);
+        candidates.RemoveAll(x => (x as AllyCard).Exhausted);
 
-    #endregion
+        if (targetOwner.Identity.ActiveIdentity is Hero && !targetOwner.Identity.Exhausted)
+            candidates.Add(targetOwner);
 
-    #region States
-    abstract class BaseDefendSystemState : BaseState
-    {
-        protected DefendSystem owner = instance;
-    }
-
-    class GetTargetState : BaseDefendSystemState //1
-    {
-        private readonly List<ICharacter> candidates = new();
-
-        public override void Enter()
+        if (candidates.Count > 0)
         {
-            Debug.Log("Select Defender");
+            CancellationToken token = CancelButton.ToggleCancelBtn(true, DefenderSelectionCanceled);
 
-            candidates.AddRange(owner._targetOwner.GetComponent<Player>().CardsInPlay.Allies);
+            Target = await TargetSystem.instance.SelectTarget(candidates, token:token);
 
-            candidates.RemoveAll(x => x == null);
-            candidates.RemoveAll(x => (x as AllyCard).Exhausted);
+            CancelButton.ToggleCancelBtn(false, DefenderSelectionCanceled);
+            OnDefenderSelected?.Invoke();
+        }
+        else
+        {
+            Debug.Log("No Defenders Available");
+            TargetSystem.SingleTarget(targetOwner);
+        }
 
-            if (owner._targetOwner.Identity.ActiveIdentity is Hero && !owner._targetOwner.Identity.Exhausted)
-                candidates.Add(owner._targetOwner);
-
-            if (candidates.Count > 0)
+        if (Target != null)
+        {
+            if (Target is Player)
             {
-                owner.StartCoroutine(GetTarget());
+                int defence = Target.CharStats.Defender.Defend();
+                AttackSystem.instance.Action.Value -= defence;
             }
             else
             {
-                Debug.Log("No Defenders Available");
-                owner.ChangeState(2);
-            }   
+                (Target as AllyCard).Exhaust();
+            }
         }
 
-        IEnumerator GetTarget()
-        {
-            CancelButton.ToggleCancelBtn(true, DefenderSelectionCanceled);
-
-            yield return owner.StartCoroutine(TargetSystem.instance.SelectTarget(candidates, character =>
-            {
-                owner.Target = character;
-            }));
-
-            owner.ChangeState(2);
-        }
-
-        private void DefenderSelectionCanceled()
-        {
-            owner.Target = null;
-            owner.StopAllCoroutines();
-            CancelButton.ToggleCancelBtn(false, DefenderSelectionCanceled);
-            owner.ChangeState(2);
-        }
-
-        public override void Exit()
-        {
-            CancelButton.ToggleCancelBtn(false, DefenderSelectionCanceled);
-            owner.OnDefenderSelected?.Invoke();
-        }
+        return Target;
     }
 
-    /// <summary>
-    /// If Hero is Defending, reduce Attack Value by Hero DEF Stat
-    /// Else If Defender != Null, Set Target to Defender
-    /// </summary>
-    class ApplyDefendState : BaseDefendSystemState
+    private void DefenderSelectionCanceled()
     {
-        public override void Enter()
-        {
-            if (owner.Target != null)
-            {
-                if (owner.Target is Player)
-                {
-                    int defence = owner.Target.CharStats.Defender.Defend();
-                    AttackSystem.instance.Action.Value -= defence;
-                }
-                else
-                {
-                    (owner.Target as AllyCard).Exhaust();
-                }
-            }
-
-            owner.ChangeState(0);
-        }
+        Target = null;
+        CancelButton.ToggleCancelBtn(false, DefenderSelectionCanceled);
     }
     #endregion
 }

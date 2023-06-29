@@ -2,22 +2,24 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading.Tasks;
 
 [CreateAssetMenu(fileName = "Jessica Jones", menuName = "MarvelChampions/Card Effects/Justice/Jessica Jones")]
 public class JessicaJones : PlayerCardEffect
 {
     Thwarter thwarter;
 
-    public override void OnEnterPlay(Player owner, Card card)
+    public override async Task OnEnterPlay(Player owner, PlayerCard card)
     {
         _owner = owner;
-        _card = card;
+        Card = card;
 
-        thwarter = (_card as AllyCard).CharStats.Thwarter;
+        thwarter = (Card as AllyCard).CharStats.Thwarter;
 
         thwarter.CurrentThwart += ScenarioManager.sideSchemes.Count;
 
         ScenarioManager.sideSchemes.CollectionChanged += ChangeTHW;
+        await Task.Yield();
     }
 
     private void ChangeTHW(object sender, NotifyCollectionChangedEventArgs e)

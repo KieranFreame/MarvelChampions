@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class CancelButton : MonoBehaviour
 {
+    private CancellationTokenSource cancelTokenSource;
     private static CancelButton inst;
     private GameObject cancelBtn;
 
@@ -19,16 +21,28 @@ public class CancelButton : MonoBehaviour
     public delegate void CancelAction();
     public static CancelAction OnCancelAction;
 
-    public static void ToggleCancelBtn(bool toggle, CancelAction func)
+    public static CancellationToken ToggleCancelBtn(bool toggle, CancelAction func)
     {
         inst.cancelBtn.SetActive(toggle);
 
-        if (toggle) OnCancelAction += func; //turning button on
-        else OnCancelAction -= func; //turning it off
+        if (toggle)
+        {
+            //turning button on
+            OnCancelAction += func;
+            inst.cancelTokenSource = new CancellationTokenSource();
+            return inst.cancelTokenSource.Token;
+        }
+        else
+        {
+            //turning it off
+            OnCancelAction -= func;
+            inst.cancelTokenSource.Dispose();
+            return default;
+        }
     }
 
     public void Cancel()
     {
-        OnCancelAction?.Invoke();
+        cancelTokenSource.Cancel();
     }
 }

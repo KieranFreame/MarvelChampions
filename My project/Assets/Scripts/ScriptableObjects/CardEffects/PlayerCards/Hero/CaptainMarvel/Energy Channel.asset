@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79019948c282f8e47ab6873f403a4681, type: 3}
   m_Name: Energy Channel
   m_EditorClassIdentifier: 
-  EffectID: DANVERS-U-003
+  countersPrefab: {fileID: 3844241250306479888, guid: be272d5109876914dbc7d7d972ba0f4f, type: 3}
   effectA: Spend X Energy resources; put X energy counters here.
   effectB: Discard Energy Channel; deal 2  damage to an enemy for each energy counter
     on this card. (Max 10 damage)

@@ -8,20 +8,21 @@ using UnityEngine.Events;
 [System.Serializable]
 public class Deck
 {
-    //dynamic owner;
     public List<CardData> deck;
-    [SerializeField] private List<CardData> limbo;
+    public List<CardData> limbo;
     public List<CardData> discardPile;
 
     public event UnityAction OnDeckReset;
 
-    public Deck()
+    public Deck(string path)
     {
-        //this.owner = owner;
         deck = new List<CardData>();
         limbo = new List<CardData>();
         discardPile = new List<CardData>();
+
+        AddToDeck(TextReader.PopulateDeck(path));
     }
+
     public void ResetDeck()
     {
         Debug.Log("Resetting Deck");
@@ -61,22 +62,30 @@ public class Deck
 
         return cardToDeal;
     }
-    public void Discard(Card discard)
+    public void Discard(ICard discard)
     {
         CardData d = limbo.FirstOrDefault(x => x.cardName == discard.CardName);
+
+        if (d == null) return;
 
         discardPile.Add(d);
         limbo.Remove(d);
 
-        if (discard.gameObject != null) //hasn't already been destroyed
-            UnityEngine.Object.Destroy(discard.gameObject);
+        if ((discard as MonoBehaviour).gameObject != null) //hasn't already been destroyed
+            UnityEngine.Object.Destroy((discard as MonoBehaviour).gameObject);
     }
-    public void Discard(List<Card> discards)
+    public void Discard(List<ICard> discards)
     {
-        foreach (Card c in discards)
+        foreach (ICard c in discards)
         {
             foreach (CardData data in limbo)
             {
+                if (data == null)
+                {
+                    limbo.Remove(data);
+                    continue;
+                }
+
                 if (data.cardName == c.CardName)
                 {
                     discardPile.Add(data);
@@ -85,10 +94,18 @@ public class Deck
                 }
             }
 
-            UnityEngine.Object.Destroy(c.gameObject);
+            UnityEngine.Object.Destroy((c as MonoBehaviour).gameObject);
         }
     }
-    public void Shuffle()
+    public void Mill(int amount = 1)
+    {
+        for (int i = 0; i < amount; i++)
+        {
+            discardPile.Add(deck[0]);
+            deck.RemoveAt(0);
+        }
+    }
+    private void Shuffle()
     {
         //Fisher-Yates
         System.Random r = new();

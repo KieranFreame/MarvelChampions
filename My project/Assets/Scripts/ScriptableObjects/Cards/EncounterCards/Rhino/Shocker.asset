@@ -18,8 +18,10 @@ MonoBehaviour:
   cardType: 5
   cardTraits:
   - Criminal
+  cardArt: {fileID: 0}
   boostIcons: 2
   boostDescription: 
+  effect: {fileID: 11400000, guid: 39cd93163c9ec4940b166e5637327104, type: 2}
   baseAttack: 2
   baseScheme: 1
   baseHealth: 3

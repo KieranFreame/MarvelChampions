@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.TextCore.Text;
 
 public class DamageSystem : MonoBehaviour
 {
@@ -16,10 +18,6 @@ public class DamageSystem : MonoBehaviour
             Destroy(this);
     }
 
-    #region Fields
-    public DamageAction DamageAction { get; private set; }
-    #endregion
-
     #region Events
     public static event UnityAction OnDamageApplied;
     #endregion
@@ -28,39 +26,34 @@ public class DamageSystem : MonoBehaviour
     public List<IModifyDamage> Modifiers { get; private set; } = new List<IModifyDamage>();
     #endregion
 
-    public IEnumerator ApplyDamage(DamageAction action)
+    public async Task ApplyDamage(DamageAction action)
     {
-        DamageAction = action;
-
-        if (DamageAction.DamageTargets.Count == 0)
+        if (action.DamageTargets.Count > 1 && !action.TargetAll)
         {
-            yield return StartCoroutine(TargetSystem.instance.SelectTarget(DamageAction.DamageTargets, character =>
-            {
-                DamageAction.DamageTargets.Add(character);
-            }));
+            var target = await TargetSystem.instance.SelectTarget(action.DamageTargets);
+            action.DamageTargets.RemoveAll(x => x != target);
         }
 
-        for (int i = Modifiers.Count - 1; i >= 0; i--)
+        foreach (ICharacter target in action.DamageTargets)
         {
-            if (Modifiers[i] == null)
+            DamageAction a = new(target, action.Value);
+
+            for (int i = Modifiers.Count - 1; i >= 0; i--)
             {
-                Modifiers.RemoveAt(i);
-                continue;
+                if (Modifiers[i] == null)
+                {
+                    Modifiers.RemoveAt(i);
+                    continue;
+                }
+
+                a = await Modifiers[i].OnTakeDamage(a, target);
+                if (action.Value < 0) a.Value = 0;
             }
 
-            yield return (StartCoroutine(Modifiers[i].OnTakeDamage(DamageAction, action =>
-            {
-                if (action.Value < 0) action.Value = 0;
-                DamageAction = action;
-            })));
+           target.CharStats.Health.TakeDamage(a.Value);
         }
 
-        foreach (ICharacter c in DamageAction.DamageTargets)
-            c.CharStats.Health.TakeDamage(DamageAction.Value);
-
         OnDamageApplied?.Invoke();
-
-        yield break;
     }
 }
 

@@ -16,7 +16,7 @@ public class SchemeCard : EncounterCard
         GetComponent<Threat>().WhenDefeated -= WhenDefeated;
     }
 
-    public override void LoadCardData(CardData data, GameObject owner)
+    public override void LoadCardData(EncounterCardData data, Villain owner)
     {
         if (this is not MainSchemeCard)
             GetComponent<Threat>().SetThreat((data as SchemeCardData).StartingThreat);
@@ -27,6 +27,6 @@ public class SchemeCard : EncounterCard
     protected override void WhenDefeated()
     {
         ScenarioManager.sideSchemes.Remove(this);
-        Owner.GetComponent<Villain>().EncounterDeck.Discard(this);
+        base.WhenDefeated();
     }
 }

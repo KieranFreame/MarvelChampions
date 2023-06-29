@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
+  m_Name: RelentlessAssault
+  m_EditorClassIdentifier: 
+  cardID: AGGRESSION-E-002
+  cardName: Relentless Assault
+  cardDesc: Deal 5 Damage to a minion. If a Physical was used to play this card,
+    gain Overkill.
+  cardType: 1
+  cardTraits:
+  - Attack
+  cardArt: {fileID: 0}
+  cardCost: 2
+  isUnique: 0
+  cardAspect: 0
+  cardResources: 03000000
+  effect: {fileID: 11400000, guid: e66c059c09bc9be49a5a45818564ecdd, type: 2}

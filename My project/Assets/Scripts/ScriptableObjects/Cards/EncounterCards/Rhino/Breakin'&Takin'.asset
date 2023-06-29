@@ -20,6 +20,7 @@ MonoBehaviour:
   cardArt: {fileID: 0}
   boostIcons: 2
   boostDescription: 
+  effect: {fileID: 11400000, guid: f57c4e5d18511954bb789790e96f5858, type: 2}
   IsMainScheme: 0
   StartingThreat: 2
   MaximumThreat: 0

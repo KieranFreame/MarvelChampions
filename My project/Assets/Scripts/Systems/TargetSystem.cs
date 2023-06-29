@@ -7,6 +7,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using System.Threading.Tasks;
+using System.Threading;
 
 public class TargetSystem : MonoBehaviour
 {
@@ -31,38 +33,28 @@ public class TargetSystem : MonoBehaviour
     {
         raycaster = GameObject.Find("Board").GetComponent<GraphicRaycaster>();
         eventSystem = GetComponent<EventSystem>();
-
-        CancelButton.OnCancelAction += Cancel;
     }
     #endregion
 
     public ObservableCollection<dynamic> candidates = new();
-    //private dynamic Target;
-    private bool stopCoroutines = false; 
+    //private dynamic Target; 
 
     public Action Action { get; private set; }
 
+    public static event UnityAction<dynamic> TargetAcquired; 
     public static event UnityAction<List<ICharacter>> CheckGuard;
     public static event UnityAction<List<Threat>> CheckPatrolAndCrisis;
-
-    private void ClearFields()
+    
+    public static void SingleTarget(dynamic target)
     {
-        candidates.Clear();
-        stopCoroutines = false;
+        TargetAcquired?.Invoke(target);
     }
 
-    private void Cancel()
-    {
-        stopCoroutines = true;
-        StopAllCoroutines();
-    }
-
-    //For Selecting Components
-    public IEnumerator SelectTarget<T>(List<T> candidates, Action<T> callback, bool isAttack = false)
+    public async Task<T> SelectTarget<T>(List<T> candidates, bool isAttack = false, CancellationToken token = default)
     {
         T comp = default;
 
-        ClearFields();
+        this.candidates.Clear();
 
         if (isAttack)
             CheckGuard?.Invoke(candidates as List<ICharacter>);
@@ -70,7 +62,7 @@ public class TargetSystem : MonoBehaviour
         if (typeof(T).ToString() is "Threat")
             CheckPatrolAndCrisis?.Invoke(candidates as List<Threat>);
 
-        while (!stopCoroutines)
+        while (!token.IsCancellationRequested)
         {
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
@@ -86,16 +78,14 @@ public class TargetSystem : MonoBehaviour
                 results.Find(x => x.gameObject.TryGetComponent(out comp));
 
                 if (comp != null)
-                {
                     if (candidates.Contains(comp))
-                    {
-                        callback(comp);
-                        yield break;
-                    }
-                }
+                        break;
             }
 
-            yield return null;
-        } 
+            await Task.Yield();
+        }
+
+        TargetAcquired?.Invoke(comp);
+        return comp;
     }
 }

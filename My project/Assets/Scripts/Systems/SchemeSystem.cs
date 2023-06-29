@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -21,12 +23,16 @@ public class SchemeSystem : MonoBehaviour
     public static event UnityAction OnActivationComplete;
     #endregion
 
+    #region Modifiers
+    public List<IModifyThreat> Modifiers { get; private set; } = new();
+    #endregion
+
     #region Fields
     public SchemeAction Action { get; private set; }
     public Threat Target { get; private set; }
     #endregion
 
-    public IEnumerator InitiateScheme(SchemeAction action)
+    public async Task InitiateScheme(SchemeAction action)
     {
         Action = action;
         Target = null;
@@ -34,16 +40,27 @@ public class SchemeSystem : MonoBehaviour
         if (Action.Owner is Villain || Action.Keywords.Contains(Keywords.Villainous))
         {
             BoostSystem.instance.DealBoostCards();
-            yield return StartCoroutine(BoostSystem.instance.FlipCard(boost => { Action.Value += boost; }));
+            Action.Value += await BoostSystem.instance.FlipCard();
         }
 
         Target = FindObjectOfType<MainSchemeCard>().GetComponent<Threat>();
-        Debug.Log(Action.Owner.name + " is placing " + Action.Value + " threat on the main scheme");
+
+        for (int i = Modifiers.Count - 1; i >= 0; i--)
+        {
+            if (Modifiers[i] == null)
+            {
+                Modifiers.RemoveAt(i);
+                continue;
+            }
+
+            action = await Modifiers[i].ModifyScheme(action);
+            if (action.Value < 0) action.Value = 0;
+        }
+
+        Debug.Log((Action.Owner as MonoBehaviour).gameObject.name + " is placing " + Action.Value + " threat on the main scheme");
         Target.GainThreat(Action.Value);
 
         OnActivationComplete?.Invoke();
         OnSchemeComplete?.Invoke(Action);
-
-        yield return null;
     }
 }

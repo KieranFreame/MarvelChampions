@@ -1,37 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Principal;
+using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Gang Up", menuName = "MarvelChampions/Card Effects/Standard I/Gang Up")]
 public class GangUp : EncounterCardEffect
 {
-    public override void OnEnterPlay(Villain owner, Card card)
+    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
-        _card = card;
+        Card = card;
         _owner = owner;
-        Player player = FindObjectOfType<Player>();
 
         if (player.Identity.ActiveIdentity is Hero)
         {
-            _card.StartCoroutine(HandleAttacks());
+            await HandleAttacks();
         }
         else
         {
             owner.Surge(player);
-        } 
+        }
     }
 
-    private IEnumerator HandleAttacks()
+    private async Task HandleAttacks()
     {
-        yield return _card.StartCoroutine(_owner.CharStats.InitiateAttack());
+        await _owner.CharStats.InitiateAttack();
 
-        List<MinionCard> minions = new();
-        minions.AddRange(VillainTurnController.instance.MinionsInPlay);
-
-        foreach (MinionCard m in minions)
+        foreach (MinionCard m in VillainTurnController.instance.MinionsInPlay)
         {
-            yield return _card.StartCoroutine(m.CharStats.InitiateAttack());
+            await m.CharStats.InitiateAttack();
         }
     }
 }

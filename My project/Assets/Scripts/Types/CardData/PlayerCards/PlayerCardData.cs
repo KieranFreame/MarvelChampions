@@ -10,4 +10,5 @@ public class PlayerCardData : CardData
     public bool isUnique;
     public Aspect cardAspect;
     public List<Resource> cardResources;
+    public PlayerCardEffect effect;
 }

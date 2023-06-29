@@ -25,7 +25,7 @@ public class Retaliate
     /// <summary>
     /// Use for Allies & Minions
     /// </summary>
-    public Retaliate(ICharacter owner, int damage) //Allies & Minions
+    public Retaliate(ICharacter owner, int damage)
     {
         _owner = owner;
         _damage = damage;
@@ -35,13 +35,13 @@ public class Retaliate
         AttackSystem.OnAttackComplete += Effect;
     }
 
-    private void Effect(Action action)
+    private async void Effect(Action action)
     {
         if (AttackSystem.instance.Target != _owner.CharStats.Health)
             return;
 
         if (action.Owner != null)
-            _owner.StartCoroutine(DamageSystem.instance.ApplyDamage(new(action.Owner, _damage)));
+            await DamageSystem.instance.ApplyDamage(new(action.Owner, _damage));
     }
 
     private void WhenDefeated()

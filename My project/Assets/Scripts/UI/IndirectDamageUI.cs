@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
@@ -13,7 +14,7 @@ public class IndirectDamageUI : MonoBehaviour
 
     private void OnEnable()
     {
-        damageText ??= transform.Find("DamageText").GetComponent<TMP_Text>();
+        damageText ??= transform.Find("DamageText").GetComponentInChildren<TMP_Text>();
     }
 
     private void Update()
@@ -21,17 +22,16 @@ public class IndirectDamageUI : MonoBehaviour
         damageText.text = totalDamage.ToString();
     }
 
-    public IEnumerator SetIndirectDamage(ICharacter h, System.Action<int> callback)
+    public async Task<int> SetIndirectDamage(ICharacter h)
     {
+        totalDamage = 0;
+        finished = false;
         target = h;
 
         while (!finished)
-            yield return null;
+            await Task.Yield();
 
-        callback(totalDamage);
-
-        totalDamage = 0;
-        finished = false;
+        return totalDamage;
     }
 
     public void IncreaseDamage()

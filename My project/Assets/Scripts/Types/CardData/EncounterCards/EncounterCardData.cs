@@ -7,5 +7,7 @@ public class EncounterCardData : CardData
 {
     [Header("Encounter Card")]
     public int boostIcons;
+    [TextArea (3,5)]
     public string boostDescription;
+    public EncounterCardEffect effect;
 }

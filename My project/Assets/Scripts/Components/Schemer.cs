@@ -19,6 +19,7 @@ public class Schemer : IConfusable, IStat
     {
         Owner = owner;
         CurrentScheme = BaseScheme = owner.BaseScheme;
+        owner.StageAdvanced += AdvanceStage;
     }
 
     public Schemer(MinionCard owner, MinionCardData data)
@@ -38,6 +39,8 @@ public class Schemer : IConfusable, IStat
         var scheme = new SchemeAction(_scheme, Owner);
         return scheme;
     }
+
+    private void AdvanceStage(int amount) => CurrentScheme += Owner.BaseScheme - BaseScheme;
 
     public bool Confused
     {

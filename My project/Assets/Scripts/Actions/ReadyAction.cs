@@ -6,14 +6,15 @@ public class ReadyAction : Action
 {
     List<IExhaust> targets;
 
-    public ReadyAction(List<IExhaust> _targets, GameObject owner)
+    public ReadyAction(List<IExhaust> _targets, ICharacter owner)
     {
         Owner = owner;
         targets = _targets;
     }
 
-    public void Execute()
+    public async void Execute()
     {
-        Owner.StartCoroutine(TargetSystem.instance.SelectTarget(targets, target => { target.Ready(); }));
+        IExhaust target = await TargetSystem.instance.SelectTarget(targets);
+        target.Ready();
     }
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using System.Threading.Tasks;
 
 public class BoostSystem : MonoBehaviour
 {
@@ -16,26 +17,20 @@ public class BoostSystem : MonoBehaviour
     }
 
     public int BoostCardCount { get; set; } = 1;
-    private Villain _villain;
     private readonly List<CardData> _boostCards = new();
 
-    public static event UnityAction<int> OnBoostCardsResolved;
-
-    private void Start()
-    {
-        _villain = FindObjectOfType<Villain>();
-    }
+    //public static event UnityAction<int> OnBoostCardsResolved;
 
     public void DealBoostCards()
     {
         for (int i = 0; i < BoostCardCount; i++)
-            _boostCards.Add(_villain.EncounterDeck.DealCard());
+            _boostCards.Add(ScenarioManager.inst.EncounterDeck.DealCard());
         
 
         BoostCardCount = 1;
     }
 
-    public IEnumerator FlipCard(System.Action<int> callback)
+    public async Task<int> FlipCard()
     {
         int value = 0; 
 
@@ -45,14 +40,13 @@ public class BoostSystem : MonoBehaviour
             inst.Flip();
             Debug.Log($"{inst.CardName} is boosting Rhino's Activation by +{inst.BoostIcons}");
             value += inst.BoostIcons;
-            yield return new WaitForSeconds(2);
-            _villain.EncounterDeck.Discard(inst.GetComponent<Card>());
+            await Task.Delay(2000);
+            ScenarioManager.inst.EncounterDeck.Discard(inst);
         }
 
-        OnBoostCardsResolved?.Invoke(value);
+        //OnBoostCardsResolved?.Invoke(value);
         _boostCards.Clear();
-
-        callback(value);
+        return value;
     }
 
     public bool IsBoost(CardData card)

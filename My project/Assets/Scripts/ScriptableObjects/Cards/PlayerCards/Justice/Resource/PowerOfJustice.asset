@@ -18,7 +18,9 @@ MonoBehaviour:
     card
   cardType: 2
   cardTraits: []
+  cardArt: {fileID: 0}
   cardCost: 0
   isUnique: 0
   cardAspect: 1
   cardResources: 04000000
+  effect: {fileID: 11400000, guid: 4edd360de679b33499a5a9a6d5ae4985, type: 2}

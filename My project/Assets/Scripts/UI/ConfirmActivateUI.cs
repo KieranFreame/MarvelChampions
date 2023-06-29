@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -30,17 +31,30 @@ public class ConfirmActivateUI : MonoBehaviour
     private bool choiceMade = false;
     private bool activate;
 
-    public static IEnumerator MakeChoice(Card card, System.Action<bool> callback)
+    public static async Task<bool> MakeChoice(ICard card)
     {
         inst._activateEffectText.text = "Activate " + card.CardName + "?";
         inst._effectDescText.text = card.CardDesc;
         inst.choiceMade = false;
         inst._confirmChoicePanel.SetActive(true);
 
-        while (!inst.choiceMade) { yield return null; }
+        while (!inst.choiceMade) { await Task.Yield(); }
 
         inst._confirmChoicePanel.SetActive(false);
-        callback(inst.activate);
+        return inst.activate;
+    }
+    
+    public static async Task<bool> MakeChoice(ICard card, string choice)
+    {
+        inst._activateEffectText.text = card.CardName;
+        inst._effectDescText.text = choice;
+        inst.choiceMade = false;
+        inst._confirmChoicePanel.SetActive(true);
+
+        while (!inst.choiceMade) { await Task.Yield(); }
+
+        inst._confirmChoicePanel.SetActive(false);
+        return inst.activate;
     }
 
     public void YesActivate()

@@ -12,11 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88ea0e913420b64499ffc02f6cd7188f, type: 3}
   m_Name: MariaHill
   m_EditorClassIdentifier: 
-  _cardName: Maria Hill
-  _cardDesc: When this card enters play, each player draws 1 card
-  _cardType: 0
+  cardID: LEADERSHIP-A-001
+  cardName: Maria Hill
+  cardDesc: When this card enters play, each player draws 1 card.
+  cardType: 0
+  cardTraits:
+  - S.H.I.E.L.D.
+  cardArt: {fileID: 0}
   cardCost: 2
+  isUnique: 1
   cardAspect: 2
+  cardResources: 01000000
+  effect: {fileID: 11400000, guid: b46954eb5455b1c45aca2a64d18c83b6, type: 2}
   alterEgo: Maria Hill
   BaseATK: 1
   ATKConsq: 1

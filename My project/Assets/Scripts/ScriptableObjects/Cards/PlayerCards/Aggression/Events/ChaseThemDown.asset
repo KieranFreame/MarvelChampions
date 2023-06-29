@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
+  m_Name: ChaseThemDown
+  m_EditorClassIdentifier: 
+  cardID: AGGRESSION-E-001
+  cardName: Chase Them Down
+  cardDesc: After your hero attacks and defeats an enemy, remove 2 threat from a
+    scheme.
+  cardType: 1
+  cardTraits:
+  - Thwart
+  cardArt: {fileID: 0}
+  cardCost: 0
+  isUnique: 0
+  cardAspect: 0
+  cardResources: 01000000
+  effect: {fileID: 11400000, guid: ab06e12bb6d1f784893b26e4f589261e, type: 2}

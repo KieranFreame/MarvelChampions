@@ -9,6 +9,7 @@ public class HeroData : ScriptableObject
     public string heroName;
     public List<string> heroTraits;
     public List<Keywords> keywords;
+    public Sprite heroArt;
 
     [Header("Stats")]
     public int baseATK;

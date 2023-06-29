@@ -18,7 +18,9 @@ MonoBehaviour:
     for this card, remove 4 threat instead
   cardType: 1
   cardTraits: []
+  cardArt: {fileID: 0}
   cardCost: 2
   isUnique: 0
   cardAspect: 1
   cardResources: 03000000
+  effect: {fileID: 11400000, guid: e027488e5a18af04bb62979b48734bf3, type: 2}

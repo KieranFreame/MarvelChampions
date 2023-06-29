@@ -3,59 +3,53 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using System.Threading.Tasks;
 
 public class ChooseEffectUI : MonoBehaviour
 {
+    private static ChooseEffectUI inst;
+
+    private void Awake()
+    {
+        inst ??= this;
+        if (inst != this) Destroy(this);
+    }
+
     [SerializeField] private GameObject chooseEffectPanel;
     [SerializeField] private Text effectDescText;
     [SerializeField] private Text effectToActivateText;
     [SerializeField] private List<Button> buttonList;
 
+    private bool effectSelected = false;
     private int selectedEffect;
     private List<string> effectDescriptions;
 
-    public static event UnityAction<int> EffectSelected;
-
-    private void OnEnable()
+    public static async Task<int> ChooseEffect(List<string> effectDescs)
     {
-        UIManager.SelectEffect += ChooseEffect;
-    }
+        inst.effectDescriptions = effectDescs;
+        inst.effectSelected = false;
 
-    private void ChooseEffect(List<string> effectDescs)
-    {
-        effectDescriptions = effectDescs;
-
-        foreach (Button b in buttonList)
+        foreach (Button b in inst.buttonList)
             b.gameObject.SetActive(false);
 
-        for (int i = 0; i < effectDescriptions.Count; i++)
-            buttonList[i].gameObject.SetActive(true);
+        for (int i = 0; i < inst.effectDescriptions.Count; i++)
+            inst.buttonList[i].gameObject.SetActive(true);
 
-        effectDescText.text = effectDescriptions[0];
-        chooseEffectPanel.SetActive(true);
+        inst.effectDescText.text = inst.effectDescriptions[0];
+        inst.chooseEffectPanel.SetActive(true);
+
+        while (!inst.effectSelected)
+            await Task.Yield();
+
+        inst.chooseEffectPanel.SetActive(false);
+        return inst.selectedEffect;
     }
 
-    public void Effect1()
+    public void ViewEffect(int index)
     {
-        selectedEffect = 1;
-        effectDescText.text = effectDescriptions[0];
+        selectedEffect = index;
+        effectDescText.text = effectDescriptions[index-1];
     }
 
-    public void Effect2()
-    {
-        selectedEffect = 2;
-        effectDescText.text = effectDescriptions[1];
-    }
-
-    public void Effect3()
-    {
-        selectedEffect = 3;
-        effectDescText.text = effectDescriptions[2];
-    }
-
-    public void SelectEffect()
-    {
-        EffectSelected?.Invoke(selectedEffect);
-        chooseEffectPanel.SetActive(false);
-    }
+    public void SelectEffect() => effectSelected = true;
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class IndirectDamageHandler : MonoBehaviour
@@ -18,7 +19,7 @@ public class IndirectDamageHandler : MonoBehaviour
 
     private int _damageToApply = 0;
     private List<ICharacter> _candidates = new();
-    private List<DamageAction> _actions = new();
+    private readonly List<DamageAction> _actions = new();
 
     private IndirectDamageUI UI;
 
@@ -28,33 +29,26 @@ public class IndirectDamageHandler : MonoBehaviour
         inst._damageToApply = damage;
         inst._actions.Clear();
 
-        inst.StartCoroutine(inst.IndirectDamage());
+        inst.IndirectDamage();
     }
 
-    private IEnumerator IndirectDamage()
+    private async void IndirectDamage()
     {
-        ICharacter h = null;
+        ICharacter h;
 
         while (_damageToApply > 0)
         {
-            yield return StartCoroutine(TargetSystem.instance.SelectTarget(_candidates, character =>
-            {
-                h = character;
-                UI.gameObject.SetActive(true);
-            }));
+            h = await TargetSystem.instance.SelectTarget(_candidates);
+            UI.gameObject.SetActive(true);
 
-            yield return StartCoroutine(UI.SetIndirectDamage(h, damageApplied =>
-            {
-                _actions.Add(new(h, damageApplied));
-                _damageToApply -= damageApplied;
-            }));
-
-            yield return null;
+            int damageApplied = await UI.SetIndirectDamage(h);
+            _actions.Add(new(h, damageApplied));
+            _damageToApply -= damageApplied;
         }
 
         foreach (DamageAction d in _actions)
         {
-            yield return StartCoroutine(DamageSystem.instance.ApplyDamage(d));
+           await DamageSystem.instance.ApplyDamage(d);
         }
     }
 }

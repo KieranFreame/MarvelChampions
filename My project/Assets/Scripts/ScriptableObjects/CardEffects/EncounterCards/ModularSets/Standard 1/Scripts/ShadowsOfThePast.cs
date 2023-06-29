@@ -1,19 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Shadows of the Past", menuName = "MarvelChampions/Card Effects/Standard I/Shadows of the Past")]
-public class ShadowsOfThePast : CardEffect
+public class ShadowsOfThePast : EncounterCardEffect
 {
     Identity identity;
     Villain villain;
 
     bool shouldSurge = false;
 
-    public override void OnEnterPlay(Villain owner, Card card)
+    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
-        identity = FindObjectOfType<Player>().Identity;
+        if (shouldSurge)
+        {
+            villain.Surge(player);
+            return;
+        }
+
+        identity = player.Identity;
         villain = owner;
         string databaseId = string.Concat(identity.Hero.Name.Where(c => !char.IsWhiteSpace(c))) + "Nemesis";
 
@@ -22,27 +29,36 @@ public class ShadowsOfThePast : CardEffect
 
         foreach (string id in Database.GetCardSetByName(databaseId).cardIDs)
         {
-            if (villain.EncounterDeck.Contains(Database.GetCardDataById(id)))
-            {
-                if (id.Contains("-M-"))
-                    shouldSurge = true;
+            CardData data = Database.GetCardDataById(id);
 
+            if (data is MinionCardData)
+            {
+                if (ScenarioManager.inst.EncounterDeck.Contains(data) && data.cardTraits.Contains("Nemesis"))
+                {
+                    villain.Surge(player);
+                    continue;
+                }
+
+                GameObject c = RevealCardSystem.instance.CreateEncounterCard(Database.GetCardDataById(id) as EncounterCardData, false);
+                await RevealEncounterCardSystem.instance.InitiateRevealCard(c.GetComponent<EncounterCard>());
                 continue;
             }
 
-            if (id.Contains("-M-") || id.Contains("-SS-")) //minion or sidescheme
+            if (data is SchemeCardData)
             {
+                if (ScenarioManager.inst.EncounterDeck.Contains(data))
+                {
+                    continue;
+                }
+
                 GameObject c = RevealCardSystem.instance.CreateEncounterCard(Database.GetCardDataById(id) as EncounterCardData, false);
-                RevealEncounterCardSystem.instance.InitiateRevealCard(c.GetComponent<EncounterCard>());
+                await RevealEncounterCardSystem.instance.InitiateRevealCard(c.GetComponent<EncounterCard>());
+                continue;
             }
-            else
-            {
-                villain.EncounterDeck.AddToDeck(Database.GetCardDataById(id));
-            }
-                
+
+            ScenarioManager.inst.EncounterDeck.AddToDeck(Database.GetCardDataById(id)); 
         }
 
-        if (shouldSurge)
-            villain.Surge(FindObjectOfType<Player>());
+        shouldSurge = true;
     }
 }

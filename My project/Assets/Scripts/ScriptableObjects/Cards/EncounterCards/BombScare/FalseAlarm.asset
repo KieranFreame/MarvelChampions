@@ -17,5 +17,7 @@ MonoBehaviour:
   cardDesc: 'When Revealed: You are confused. If you are already confused, Surge'
   cardType: 7
   cardTraits: []
+  cardArt: {fileID: 0}
   boostIcons: 1
   boostDescription: 
+  effect: {fileID: 11400000, guid: ae518f4da890dae44bdda2cec6fc4321, type: 2}

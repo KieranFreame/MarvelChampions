@@ -12,10 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88ea0e913420b64499ffc02f6cd7188f, type: 3}
   m_Name: Hawkeye
   m_EditorClassIdentifier: 
-  _cardName: Hawkeye
-  _cardDesc: When this card enters play, gain 4 arrow counters. When a minion enters
-    play, you may remove 1 arrow counter; deal 2 damage to that minion.
-  _cardType: 0
+  cardID: LEADERSHIP-A-002
+  cardName: Hawkeye
+  cardDesc: Enters play with 4 counters. After a minion enters play, you can remove
+    1 counter; deal 2 damage to that minion.
+  cardType: 0
+  cardTraits:
+  - Avenger
+  cardArt: {fileID: 0}
   cardCost: 3
+  isUnique: 1
   cardAspect: 2
+  cardResources: 03000000
+  effect: {fileID: 11400000, guid: 0b5a6723eadd90f4987f20229ef4d9bb, type: 2}
   alterEgo: Clint Barton
+  BaseATK: 1
+  ATKConsq: 1
+  BaseTHW: 1
+  THWConsq: 1
+  BaseHP: 3

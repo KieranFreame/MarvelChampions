@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AllyCard : PlayerCard, IAttached, ICharacter, IExhaust
+public class AllyCard : PlayerCard, ICharacter, IExhaust
 {
     public List<IAttachment> Attachments { get; private set; } = new List<IAttachment>();
     public CharacterStats CharStats { get; set; }
 
-    public int thwartConsq { get; set; }
-    public int attackConsq { get; set; }
+    public int ThwartConsq { get; set; }
+    public int AttackConsq { get; set; }
 
     protected override void OnEnable()
     {
@@ -20,23 +20,21 @@ public class AllyCard : PlayerCard, IAttached, ICharacter, IExhaust
         base.OnDisable();
         CharStats.Health.Defeated -= WhenDefeated;
     }
-    protected virtual void WhenDefeated()
+
+    protected void WhenDefeated()
     {
         Effect.OnExitPlay();
-        Owner.GetComponent<Player>().CardsInPlay.Allies.Remove(this);
-        Owner.GetComponent<Player>().Deck.Discard(this);
+        Owner.CardsInPlay.Allies.Remove(this);
+        Owner.Deck.Discard(this);
     }
 
-    public void Attack() => StartCoroutine(CharStats.InitiateAttack());
-    public void Thwart() => StartCoroutine(CharStats.InitiateThwart());
-
-    public override void LoadCardData(CardData data, GameObject owner)
+    public override void LoadCardData(PlayerCardData data, Player owner)
     {
         CharStats = new(this, data);
         CharStats.Health.Defeated += WhenDefeated;
 
-        thwartConsq = (data as AllyCardData).THWConsq;
-        attackConsq = (data as AllyCardData).ATKConsq;
+        ThwartConsq = (data as AllyCardData).THWConsq;
+        AttackConsq = (data as AllyCardData).ATKConsq;
 
         base.LoadCardData(data, owner);
     }

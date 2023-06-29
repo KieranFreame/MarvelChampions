@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IAttachment
 {
-    IAttached Attached { get; set; }
+
 }

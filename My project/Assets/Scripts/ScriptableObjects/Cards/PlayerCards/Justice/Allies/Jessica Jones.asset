@@ -18,10 +18,12 @@ MonoBehaviour:
   cardType: 0
   cardTraits:
   - Defender
+  cardArt: {fileID: 0}
   cardCost: 3
   isUnique: 1
   cardAspect: 1
   cardResources: 03000000
+  effect: {fileID: 11400000, guid: 796e1b48efdf55e46851b3ad95e761d9, type: 2}
   alterEgo: Jessica Jones
   BaseATK: 2
   ATKConsq: 1

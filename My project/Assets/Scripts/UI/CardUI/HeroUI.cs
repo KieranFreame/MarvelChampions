@@ -18,6 +18,7 @@ public class HeroUI : MonoBehaviour
     Thwarter _thwarter;
     Defender _defender;
     Health _health;
+    Sprite _art;
     #endregion
 
     #region Colours
@@ -31,12 +32,38 @@ public class HeroUI : MonoBehaviour
 
     private void OnEnable()
     {
-        Player p = FindObjectOfType<Player>();
+        heroPortrait.sprite = _art;
 
-        _attacker ??= p.CharStats.Attacker;
-        _thwarter ??= p.CharStats.Thwarter; 
-        _defender ??= p.CharStats.Defender;
-        _health ??= p.CharStats.Health;
+        _attacker.AttackChanged += AttackChanged;
+        _health.HealthChanged += HealthChanged;
+        _thwarter.ThwartChanged += ThwartChanged;
+        _defender.DefenceChanged += DefenceChanged;
+
+        _attacker.OnToggleStun += ToggleStun;
+        _thwarter.OnToggleConfuse += ToggleConfuse;
+        _health.OnToggleTough += ToggleTough;
+    }
+
+    private void OnDisable()
+    {
+        _attacker.AttackChanged -= AttackChanged;
+        _health.HealthChanged -= HealthChanged;
+        _thwarter.ThwartChanged -= ThwartChanged;
+        _defender.DefenceChanged -= DefenceChanged;
+
+        _attacker.OnToggleStun -= ToggleStun;
+        _thwarter.OnToggleConfuse -= ToggleConfuse;
+        _health.OnToggleTough -= ToggleTough;
+    }
+
+    public void LoadUI(Player owner)
+    {
+        _attacker = owner.CharStats.Attacker;
+        _thwarter = owner.CharStats.Thwarter;
+        _defender = owner.CharStats.Defender;
+        _health = owner.CharStats.Health;
+
+        _art = owner.Identity.Hero.Art;
 
         _attacker.AttackChanged += AttackChanged;
         _health.HealthChanged += HealthChanged;
@@ -51,18 +78,6 @@ public class HeroUI : MonoBehaviour
         ThwartChanged();
         DefenceChanged();
         HealthChanged();
-    }
-
-    private void OnDisable()
-    {
-        _attacker.AttackChanged -= AttackChanged;
-        _health.HealthChanged -= HealthChanged;
-        _thwarter.ThwartChanged -= ThwartChanged;
-        _defender.DefenceChanged -= DefenceChanged;
-
-        _attacker.OnToggleStun -= ToggleStun;
-        _thwarter.OnToggleConfuse -= ToggleConfuse;
-        _health.OnToggleTough -= ToggleTough;
     }
 
     private void AttackChanged() { heroATK.text = _attacker.CurrentAttack.ToString(); }

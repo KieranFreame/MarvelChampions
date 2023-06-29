@@ -28,7 +28,7 @@ public class IdentityActions : MonoBehaviour
 
     private void OnEnable()
     {
-        if (UIManager.InStateMachine) return;
+        if (UIManager.MakingSelection) return;
 
         atk.gameObject.SetActive(player.Identity.ActiveIdentity is Hero && !player.Identity.Exhausted);
         thw.gameObject.SetActive(player.Identity.ActiveIdentity is Hero && !player.Identity.Exhausted);
@@ -37,14 +37,14 @@ public class IdentityActions : MonoBehaviour
         flip.gameObject.SetActive(!player.Identity.HasFlipped);
     }
 
-    public void Attack()
+    public async void Attack()
     {
-        player.Attack();
+        await player.CharStats.InitiateAttack();
         gameObject.SetActive(false);
     }
-    public void Thwart()
+    public async void Thwart()
     {
-        player.Thwart();
+        await player.CharStats.InitiateThwart();
         gameObject.SetActive(false);
     }
     public void Recover()

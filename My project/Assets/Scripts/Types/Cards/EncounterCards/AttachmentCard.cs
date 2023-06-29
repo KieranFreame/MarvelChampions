@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class AttachmentCard : EncounterCard, IAttachment
 {
-    private IAttached _attached;
-    public IAttached Attached { get => _attached; set => _attached = value; }
+    private ICharacter _attached;
+    public ICharacter Attached { get => _attached; set => _attached = value; }
 
     private int _atkModifier = 0;
     private int _thwSchModifier = 0;
 
-    public override void LoadCardData(CardData data, GameObject owner)
+    public override void LoadCardData(EncounterCardData data, Villain owner)
     {
         _atkModifier = (data as AttachmentCardData).ATKModifier;
         _thwSchModifier = (data as AttachmentCardData).THWSCHModifier;

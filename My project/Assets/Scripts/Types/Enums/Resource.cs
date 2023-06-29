@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum Resource
 {
-    None = 0,
+    Any = 0,
     Scientific = 1,
     Physical = 2,
     Energy = 3,

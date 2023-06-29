@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CharacterStats
 {
@@ -13,10 +15,14 @@ public class CharacterStats
     public Defender Defender { get; private set; }
     public Recovery Recovery { get; private set; }
 
+    public event UnityAction AttackInitiated;
+    public event UnityAction ThwartInitiated;
+    public event UnityAction SchemeInitiated;
+
     public CharacterStats(Player owner, HeroData hData, AlterEgoData aData)
     {
         Owner = owner;
-        Attacker = new Attacker(owner.Identity, hData);
+        Attacker = new Attacker(owner, hData);
         Thwarter = new Thwarter(owner.Identity, hData);
         Defender = new Defender(owner.Identity, hData);
         Health = new Health(owner.Identity, aData);
@@ -31,7 +37,7 @@ public class CharacterStats
         Health = new Health(owner);
     }
 
-    public CharacterStats(Card owner, CardData data)
+    public CharacterStats(ICard owner, CardData data)
     {
         Owner = owner;
         Attacker = new Attacker(owner, data);
@@ -43,38 +49,41 @@ public class CharacterStats
             Thwarter = new Thwarter(owner as AllyCard, data as AllyCardData);
     }
 
-    public IEnumerator InitiateAttack()
+    public async Task InitiateAttack(AttackAction _attack = null)
     {
-        AttackAction attack = Attacker.Attack();
+        AttackAction attack = Attacker.Attack(_attack);
 
         if (attack == null)
-            yield break;
+            return;
 
-        yield return AttackSystem.instance.InitiateAttack(attack);
+        AttackInitiated?.Invoke();
+        await AttackSystem.instance.InitiateAttack(attack);
 
         if (Owner is AllyCard)
-            Health.TakeDamage((Owner as AllyCard).attackConsq);
+            Health.TakeDamage((Owner as AllyCard).AttackConsq);
     }
-    public IEnumerator InitiateScheme()
+    public async Task InitiateScheme()
     {
         SchemeAction scheme = Schemer.Scheme();
 
+        SchemeInitiated?.Invoke();
         if (scheme == null)
-            yield break;
+            return;
 
-        yield return Owner.StartCoroutine(SchemeSystem.instance.InitiateScheme(scheme));
+        await SchemeSystem.instance.InitiateScheme(scheme);
     }
-    public IEnumerator InitiateThwart()
+    public async Task InitiateThwart(ThwartAction _thwart = null)
     {
-        ThwartAction thwart = Thwarter.Thwart();
+        ThwartAction thwart = Thwarter.Thwart(_thwart);
 
+        ThwartInitiated?.Invoke();
         if (thwart == null)
-            yield break;
+            return;
 
-        yield return ThwartSystem.instance.InitiateThwart(thwart);
+        await ThwartSystem.instance.InitiateThwart(thwart);
 
         if (Owner is AllyCard)
-            Health.TakeDamage((Owner as AllyCard).thwartConsq);
+            Health.TakeDamage((Owner as AllyCard).ThwartConsq);
     }
     public void InitiateRecover()
     {

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
+  m_Name: Helicarrier
+  m_EditorClassIdentifier: 
+  cardID: BASIC-S-002
+  cardName: Helicarrier
+  cardDesc: Exhaust this card; the next card you play costs 1 less.
+  cardType: 3
+  cardTraits:
+  - Location
+  - S.H.I.E.L.D.
+  cardArt: {fileID: 0}
+  cardCost: 3
+  isUnique: 0
+  cardAspect: 4
+  cardResources: 02000000
+  effect: {fileID: 11400000, guid: 89caaf21a8a0b3b4db8697e636fa4dff, type: 2}

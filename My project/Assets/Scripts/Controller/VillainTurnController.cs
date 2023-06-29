@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -18,9 +19,6 @@ public class VillainTurnController : MonoBehaviour
 
     private void OnEnable()
     {
-        ActiveVillain ??= FindObjectOfType<Villain>();
-        mainScheme ??= FindObjectOfType<MainSchemeCard>();
-
         TurnManager.OnStartVillainPhase += StartVillainPhase;
     }
 
@@ -35,26 +33,32 @@ public class VillainTurnController : MonoBehaviour
     public List<MinionCard> MinionsInPlay { get; private set; } = new();
     private Villain ActiveVillain;
     MainSchemeCard mainScheme;
-    private bool goToNextPlayer = false;
     #endregion
 
-    private void StartVillainPhase() => StartCoroutine(VillainPhase());
+    private void StartVillainPhase()
+    {
+        ActiveVillain ??= FindObjectOfType<Villain>();
+        mainScheme ??= FindObjectOfType<MainSchemeCard>();
+        VillainPhase();
+    }
 
-    private IEnumerator VillainPhase()
+    private async void VillainPhase()
     {
         Debug.Log("Step 1: Accelerating");
-        yield return StartCoroutine(mainScheme.Accelerate());
+        await mainScheme.Accelerate();
 
         Debug.Log("Step 2: The Villain Activates");
         foreach (Player p in TurnManager.Players)
         {
             if (p.Identity.ActiveIdentity is Hero)
             {
-                Debug.Log("Villain attacks!");
-                yield return StartCoroutine(ActiveVillain.CharStats.InitiateAttack());
+                await ActiveVillain.CharStats.InitiateAttack();
             }
             else
-                yield return StartCoroutine(ActiveVillain.CharStats.InitiateScheme());
+            {
+                await ActiveVillain.CharStats.InitiateScheme();
+            }
+                
         }
 
         Debug.Log("Step 3: The Minions Activate");
@@ -62,7 +66,7 @@ public class VillainTurnController : MonoBehaviour
         {
             foreach (Player p in TurnManager.Players)
             {
-                yield return StartCoroutine(ActivateMinions(p));
+               await ActivateMinions(p);
             }
         }
 
@@ -70,7 +74,7 @@ public class VillainTurnController : MonoBehaviour
         DealEncounterCards();
 
         Debug.Log("Step 5: Encounter Cards are revealed");
-        yield return StartCoroutine(RevealEncounterCards());
+        await RevealEncounterCards();
 
         Debug.Log("Step 6: Change the first player");
         //ChangeFirstPlayer
@@ -79,17 +83,15 @@ public class VillainTurnController : MonoBehaviour
         TurnManager.instance.EndVillainPhase();
     }
 
-    private IEnumerator ActivateMinions(Player p)
+    private async Task ActivateMinions(Player p)
     {
         foreach (MinionCard m in MinionsInPlay)
         {
             if (p.Identity.ActiveIdentity is Hero)
-                yield return StartCoroutine(m.CharStats.InitiateAttack());
+                await m.CharStats.InitiateAttack();
             else
-                yield return StartCoroutine(m.CharStats.InitiateScheme());
+                await m.CharStats.InitiateScheme();
         }
-
-        yield return null;
     }
 
     private void DealEncounterCards()
@@ -100,7 +102,7 @@ public class VillainTurnController : MonoBehaviour
         {
             foreach (Player p in TurnManager.Players)
             {
-                p.EncounterCards.AddCard(ActiveVillain.EncounterDeck.DealCard());
+                p.EncounterCards.AddCard(ScenarioManager.inst.EncounterDeck.DealCard());
                 cardsToDeal--;
 
                 if (cardsToDeal == 0)
@@ -109,20 +111,11 @@ public class VillainTurnController : MonoBehaviour
         }
     }
 
-    private IEnumerator RevealEncounterCards()
+    private async Task RevealEncounterCards()
     {
         foreach (Player p in TurnManager.Players)
         {
-            p.EncounterCards.AllCardsRevealed += Finished;
-            StartCoroutine(p.EncounterCards.RevealEncounterCards());
-
-            while (!goToNextPlayer)
-                yield return null;
-
-            goToNextPlayer = false;
-            p.EncounterCards.AllCardsRevealed -= Finished;
+            await p.EncounterCards.RevealEncounterCards();
         }
     }
-
-    public void Finished() => goToNextPlayer = true;
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using static UnityEngine.UI.GridLayoutGroup;
@@ -16,30 +17,11 @@ public class PlayCardSystem : MonoBehaviour
             instance = this;
         else
             Destroy(this);
-
-        //State Machine
-        states.Add(new IdleState()); //0
-        states.Add(new PayCostState()); //1
-        states.Add(new ResolveEffectState()); //2
-        states.Add(new MoveCardState()); //3
-        states.Add(new CheckAllyLimitState()); //4
-        states.Add(new CardPlayedState()); //5
-
-        ChangeState(0);
     }
 
-    private PlayCardAction _action;
+    public PlayCardAction Action { get; private set; }
+    public PlayerCard CardToPlay { get => Action.CardToPlay; }
     private Player _player;
-
-    #region State Machine
-    private readonly StateMachine stateMachine = new();
-    private readonly List<IState> states = new();
-
-    public void ChangeState(int index)
-    {
-        stateMachine.ChangeState(states[index]);
-    }
-    #endregion
 
     #region Events
     public event UnityAction<PlayerCard> OnCardPlayed;
@@ -48,181 +30,67 @@ public class PlayCardSystem : MonoBehaviour
     [SerializeField] private Transform alliesTransform;
     [SerializeField] private Transform permanentsTransform;
 
-    public void InitiatePlayCard(PlayCardAction action)
+    public async Task InitiatePlayCard(PlayCardAction action)
     {
-        _action = action;
-        _player = _action.Owner.GetComponent<Player>();
-        ChangeState(1);
+        Action = action;
+        _player = Action.Owner as Player;
+
+        if (CardToPlay.CardCost > 0)
+            await PayCostSystem.instance.PayForCard(CardToPlay);
+
+        _player.Hand.Remove(CardToPlay);
+
+        await ChangeZones();
+
+        await CardToPlay.Effect.OnEnterPlay(_player, CardToPlay);
+
+        OnCardPlayed?.Invoke(CardToPlay);
+    }
+
+    private async Task ChangeZones()
+    {
+        if (CardToPlay.Data.cardType is CardType.Ally)
+        {
+            CardToPlay.transform.SetParent(alliesTransform);
+            _player.CardsInPlay.Allies.Add(CardToPlay as AllyCard);
+
+            if (_player.CardsInPlay.ReachedAllyLimit())
+            {
+                Debug.Log("Exceeded Ally Limit, Discard 1 Ally from Play");
+                await DiscardAlly();
+            }
+
+            CardToPlay.PrevZone = CardToPlay.CurrZone;
+            CardToPlay.CurrZone = Zone.Ally;
+            CardToPlay.InPlay = true;
+        }
+        else if (CardToPlay.Data.cardType is CardType.Upgrade || CardToPlay.Data.cardType is CardType.Support)
+        {
+            CardToPlay.transform.SetParent(permanentsTransform);
+            _player.CardsInPlay.Permanents.Add(CardToPlay);
+
+            CardToPlay.PrevZone = CardToPlay.CurrZone;
+            CardToPlay.CurrZone = Zone.Support;
+            CardToPlay.InPlay = true;
+        }
+        else
+            _player.Deck.Discard(CardToPlay);
+        
+    }
+    public async Task DiscardAlly()
+    {
+        List<AllyCard> allies = _player.GetComponent<Player>().CardsInPlay.Allies.ToList();
+
+        if (CardToPlay is AllyCard)
+            allies.RemoveAll(x => x == CardToPlay as AllyCard);
+
+        AllyCard target = await TargetSystem.instance.SelectTarget(allies);
+
+        _player.Deck.Discard(target);
+        _player.CardsInPlay.Allies.Remove(target);
     }
 
     #region Properties
-    public PlayCardAction Action
-    {
-        get { return _action; }
-    }
-    public PlayerCard CardToPlay
-    {
-        get { return _action.CardToPlay; }
-    }
-    #endregion
-
-    #region States
-    abstract class BasePlayCardSystemState : BaseState
-    {
-        protected PlayCardSystem owner = instance;
-    }
-
-    class PayCostState : BasePlayCardSystemState //1
-    {
-        public override void Enter()
-        {
-            owner.StartCoroutine(PayCost());
-        }
-
-        IEnumerator PayCost()
-        {
-            if (owner.CardToPlay.CardCost > 0)
-            {
-                yield return owner.StartCoroutine(PayCostSystem.instance.GetTargets(owner.CardToPlay, owner.Action.Candidates));
-                List<Card> discards = PayCostSystem.instance.Discards;
-
-                foreach (PlayerCard card in discards.Cast<PlayerCard>())
-                {
-                    owner._player.Hand.Remove(card);
-                    owner._player.Deck.Discard(card);
-                }
-            }
-
-            if (owner.CardToPlay.CardType == CardType.Event)
-                owner.ChangeState(2);
-            else
-                owner.ChangeState(3);
-        }
-    }
     
-    class ResolveEffectState : BasePlayCardSystemState //2
-    {
-        bool _activeState = false;
-
-        public override void Enter()
-        {
-            _activeState = true;
-            owner.CardToPlay.EnterPlay();
-            ChangeState();
-        }
-
-        private void ChangeState()
-        {
-            if (!_activeState)
-                return;
-
-            if (owner.CardToPlay.CardType == CardType.Ally)
-                owner.ChangeState(4);
-            else if (owner.CardToPlay.CardType is CardType.Event)
-            {
-                owner._player.Hand.Remove(owner.CardToPlay);
-                owner._player.Deck.Discard(owner.CardToPlay);
-            }
-            
-            owner.ChangeState(5);
-        }
-
-        public override void Exit()
-        {
-            _activeState = false;
-        }
-    }
-
-    class MoveCardState : BasePlayCardSystemState //3
-    {
-        bool _activeState = false;
-
-        public override void Enter()
-        {
-            _activeState = true;
-
-            ChangeZones(owner.CardToPlay);
-
-            owner.CardToPlay.InPlay = true;
-
-            owner._player.Hand.Remove(owner.CardToPlay);
-
-            owner.CardToPlay.EnterPlay();
-
-            ChangeState();
-        }
-
-        private void ChangeState()
-        {
-            if (!_activeState)
-                return;
-
-            owner.ChangeState((owner.CardToPlay is AllyCard ? 4 : 5));
-        }
-
-        private void ChangeZones(Card cardToPlay)
-        {
-            if (cardToPlay.CardType is CardType.Ally)
-            {
-                cardToPlay.transform.SetParent(owner.alliesTransform);
-                owner._player.GetComponent<Player>().CardsInPlay.Allies.Add(owner.CardToPlay as AllyCard);
-
-                cardToPlay.PrevZone = owner.CardToPlay.CurrZone;
-                cardToPlay.CurrZone = Zone.Ally;
-            }
-            else
-            {
-                cardToPlay.transform.SetParent(owner.permanentsTransform);
-                owner._player.GetComponent<Player>().CardsInPlay.Permanents.Add(owner.CardToPlay);
-
-                cardToPlay.PrevZone = owner.CardToPlay.CurrZone;
-                cardToPlay.CurrZone = Zone.Support;
-            }
-        }
-
-        public override void Exit()
-        {
-            _activeState = false;
-        }
-    }
-
-    class CheckAllyLimitState : BasePlayCardSystemState //4
-    {
-        public override void Enter()
-        {
-            if (owner._player.GetComponent<Player>().CardsInPlay.ReachedAllyLimit())
-            {
-                Debug.Log("Exceeded Ally Limit, Discard 1 Ally from Play");
-                owner.StartCoroutine(DiscardAlly());
-            }
-            else
-                owner.ChangeState(5);
-        }
-
-        IEnumerator DiscardAlly()
-        {   
-            List<AllyCard> allies = owner._player.GetComponent<Player>().CardsInPlay.Allies.ToList();
-            allies.RemoveAll(x => x == owner.CardToPlay as AllyCard);
-
-            yield return owner.StartCoroutine(TargetSystem.instance.SelectTarget(allies, ally =>
-            {
-                AllyCard target = ally;
-                owner._player.Deck.Discard(target);
-                owner._player.GetComponent<Player>().CardsInPlay.Allies.Remove(target);
-            }));
-
-            owner.ChangeState(5);
-        }
-    }
-
-    class CardPlayedState : BasePlayCardSystemState //5
-    {
-        public override void Enter()
-        {
-            owner.OnCardPlayed?.Invoke(owner.CardToPlay);
-            owner.ChangeState(0);
-        }
-    }
-
     #endregion
 }

@@ -2,33 +2,33 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading.Tasks;
 
 [CreateAssetMenu(fileName = "Crowd Control", menuName = "MarvelChampions/Card Effects/Rhino/Crowd Control")]
-public class CrowdControl : CardEffect
+public class CrowdControl : EncounterCardEffect
 {
-    Threat mainScheme;
-
     /// <summary>
     /// Crisis Icon: While this scheme is in play, you cannot remove threat from the main scheme.
     /// </summary>
 
-    public override void OnEnterPlay(Villain owner, Card card)
+    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
-        _card = card;
+        Card = card;
 
-        mainScheme = FindObjectOfType<MainSchemeCard>().GetComponent<Threat>();
-        _card.GetComponent<Threat>().WhenDefeated += WhenDefeated;
+        card.GetComponent<Threat>().WhenDefeated += WhenDefeated;
         TargetSystem.CheckPatrolAndCrisis += Crisis;
+
+        await Task.Yield();
     }
 
     private void Crisis(List<Threat> candidates)
     {
-        candidates.RemoveAll(x => x == mainScheme);
+        candidates.RemoveAll(x => x.GetComponent<MainSchemeCard>() != null);
     }
 
     public override void WhenDefeated()
     {
-        _card.GetComponent<Threat>().WhenDefeated -= WhenDefeated;
+        Card.GetComponent<Threat>().WhenDefeated -= WhenDefeated;
         TargetSystem.CheckPatrolAndCrisis -= Crisis;
     }
 }

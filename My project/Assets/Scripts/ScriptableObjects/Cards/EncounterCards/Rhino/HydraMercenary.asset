@@ -18,8 +18,10 @@ MonoBehaviour:
   cardType: 5
   cardTraits:
   - Hydra
+  cardArt: {fileID: 0}
   boostIcons: 1
   boostDescription: 
+  effect: {fileID: 11400000, guid: 912cdd7d22e51ce4e8688f1d2f20bd72, type: 2}
   baseAttack: 1
   baseScheme: 0
   baseHealth: 3
