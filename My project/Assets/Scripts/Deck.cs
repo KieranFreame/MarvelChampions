@@ -105,7 +105,7 @@ public class Deck
             deck.RemoveAt(0);
         }
     }
-    private void Shuffle()
+    public void Shuffle()
     {
         //Fisher-Yates
         System.Random r = new();

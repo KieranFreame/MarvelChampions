@@ -7,13 +7,15 @@ using UnityEngine.Events;
 public class CharacterStats
 {
     //For accessing coroutines
-    private readonly dynamic Owner;
+    private readonly ICharacter Owner;
     public Attacker Attacker { get; private set; }
     public Schemer Schemer { get; private set; }
     public Thwarter Thwarter { get; private set; }
     public Health Health { get; private set; }
     public Defender Defender { get; private set; }
     public Recovery Recovery { get; private set; }
+
+    public List<ICancelAttack> AttackCancel { get; private set; } = new();
 
     public event UnityAction AttackInitiated;
     public event UnityAction ThwartInitiated;
@@ -39,7 +41,7 @@ public class CharacterStats
 
     public CharacterStats(ICard owner, CardData data)
     {
-        Owner = owner;
+        Owner = owner as ICharacter;
         Attacker = new Attacker(owner, data);
         Health = new Health(owner, data);
 
@@ -53,10 +55,18 @@ public class CharacterStats
     {
         AttackAction attack = Attacker.Attack(_attack);
 
-        if (attack == null)
-            return;
+        if (attack is null) return;
+
+        foreach (var card in AttackCancel)
+        {
+            attack = card.CancelAttack();
+
+            if (attack == null)
+                return;
+        }
 
         AttackInitiated?.Invoke();
+
         await AttackSystem.instance.InitiateAttack(attack);
 
         if (Owner is AllyCard)

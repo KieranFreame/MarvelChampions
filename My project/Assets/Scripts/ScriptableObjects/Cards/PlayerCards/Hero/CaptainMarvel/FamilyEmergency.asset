@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardID: DANVERS-O-001
   cardName: Family Emergency
-  cardDesc: "You may flip to Alter-Ego. Choose One: \n- Exhaust Carol Danvers and
-    remove this card from the game.\n- You are Stunned. Surge. Discard this card"
+  cardDesc: "Choose One: \n- Exhaust Carol Danvers and remove this card from the
+    game.\n- You are Stunned. Surge. Discard this card"
   cardType: 10
   cardTraits: []
   cardArt: {fileID: 0}

@@ -7,6 +7,7 @@ using UnityEngine.Events;
 public class Villain : MonoBehaviour, ICharacter
 {
     public VillainData data;
+    public List<IAttachment> Attachments { get; set; } = new();
     public int Stage { get; private set; }
     public string VillainName { get; private set; }
     public Sprite Art { get; private set; }

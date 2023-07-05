@@ -44,9 +44,9 @@ public class ConfirmActivateUI : MonoBehaviour
         return inst.activate;
     }
     
-    public static async Task<bool> MakeChoice(ICard card, string choice)
+    public static async Task<bool> MakeChoice(string choice, ICard card = null)
     {
-        inst._activateEffectText.text = card.CardName;
+        inst._activateEffectText.text = card?.CardName;
         inst._effectDescText.text = choice;
         inst.choiceMade = false;
         inst._confirmChoicePanel.SetActive(true);

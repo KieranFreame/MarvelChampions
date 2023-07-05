@@ -36,7 +36,7 @@ public class CardViewerUI : MonoBehaviour
             else
             {
                 card = Instantiate(PrefabFactory.instance.CreatePlayerCard(c as PlayerCardData), cardViewerPanel);
-                card.GetComponent<PlayerCardUI>().LoadData(c as PlayerCardData);
+                card.GetComponent<PlayerCard>().LoadCardData(c as PlayerCardData, TurnManager.instance.CurrPlayer);
             }
 
             cardsOnDisplay.Add(card.GetComponent<ICard>());
@@ -51,8 +51,9 @@ public class CardViewerUI : MonoBehaviour
         TargetSystem.TargetAcquired -= DisablePanel;
 
         card.transform.SetParent(aside, false);
-        CardData data = _cardsOnDisplay.First(x=> x.cardName == card.GetComponent<PlayerCardUI>().cardName.text);
-        (card as PlayerCard).LoadCardData(data as PlayerCardData, TurnManager.instance.CurrPlayer);
+
+        foreach (Transform child in cardViewerPanel.transform)
+            Destroy(child.gameObject);
 
         cardViewerPanel.gameObject.SetActive(false);
     }

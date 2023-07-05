@@ -25,11 +25,17 @@ public class PlayerCardActions : MonoBehaviour
     {
         if (UIManager.MakingSelection) return;
 
-        _play.SetActive(card.CurrZone == Zone.Hand && card.Effect.CanBePlayed());
+        if (!card.InPlay && player.ResourcesAvailable(card) >= card.CardCost)
+            _play.SetActive(card.Effect.CanBePlayed());
+        else
+            _play.SetActive(false);
 
-        if (_activate != null && card.Data.cardType != CardType.Event && card.InPlay)
+        if (_activate != null)
         {
-            _activate.gameObject.SetActive(card.Effect.CanActivate());
+            if (card.Data.cardType != CardType.Event && card.InPlay)
+                _activate.gameObject.SetActive(card.Effect.CanActivate());
+            else
+                _activate.gameObject.SetActive(false);
         }
     }
 

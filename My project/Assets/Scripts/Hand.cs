@@ -15,7 +15,7 @@ public class Hand
     public void AddToHand(PlayerCard card)
     {
         cards.Add(card);
-        card.Data.effect?.OnDrawn(card.Owner, card);
+        card.Effect?.OnDrawn(card.Owner, card);
     }
 
     public bool Contains(PlayerCard card)

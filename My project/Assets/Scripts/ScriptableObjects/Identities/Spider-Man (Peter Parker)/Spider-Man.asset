@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efbb811dfd528454fb02f32b1d6a7056, type: 3}
+  m_Name: Spider-Man
+  m_EditorClassIdentifier: 
+  heroName: Spider-Man
+  heroTraits:
+  - Avenger
+  keywords: 
+  heroArt: {fileID: 21300000, guid: bd270e1ecb744784f90fc889c6fe3c42, type: 3}
+  baseATK: 2
+  baseTHW: 1
+  baseDEF: 3
+  baseHandSize: 5
+  effect: {fileID: 11400000, guid: 1679fb813ea99bf429980e625a717d7a, type: 2}

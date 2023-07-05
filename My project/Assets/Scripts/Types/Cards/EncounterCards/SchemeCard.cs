@@ -24,9 +24,10 @@ public class SchemeCard : EncounterCard
         base.LoadCardData(data, owner);
     }
 
-    protected override void WhenDefeated()
+    protected override async void WhenDefeated()
     {
         ScenarioManager.sideSchemes.Remove(this);
+        await Effect.WhenDefeated();
         base.WhenDefeated();
     }
 }

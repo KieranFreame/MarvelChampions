@@ -16,10 +16,13 @@ public class ScenarioManager : MonoBehaviour
             Destroy(this);
 
         scenario.difficulty = Difficulty.Standard;
+        SOTPResolved.Clear();
 ;   }
 
     public string pathName;
     public List<CardData> RemovedFromGame { get; private set; } = new();
+
+    public List<Player> SOTPResolved { get; set; } = new();
 
     public Scenario scenario = new();
 

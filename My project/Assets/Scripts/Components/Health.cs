@@ -28,14 +28,15 @@ public class Health : IStat
             }
         }
     #endregion
-
     public dynamic Owner { get; private set; }
-
     #region Events
     public event UnityAction Defeated;
     public event UnityAction<bool> OnToggleTough;
     public event UnityAction HealthChanged;
+    public event UnityAction OnTakeDamage;
     #endregion
+
+    public List<IModifyDamage> Modifiers { get; private set; } = new();
 
     public Health(Identity owner, AlterEgoData data)
     {
@@ -60,7 +61,7 @@ public class Health : IStat
             CurrentHealth = BaseHP = (data as AllyCardData).BaseHP;
     }
 
-    public void TakeDamage(int damage)
+    public async void TakeDamage(int damage)
     {
         if (damage > 0)
         {
@@ -70,13 +71,27 @@ public class Health : IStat
                 return;
             }
 
+            for (int i = Modifiers.Count - 1; i >= 0; i--)
+            {
+                damage = await Modifiers[i].OnTakeDamage(damage);
+
+                if (damage < 0)
+                {
+                    damage = 0;
+                    break;
+                } 
+            }
+
             CurrentHealth -= damage;
 
             if (CurrentHealth <= 0)
             {
                 CurrentHealth = 0;
                 Defeated?.Invoke();
+                return;
             }
+
+            OnTakeDamage?.Invoke();
         }
     }
     public void RecoverHealth(int healing)

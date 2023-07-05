@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AllyCard : PlayerCard, ICharacter, IExhaust
 {
-    public List<IAttachment> Attachments { get; private set; } = new List<IAttachment>();
+    public List<IAttachment> Attachments { get; set; } = new List<IAttachment>();
     public CharacterStats CharStats { get; set; }
 
     public int ThwartConsq { get; set; }

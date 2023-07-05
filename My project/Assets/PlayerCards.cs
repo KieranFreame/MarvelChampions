@@ -7,7 +7,7 @@ public class PlayerCards
 {
     public ObservableCollection<AllyCard> Allies { get; private set; } = new();
     public ObservableCollection<PlayerCard> Permanents { get; private set; } = new();
-    public ObservableCollection<CardData> Attachments { get; private set; } = new();
+    public ObservableCollection<IAttachment> Attachments { get; private set; } = new();
     public int AllyLimit { get; set; } = 3;
     public bool ReachedAllyLimit()
     {

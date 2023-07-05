@@ -40,7 +40,8 @@ public class EncounterCard : MonoBehaviour, ICard
         Data = data;
         GetComponent<CardUI>().CardArt = Data.cardArt;
 
-        Effect = Data.effect;
+        if (Data.effect != null)
+            Effect = Instantiate(Data.effect);
 
         SetupComplete?.Invoke();
     }

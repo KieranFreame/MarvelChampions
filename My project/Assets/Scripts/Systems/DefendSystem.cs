@@ -20,7 +20,7 @@ public class DefendSystem : MonoBehaviour
     }
 
     #region Events
-    //public event UnityAction OnSelectingDefender;
+    public event UnityAction<Player> OnSelectingDefender;
     public event UnityAction OnDefenderSelected;
     #endregion
 
@@ -34,6 +34,8 @@ public class DefendSystem : MonoBehaviour
     public async Task<ICharacter> GetDefender(Player targetOwner)
     {
         candidates.Clear();
+
+        OnSelectingDefender?.Invoke(targetOwner);
 
         Debug.Log("Select Defender");
 

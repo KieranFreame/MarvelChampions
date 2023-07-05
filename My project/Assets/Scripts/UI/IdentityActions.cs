@@ -4,16 +4,18 @@ using UnityEngine.UI;
 
 public class IdentityActions : MonoBehaviour
 {
+    #region UI Elements
     private Button atk;
     private Button thw;
     private Button rec;
     private Button eff;
     private Button flip;
     private Player player;
+    #endregion
 
-    //Events
-    public static event UnityAction Activating;
-    public static event UnityAction Flipping;
+    #region Events
+    public event UnityAction OnBasicAttack;
+    #endregion
 
     private void Awake()
     {
@@ -39,6 +41,7 @@ public class IdentityActions : MonoBehaviour
 
     public async void Attack()
     {
+        OnBasicAttack?.Invoke();
         await player.CharStats.InitiateAttack();
         gameObject.SetActive(false);
     }
@@ -54,13 +57,13 @@ public class IdentityActions : MonoBehaviour
     }
     public void Flip()
     {
-        Flipping?.Invoke();
+        player.Identity.Flip();
         gameObject.SetActive(false);
     }
 
     public void Activate()
     {
-        Activating?.Invoke();
+        player.Identity.Activate();
         gameObject.SetActive(false);
     }
 }

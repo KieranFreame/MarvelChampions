@@ -13,10 +13,9 @@ public class Player : MonoBehaviour, ICharacter, IExhaust
     public Identity Identity { get; private set; }
     public CharacterStats CharStats { get; set; }
     public Deck Deck;
-
-    //[SerializeField] private List<string> cardIDs = new();
-
     public Hand Hand = new();
+    private List<IAttachment> attachments = new();
+    public List<IAttachment> Attachments { get => CardsInPlay.Attachments.ToList(); set => attachments = new(); }
     public PlayerCards CardsInPlay { get; private set; } = new();
     public PlayerEncounterCards EncounterCards { get; private set; } = new();
     public bool Exhausted { get => Identity.Exhausted; set => Identity.Exhausted = value; }
@@ -29,8 +28,8 @@ public class Player : MonoBehaviour, ICharacter, IExhaust
 
         Deck = new(path);
 
-        GetComponentInChildren<AlterEgoUI>().LoadUI(this);
-        GetComponentInChildren<HeroUI>(true).LoadUI(this);
+        transform.parent.Find("AlterEgoInfo").GetComponent<AlterEgoUI>().LoadUI(this);
+        transform.parent.Find("HeroInfo").GetComponent<HeroUI>().LoadUI(this);
     }
     private void OnEnable()
     {
@@ -54,11 +53,11 @@ public class Player : MonoBehaviour, ICharacter, IExhaust
 
         Deck.deck.RemoveAll(x => x == null);
 
-        DrawCardSystem.instance.DrawCards(new DrawCardsAction(Identity.ActiveIdentity.BaseHandSize));
+        DrawCardSystem.instance.DrawCards(new DrawCardsAction(Identity.ActiveIdentity.HandSize, this));
     }
     private void DrawToHandSize()
     {
-        while (Hand.cards.Count < Identity.ActiveIdentity.BaseHandSize)
+        while (Hand.cards.Count < Identity.ActiveIdentity.HandSize)
         {
             DrawCardSystem.instance.DrawCards(new DrawCardsAction(1));
         }
@@ -66,22 +65,27 @@ public class Player : MonoBehaviour, ICharacter, IExhaust
     public void Recover() => CharStats.InitiateRecover();
     public void Ready()=> Identity.Ready();
     public void Exhaust()=>Identity.Exhaust();
-
-    public int ResourcesAvailable()
+    public int ResourcesAvailable(PlayerCard cardToPlay = null)
     {
         int resourceCount = 0;
 
-        foreach (PlayerCard c in Hand.cards)
-            resourceCount += c.Resources.Count;
+        List<PlayerCard> hand = Hand.cards.Where(x => x != cardToPlay).ToList();
 
-        /*
-         *  foreach (PlayerCard c in CardsInPlay.Permanents)
-         *      if (c.Effect is IResourceGenerator)
-         *          resourceCount++; //don't think any resource generator produces more than 1
-         * 
-         */
+        foreach (PlayerCard card in hand)
+        {
+            if (card is ResourceCard)
+                resourceCount += (card as ResourceCard).ResourceCount(cardToPlay);
+            else
+                resourceCount++;
+        }
+
+        foreach (PlayerCard c in CardsInPlay.Permanents)
+            if (c.Effect is IResourceGenerator)
+                resourceCount++;
+
+        if (Identity.ActiveEffect is IResourceGenerator)
+            resourceCount++;
 
         return resourceCount;
     }
-
 }

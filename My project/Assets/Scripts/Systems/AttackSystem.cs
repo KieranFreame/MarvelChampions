@@ -1,10 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
-using static UnityEngine.UI.GridLayoutGroup;
 
 public class AttackSystem : MonoBehaviour //PlayerAttackSystem
 {
@@ -65,7 +63,7 @@ public class AttackSystem : MonoBehaviour //PlayerAttackSystem
 
         CheckKeywords();
 
-        await DamageSystem.instance.ApplyDamage(new DamageAction(Action, Target));
+        await DamageSystem.instance.ApplyDamage(new DamageAction(Action, Action.Target));
 
         if (Excess > 0)
         {
@@ -84,11 +82,11 @@ public class AttackSystem : MonoBehaviour //PlayerAttackSystem
 
         if (enemies.Count > 1)
         {
-            Target = await TargetSystem.instance.SelectTarget(enemies, true);
+            Action.Target = await TargetSystem.instance.SelectTarget(enemies, true);
             return;
         }
 
-        Target = enemies[0];
+        Action.Target = enemies[0];
         TargetSystem.SingleTarget(enemies[0]);
     }
 
@@ -99,12 +97,13 @@ public class AttackSystem : MonoBehaviour //PlayerAttackSystem
             BoostSystem.instance.DealBoostCards();
         }
 
-        Target = await DefendSystem.instance.GetDefender(TurnManager.instance.CurrPlayer);
+        Action.Target = await DefendSystem.instance.GetDefender(TurnManager.instance.CurrPlayer);
 
-        Target ??= TurnManager.instance.CurrPlayer;
+        if (Action.Target == null)
+            Action.Target = TurnManager.instance.CurrPlayer;
 
         if (Action.Owner is Villain || Action.Keywords.Contains(Keywords.Villainous))
-           Action.Value += await BoostSystem.instance.FlipCard();
+           Action.Value += await BoostSystem.instance.FlipCard(Action);
     }
     #endregion
 }

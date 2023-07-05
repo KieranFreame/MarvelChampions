@@ -18,7 +18,7 @@ public class AlterEgoData : ScriptableObject
     [Header("Ability")]
     public IdentityEffect effect;
 
-    [Header("Identity Cards")]
-    public CardSet heroCards;
-    public CardSet nemesisCards;
+    //[Header("Identity Cards")]
+    //public CardSet heroCards;
+    //public CardSet nemesisCards;
 }

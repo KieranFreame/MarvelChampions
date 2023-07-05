@@ -10,6 +10,7 @@ public class Hero
     public List<string> Traits { get; protected set; } = new List<string>();
     public List<Keywords> Keywords { get; protected set; } = new List<Keywords>();
     public int BaseHandSize { get; protected set; }
+    public int HandSize { get; set; }
     public IdentityEffect Effect { get; protected set; }
 
     public Hero (HeroData data, Player owner)
@@ -18,7 +19,7 @@ public class Hero
         Name = data.heroName;
         Art = data.heroArt;
         Traits = data.heroTraits;
-        BaseHandSize = data.baseHandSize;
+        HandSize = BaseHandSize = data.baseHandSize;
         Keywords = data.keywords;
 
         Effect = data.effect;

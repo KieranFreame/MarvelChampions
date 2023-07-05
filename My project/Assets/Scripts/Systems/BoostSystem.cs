@@ -25,22 +25,23 @@ public class BoostSystem : MonoBehaviour
     {
         for (int i = 0; i < BoostCardCount; i++)
             _boostCards.Add(ScenarioManager.inst.EncounterDeck.DealCard());
-        
 
         BoostCardCount = 1;
     }
 
-    public async Task<int> FlipCard()
+    public async Task<int> FlipCard(Action action)
     {
-        int value = 0; 
+        int value = 0;
 
-        foreach (CardData boost in _boostCards)
+        while (_boostCards.Count > 0)
         {
-            EncounterCard inst = RevealCardSystem.instance.CreateEncounterCard(boost as EncounterCardData, true).GetComponent<EncounterCard>();
+            EncounterCard inst = RevealCardSystem.instance.CreateEncounterCard(_boostCards[0] as EncounterCardData, true).GetComponent<EncounterCard>();
             inst.Flip();
             Debug.Log($"{inst.CardName} is boosting Rhino's Activation by +{inst.BoostIcons}");
             value += inst.BoostIcons;
+            await inst.Effect.Boost(action);
             await Task.Delay(2000);
+            _boostCards.RemoveAt(0);
             ScenarioManager.inst.EncounterDeck.Discard(inst);
         }
 

@@ -16,7 +16,6 @@ public class PlayerCard : MonoBehaviour, ICard, IExhaust
 
     public bool Exhausted { get => _exhausted; set => _exhausted = value; }
 
-    public event UnityAction OnActivate;
     public event UnityAction SetupComplete;
     public event UnityAction<int> CardCostChanged;
 
@@ -31,7 +30,6 @@ public class PlayerCard : MonoBehaviour, ICard, IExhaust
 
         TurnManager.OnEndPlayerPhase -= Ready;
     }
-
     public virtual void LoadCardData(PlayerCardData data, Player owner)
     {
         Owner = owner;
@@ -42,14 +40,17 @@ public class PlayerCard : MonoBehaviour, ICard, IExhaust
         
         GetComponent<CardUI>().CardArt = Data.cardArt;
 
-        Effect = Data.effect;
+        if (Data.effect != null)
+        {
+            Effect = Instantiate(Data.effect);
+        }
 
         SetupComplete?.Invoke();
     }
 
-    public void Activate()
+    public async Task OnEnterPlay()
     {
-        OnActivate?.Invoke();
+        await Effect.OnEnterPlay();
     }
     public void Ready()
     {
@@ -71,6 +72,7 @@ public class PlayerCard : MonoBehaviour, ICard, IExhaust
         }
     }
 
+    public PlayerCardEffect Effect { get; private set; }
     public virtual List<Resource> Resources { get => Data.cardResources; }
     public int CardCost 
     { 
@@ -85,7 +87,6 @@ public class PlayerCard : MonoBehaviour, ICard, IExhaust
             CardCostChanged?.Invoke(cardCost);
         }
     }
-    public PlayerCardEffect Effect { get; set; }
     public Aspect CardAspect { get => Data.cardAspect; }
     public Zone CurrZone { get; set; }
     public Zone PrevZone { get; set; }

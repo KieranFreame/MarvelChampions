@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29ef56e8914e65340af83778e47883f8, type: 3}
+  m_Name: GeneticallyEnhanced
+  m_EditorClassIdentifier: 
+  cardID: WALTERS-A-002
+  cardName: Genetically Enhanced
+  cardDesc: Attach the minion with highest starting HP. It gains +3 HP. Surge if
+    there are no minions in play.
+  cardType: 6
+  cardTraits: []
+  cardArt: {fileID: 0}
+  boostIcons: 1
+  boostDescription: 
+  effect: {fileID: 11400000, guid: 1e48d89d939cb1845978070aef512a18, type: 2}
+  ATKModifier: 0
+  THWSCHModifier: 0

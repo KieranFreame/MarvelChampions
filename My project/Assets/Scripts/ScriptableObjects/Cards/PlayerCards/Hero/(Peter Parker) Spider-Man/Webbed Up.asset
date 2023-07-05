@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
+  m_Name: Webbed Up
+  m_EditorClassIdentifier: 
+  cardID: PARKER-U-003
+  cardName: Webbed Up
+  cardDesc: 'Hero Only. Attach to an enemy. Max 1 per enemy.
+
+    When attached enemy
+    would attack, discard Webbed Up instead. Then, stun that enemy.'
+  cardType: 4
+  cardTraits:
+  - Condition
+  cardArt: {fileID: 0}
+  cardCost: 4
+  isUnique: 0
+  cardAspect: 5
+  cardResources: 02000000
+  effect: {fileID: 11400000, guid: ca3aee41ff3f82c4484a7e641e03d98a, type: 2}

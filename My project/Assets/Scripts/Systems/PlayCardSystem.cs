@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
-using static UnityEngine.UI.GridLayoutGroup;
 
 public class PlayCardSystem : MonoBehaviour
 {
@@ -41,8 +40,7 @@ public class PlayCardSystem : MonoBehaviour
         _player.Hand.Remove(CardToPlay);
 
         await ChangeZones();
-
-        await CardToPlay.Effect.OnEnterPlay(_player, CardToPlay);
+        await CardToPlay.OnEnterPlay();
 
         OnCardPlayed?.Invoke(CardToPlay);
     }
@@ -89,8 +87,4 @@ public class PlayCardSystem : MonoBehaviour
         _player.Deck.Discard(target);
         _player.CardsInPlay.Allies.Remove(target);
     }
-
-    #region Properties
-    
-    #endregion
 }

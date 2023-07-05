@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class FinishButton : MonoBehaviour
 {
+    private CancellationTokenSource cancelTokenSource;
     private static FinishButton inst;
+    private GameObject finishBtn;
 
     private void Awake()
     {
@@ -19,18 +22,26 @@ public class FinishButton : MonoBehaviour
     public delegate void FinishAction();
     public static FinishAction OnFinishAction;
 
-    private GameObject finishBtn;
-
-    public static void ToggleFinishButton(bool toggle, FinishAction func)
+    public static CancellationToken ToggleFinishButton(bool toggle, FinishAction func)
     {
         inst.finishBtn.SetActive(toggle);
 
-        if (toggle) OnFinishAction += func;
-        else OnFinishAction -= func;
+        if (toggle)
+        {
+            OnFinishAction += func;
+            inst.cancelTokenSource = new CancellationTokenSource();
+            return inst.cancelTokenSource.Token;
+        }
+        else 
+        { 
+            OnFinishAction -= func;
+            inst.cancelTokenSource.Dispose();
+            return default;
+        }
     }
 
     public void Finish()
     {
-        OnFinishAction?.Invoke();
+        cancelTokenSource.Cancel();
     }
 }

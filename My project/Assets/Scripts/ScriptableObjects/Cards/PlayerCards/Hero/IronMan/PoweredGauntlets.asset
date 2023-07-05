@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
+  m_Name: PoweredGauntlets
+  m_EditorClassIdentifier: 
+  cardID: STARK-U-004
+  cardName: Powered Gauntlets
+  cardDesc: Exhaust Powered Gauntlet; deal 1 damage to an enemy (2 if Iron Man has
+    the Aerial trait)
+  cardType: 4
+  cardTraits:
+  - Armor
+  - Tech
+  cardArt: {fileID: 0}
+  cardCost: 2
+  isUnique: 0
+  cardAspect: 5
+  cardResources: 03000000
+  effect: {fileID: 11400000, guid: 2e28d9abed0d5c84599d99b82e735168, type: 2}

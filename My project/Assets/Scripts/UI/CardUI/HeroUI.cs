@@ -88,12 +88,12 @@ public class HeroUI : MonoBehaviour
     private void ToggleStun(bool stunned)
     {
         heroATK.text = stunned ? "S" : _attacker.CurrentAttack.ToString();
-        heroATK.GetComponentInParent<Image>().color = stunned ? _stun : _atk;
+        heroATK.GetComponentInParent<Image>(true).color = stunned ? _stun : _atk;
     }
     private void ToggleConfuse(bool confused)
     {
         heroTHW.text = confused ? "C" : _thwarter.CurrentThwart.ToString();
-        heroTHW.GetComponentInParent<Image>().color = confused ? _confuse : _thw;
+        heroTHW.GetComponentInParent<Image>(true).color = confused ? _confuse : _thw;
     }
     private void ToggleTough(bool tough)
     {

@@ -31,7 +31,7 @@ public class VillainTurnController : MonoBehaviour
 
     #region Fields
     public List<MinionCard> MinionsInPlay { get; private set; } = new();
-    private Villain ActiveVillain;
+    public Villain ActiveVillain;
     MainSchemeCard mainScheme;
     #endregion
 

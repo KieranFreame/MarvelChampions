@@ -6,5 +6,5 @@ using UnityEngine.Events;
 
 public interface IModifyDamage
 {
-    Task<DamageAction> OnTakeDamage(DamageAction action, ICharacter target);
+    Task<int> OnTakeDamage(int damage);
 }

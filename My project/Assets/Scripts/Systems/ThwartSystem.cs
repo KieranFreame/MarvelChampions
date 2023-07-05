@@ -29,8 +29,9 @@ public class ThwartSystem : MonoBehaviour
     {
         instance.Action = action;
 
-        List<Threat> targets = new(); 
-        targets.AddRange(FindObjectsOfType<Threat>());
+        List<Threat> targets = new() { FindObjectOfType<MainSchemeCard>().GetComponent<Threat>() };
+        foreach (SchemeCard s in ScenarioManager.sideSchemes)
+            targets.Add(s.GetComponent<Threat>());
 
         if (targets.Count > 1)
             Target = await TargetSystem.instance.SelectTarget(targets);

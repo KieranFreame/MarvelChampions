@@ -11,7 +11,8 @@ public class AlterEgo
     public List<string> Traits { get; protected set; } = new List<string>();
     public int BaseREC { get; set; }
     public int BaseHP { get; set; }
-    public int BaseHandSize { get; set; }
+    public int BaseHandSize { get; protected set; }
+    public int HandSize { get; set; }
     public IdentityEffect Effect { get; private set; }
     public event UnityAction SetupComplete;
 
@@ -19,7 +20,7 @@ public class AlterEgo
     {
         //Identity
         BaseHP = data.baseHP;
-        BaseHandSize = data.baseHandSize;
+        HandSize = BaseHandSize = data.baseHandSize;
         Name = data.alterEgoName;
         Traits = data.alterEgoTags;
         Art = data.alterEgoArt;

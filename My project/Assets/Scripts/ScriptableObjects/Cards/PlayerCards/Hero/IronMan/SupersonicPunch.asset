@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
+  m_Name: SupersonicPunch
+  m_EditorClassIdentifier: 
+  cardID: STARK-E-002
+  cardName: Supersonic Punch
+  cardDesc: Deal 4 damage to an enemy. (8 instead if Iron Man has the Aerial trait)
+  cardType: 1
+  cardTraits:
+  - Attack
+  cardArt: {fileID: 0}
+  cardCost: 2
+  isUnique: 0
+  cardAspect: 5
+  cardResources: 03000000
+  effect: {fileID: 11400000, guid: 1f15a37f81d9e2f43b8f861c7928fc00, type: 2}

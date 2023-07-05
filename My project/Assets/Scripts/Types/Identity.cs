@@ -43,18 +43,14 @@ public class Identity : IExhaust
         ActiveIdentity = AlterEgo;
         ActiveEffect = AlterEgo.Effect;
            
-        animator = p.transform.Find("HeroIdentityProfile").GetComponent<Animator>();
-        heroUI = p.GetComponentInChildren<HeroUI>(true);
-        alterEgoUI = p.GetComponentInChildren<AlterEgoUI>();
+        animator = p.GetComponent<Animator>();
+        heroUI = p.transform.parent.Find("HeroInfo").GetComponent<HeroUI>();
+        alterEgoUI = p.transform.parent.Find("AlterEgoInfo").GetComponent<AlterEgoUI>();
 
-        IdentityActions.Flipping += Flip;
-        IdentityActions.Activating += Activate;
         TurnManager.OnEndPlayerPhase += EndPlayerPhase;
     }
     protected virtual void OnDisable()
     {
-        IdentityActions.Flipping -= Flip;
-        IdentityActions.Activating -= Activate;
         TurnManager.OnEndPlayerPhase -= EndPlayerPhase;
     }
 
@@ -81,7 +77,9 @@ public class Identity : IExhaust
         alterEgoUI.gameObject.SetActive(false);
         heroUI.gameObject.SetActive(true);
 
+        ActiveEffect.OnFlipDown();
         ActiveEffect = Hero.Effect;
+        ActiveEffect.OnFlipUp();
 
         FlippedToHero?.Invoke();
     }
@@ -100,7 +98,9 @@ public class Identity : IExhaust
         alterEgoUI.gameObject.SetActive(true);
         heroUI.gameObject.SetActive(false);
 
+        ActiveEffect.OnFlipDown();
         ActiveEffect = AlterEgo.Effect;
+        ActiveEffect.OnFlipUp();
 
         FlippedToAlterEgo?.Invoke();
     }

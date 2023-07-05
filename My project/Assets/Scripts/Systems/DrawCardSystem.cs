@@ -27,7 +27,7 @@ public class DrawCardSystem : MonoBehaviour
 
     public void DrawCards (DrawCardsAction action)
     {
-        _player = (action.Drawer == null ? TurnManager.instance.CurrPlayer : action.Drawer);
+        _player = action.Drawer == null ? TurnManager.instance.CurrPlayer : action.Drawer;
 
         for (int i = 0; i < action.Value; i++)
         {

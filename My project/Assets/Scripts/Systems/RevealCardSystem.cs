@@ -1,4 +1,3 @@
-using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -35,7 +34,17 @@ public class RevealCardSystem : MonoBehaviour
 
     public GameObject CreateEncounterCard(EncounterCardData card, bool faceDown)
     {
-        EncounterCard inst = Instantiate(PrefabFactory.instance.CreateEncounterCard(card), _parentTransform).GetComponent<EncounterCard>();
+        EncounterCard inst;
+
+        if (card.cardType is CardType.SideScheme)
+        {
+            inst = Instantiate(PrefabFactory.instance.CreateEncounterCard(card), _parentTransform).GetComponentInChildren<EncounterCard>();
+        }
+        else
+        {
+            inst = Instantiate(PrefabFactory.instance.CreateEncounterCard(card), _parentTransform).GetComponent<EncounterCard>();
+        }
+
         inst.gameObject.name = card.cardName;
 
         inst.LoadCardData(card, _villain);

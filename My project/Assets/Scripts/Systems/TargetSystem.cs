@@ -88,4 +88,50 @@ public class TargetSystem : MonoBehaviour
         TargetAcquired?.Invoke(comp);
         return comp;
     }
+
+    public async Task<List<T>> SelectTargets<T>(List<T> candidates, int amount, CancellationToken token = default) where T : Component
+    {
+        List<T> selections = new();
+
+        while (!token.IsCancellationRequested)
+        {
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                pointerEventData = new PointerEventData(eventSystem)
+                {
+                    position = Input.mousePosition
+                };
+
+                List<RaycastResult> results = new();
+
+                raycaster.Raycast(pointerEventData, results);
+
+                foreach (RaycastResult r in results)
+                {
+                    if (r.gameObject.GetComponent<T>() != null)
+                    {
+                        T component = r.gameObject.GetComponent<T>();
+
+                        if (candidates.Contains(component))
+                        {
+                            if (!selections.Contains(component))
+                                selections.Add(component);
+                            else
+                                selections.Remove(component);
+                        }    
+                    }
+                }
+            }
+
+            if (selections.Count == amount)
+                break;
+
+            await Task.Yield();
+        }
+
+        foreach (T selection in selections)
+            TargetAcquired?.Invoke(selection);
+
+        return selections;
+    }
 }

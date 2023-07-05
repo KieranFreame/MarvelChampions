@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: Card Set Database
   m_EditorClassIdentifier: 
   database:
-  - {fileID: 11400000, guid: 47032d1af3410a64690db176ccd18247, type: 2}
+  - {fileID: 11400000, guid: 8499a29a793db0c47abf8d956e45539b, type: 2}
   - {fileID: 11400000, guid: 98751cfeb13fd4c43a91c1111bfc8df2, type: 2}
   - {fileID: 11400000, guid: df89075ac470f424296867a14327f6a8, type: 2}
   - {fileID: 11400000, guid: b2b426909aa3250439e57bcd4d645337, type: 2}
   - {fileID: 11400000, guid: c413798ad735b1545898229000be35a6, type: 2}
+  - {fileID: 11400000, guid: 04a9343531e4585478d5fa5de5106228, type: 2}
+  - {fileID: 11400000, guid: 4c5d81009cce09e4291a0206d8afdbf0, type: 2}

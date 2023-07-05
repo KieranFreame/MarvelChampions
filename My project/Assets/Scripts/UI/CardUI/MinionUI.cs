@@ -34,6 +34,7 @@ public class MinionUI : EncounterCardUI
         }
 
         _attacker.OnToggleStun += ToggleStun;
+        _attacker.AttackChanged += AttackChanged;
         _schemer.OnToggleConfuse += ToggleConfuse;
         _health.OnToggleTough += ToggleTough;
         _health.HealthChanged += HealthChanged;
@@ -41,8 +42,10 @@ public class MinionUI : EncounterCardUI
     protected void OnDisable()
     {
         _attacker.OnToggleStun -= ToggleStun;
+        _attacker.AttackChanged -= AttackChanged;
         _schemer.OnToggleConfuse -= ToggleConfuse;
         _health.OnToggleTough -= ToggleTough;
+        _health.HealthChanged -= HealthChanged;
     }
 
     protected override void LoadData()
@@ -54,7 +57,10 @@ public class MinionUI : EncounterCardUI
         _health = minionCard.CharStats.Health;
 
         _attacker.OnToggleStun += ToggleStun;
+        _attacker.AttackChanged += AttackChanged;
+
         _schemer.OnToggleConfuse += ToggleConfuse;
+
         _health.OnToggleTough += ToggleTough;
         _health.HealthChanged += HealthChanged;
 
@@ -80,6 +86,12 @@ public class MinionUI : EncounterCardUI
     {
         minionHealth.text = tough ? "T" : _health.CurrentHealth.ToString();
         minionHealth.GetComponentInParent<Image>().color = tough ? _tough : _hp;
+    }
+
+    private void AttackChanged()
+    {
+        minionAttack.text = _attacker.Stunned ? "S" : _attacker.CurrentAttack.ToString();
+        minionAttack.GetComponentInParent<Image>().color = _attacker.Stunned ? _stun : _atk;
     }
 
     private void HealthChanged()

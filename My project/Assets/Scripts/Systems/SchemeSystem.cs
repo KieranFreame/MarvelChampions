@@ -40,7 +40,7 @@ public class SchemeSystem : MonoBehaviour
         if (Action.Owner is Villain || Action.Keywords.Contains(Keywords.Villainous))
         {
             BoostSystem.instance.DealBoostCards();
-            Action.Value += await BoostSystem.instance.FlipCard();
+            Action.Value += await BoostSystem.instance.FlipCard(Action);
         }
 
         Target = FindObjectOfType<MainSchemeCard>().GetComponent<Threat>();

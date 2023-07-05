@@ -11,4 +11,12 @@ public class ResourceCard : PlayerCard
 
         return Resources;
     }
+
+    public int ResourceCount(PlayerCard c)
+    {
+        if (Effect != null)
+            return (Effect as ResourceCardEffect).ResourceCount(c);
+
+        return Resources.Count;
+    }
 }
