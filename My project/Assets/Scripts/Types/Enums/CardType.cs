@@ -15,4 +15,5 @@ public enum CardType
     SideScheme,
     MainScheme,
     Obligation,
+    Environment
 }

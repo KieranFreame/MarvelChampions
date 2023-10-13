@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerCardActions : MonoBehaviour
@@ -41,9 +42,9 @@ public class PlayerCardActions : MonoBehaviour
 
     public async void Play()
     {
-        var action = new PlayCardAction(player, player.Hand.cards, card);
+        var action = new PlayCardAction(card);
         gameObject.SetActive(false);
-        await PlayCardSystem.instance.InitiatePlayCard(action);
+        await PlayCardSystem.Instance.InitiatePlayCard(action);
     }
 
     public async void Activate()

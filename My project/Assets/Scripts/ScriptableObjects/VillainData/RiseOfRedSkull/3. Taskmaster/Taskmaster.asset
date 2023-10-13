@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b06dd0bbd4574c4faae592e65e4c378, type: 3}
+  m_Name: Taskmaster
+  m_EditorClassIdentifier: 
+  villainName: Taskmaster
+  villainTraits:
+  - Hydra
+  - Mercenary
+  deckPath: Taskmaster
+  villainArt: {fileID: 0}
+  villainEffect: {fileID: 11400000, guid: 99c635454de43294497e3092885cdb84, type: 2}
+  stages:
+  - baseScheme: 1
+    baseAttack: 2
+    baseHitpoints: 13
+  - baseScheme: 2
+    baseAttack: 2
+    baseHitpoints: 16
+  - baseScheme: 3
+    baseAttack: 3
+    baseHitpoints: 17

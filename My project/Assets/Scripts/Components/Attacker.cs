@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Attacker : IStat
+public class Attacker
 {
     #region Properties
     private int _currAttack;
@@ -12,10 +13,14 @@ public class Attacker : IStat
         set
         {
             _currAttack = value;
+
+            if (_currAttack < BaseATK)
+                _currAttack = BaseATK;
+
             AttackChanged?.Invoke();
         }
     }
-    public int BaseATK { get; private set; }
+    public int BaseATK { get; set; }
 
     private bool stunned = false;
     public bool Stunned
@@ -30,6 +35,10 @@ public class Attacker : IStat
     #endregion
     public ICharacter Owner { get; private set; }
     public List<Keywords> Keywords { get; private set; } = new();
+
+    public delegate Task<AttackAction> CancelAttack(AttackAction action);
+    public List<CancelAttack> AttackCancel { get; private set; } = new();
+
     #region Events
     public event UnityAction<bool> OnToggleStun;
     public event UnityAction AttackChanged;
@@ -53,12 +62,12 @@ public class Attacker : IStat
     public Attacker(Villain owner)
     {
         Owner = owner;
-        owner.StageAdvanced += AdvanceStage;
+        owner.Stages.StageAdvanced += AdvanceStage;
         CurrentAttack = BaseATK = owner.BaseAttack;
     }
     #endregion
 
-    public AttackAction Attack(AttackAction action = null)
+    public async Task<AttackAction> Attack(AttackAction action = null)
     {
         if (Owner is IExhaust && action == null)
         {
@@ -74,8 +83,18 @@ public class Attacker : IStat
             return null;
         }
 
-        return action ?? new AttackAction(CurrentAttack, _keywords:Keywords, owner:Owner);
+        action ??= new AttackAction(CurrentAttack, _keywords: Keywords, owner: Owner);
+
+        for (int i = AttackCancel.Count-1; i >= 0; i--)
+        {
+            action = await AttackCancel[i](action);
+
+            if (action == null)
+                return null;
+        }
+
+        return action;
     }
 
-    private void AdvanceStage(int newStage) => CurrentAttack += (Owner as Villain).BaseAttack - BaseATK;
+    private void AdvanceStage() => CurrentAttack += (Owner as Villain).BaseAttack - BaseATK;
 }

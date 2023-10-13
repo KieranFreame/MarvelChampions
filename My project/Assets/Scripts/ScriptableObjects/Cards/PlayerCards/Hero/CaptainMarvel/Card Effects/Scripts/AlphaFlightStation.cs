@@ -12,7 +12,7 @@ public class AlphaFlightStation : PlayerCardEffect
     public override async Task Activate()
     {
         Card.Exhaust();
-        DrawCardSystem.instance.DrawCards(new(amount: (_owner.Identity.ActiveIdentity is AlterEgo) ? 2 : 1));
+        DrawCardSystem.Instance.DrawCards(new(amount: (_owner.Identity.ActiveIdentity is AlterEgo) ? 2 : 1));
         await Task.Yield();
     }
 }

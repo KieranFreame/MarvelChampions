@@ -7,16 +7,21 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Inspired", menuName = "MarvelChampions/Card Effects/Leadership/Inspired")]
 public class Inspired : PlayerCardEffect
 {
-    List<AllyCard> allies = new();
+    readonly List<AllyCard> allies = new();
     AllyCard ally;
 
     public override bool CanBePlayed()
     {
-        allies.Clear();
-        allies.AddRange(_owner.CardsInPlay.Allies);
-        allies.RemoveAll(x => x.Attachments.FirstOrDefault(x => (x as ICard).CardName == Card.CardName) != default);
+        if (base.CanBePlayed())
+        {
+            allies.Clear();
+            allies.AddRange(_owner.CardsInPlay.Allies);
+            allies.RemoveAll(x => x.Attachments.FirstOrDefault(x => (x as ICard).CardName == Card.CardName) != default);
 
-        return allies.Count > 0;
+            return allies.Count > 0;
+        }
+
+        return false;
     }
 
     public override async Task OnEnterPlay()
@@ -31,10 +36,10 @@ public class Inspired : PlayerCardEffect
 
         ally.CharStats.Attacker.CurrentAttack++;
         ally.CharStats.Thwarter.CurrentThwart++;
-        ally.CharStats.Health.Defeated += OnDefeat;
+        ally.CharStats.Health.Defeated.Add(OnDefeat);
     }
 
-    private void OnDefeat()
+    private Task OnDefeat()
     {
         ally.Attachments.Remove(Card as IAttachment);
 
@@ -43,11 +48,13 @@ public class Inspired : PlayerCardEffect
 
         _owner.CardsInPlay.Permanents.Remove(Card);
         _owner.Deck.Discard(Card);
+
+        return Task.CompletedTask;
     }
 
     public override void OnExitPlay()
     {
-        if (ally is null) return;
+        if (ally == null) return;
 
         ally.Attachments.Remove(Card as IAttachment);
 

@@ -1,38 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Backflip", menuName = "MarvelChampions/Card Effects/Spider-Man (Peter Parker)/Backflip")]
-public class Backflip : PlayerCardEffect, IModifyDamage
+public class Backflip : PlayerCardEffect
 {
-    public override void OnDrawn(Player player, PlayerCard card)
+    public override void OnDrawn()
     {
-        base.OnDrawn(player, card);
-        _owner.CharStats.Health.Modifiers.Add(this);
+        _owner.CharStats.Health.Modifiers.Add(OnTakeDamage);
     }
 
     public override async Task OnEnterPlay()
     {
-        _owner.CharStats.Health.Modifiers.Remove(this);
+        _owner.CharStats.Health.Modifiers.Remove(OnTakeDamage);
         await Task.Yield();
     }
 
-    public async Task<int> OnTakeDamage(int damage)
+    public async Task<DamageAction> OnTakeDamage(DamageAction action)
     {
         bool decision = await ConfirmActivateUI.MakeChoice(Card);
 
         if (decision)
         {
-            await PlayCardSystem.instance.InitiatePlayCard(new(_owner, _owner.Hand.cards, Card));
-            return 0;
+            await PlayCardSystem.Instance.InitiatePlayCard(new(Card));
+            action.Value = 0;
         }
 
-        return damage;
+        return action;
     }
 
     public override void OnDiscard()
     {
-        _owner.CharStats.Health.Modifiers.Remove(this);
+        _owner.CharStats.Health.Modifiers.Remove(OnTakeDamage);
     }
 }

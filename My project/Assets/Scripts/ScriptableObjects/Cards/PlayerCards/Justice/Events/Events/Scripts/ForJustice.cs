@@ -8,13 +8,15 @@ public class ForJustice : PlayerCardEffect
 {
     public override bool CanBePlayed()
     {
-        if (ScenarioManager.sideSchemes.Count > 0 && FindObjectOfType<MainSchemeCard>().GetComponent<Threat>().CurrentThreat > 0)
-            return true;
+        if (base.CanBePlayed())
+        {
+            if (_owner.Identity.ActiveIdentity is AlterEgo)
+                return false;
 
-        if (_owner.Identity.ActiveIdentity is AlterEgo)
-            return false;
+            return ScenarioManager.sideSchemes.Count > 0 || ScenarioManager.inst.MainScheme.Threat.CurrentThreat > 0;
+        }
 
-        return true;
+        return false;
     }
 
     public override async Task OnEnterPlay()

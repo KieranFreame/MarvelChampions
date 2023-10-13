@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd59bffae62c9843892e230b19351f6, type: 3}
+  m_Name: DenseForest
+  m_EditorClassIdentifier: 
+  cardID: ABSORBING-E-001
+  cardName: Dense Forest
+  cardDesc: After Absorbing Man makes an undefended attack, take 1 indirect damage
+    (2 if there are 5> Delay counters)
+  cardType: 11
+  cardTraits:
+  - Wood
+  cardArt: {fileID: 0}
+  boostIcons: 0
+  boostDescription: Put this into play
+  effect: {fileID: 11400000, guid: a238bcde3995ecc4e96759943c39a8b1, type: 2}

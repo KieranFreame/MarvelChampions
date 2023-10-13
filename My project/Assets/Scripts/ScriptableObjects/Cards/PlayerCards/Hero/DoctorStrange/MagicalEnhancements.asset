@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
+  m_Name: MagicalEnhancements
+  m_EditorClassIdentifier: 
+  cardID: STRANGE-U-002
+  cardName: Magical Enhancements
+  cardDesc: Your hero gains +1 to its ATK, THW and DEF. Discard this at the start
+    of the next round.
+  cardType: 4
+  cardTraits:
+  - Condition
+  - Spell
+  cardArt: {fileID: 0}
+  cardCost: 1
+  isUnique: 0
+  cardAspect: 5
+  cardResources: 03000000
+  effect: {fileID: 11400000, guid: abc9c12ebe8cae04dab64fc3268e2e7c, type: 2}

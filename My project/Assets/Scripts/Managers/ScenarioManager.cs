@@ -15,38 +15,72 @@ public class ScenarioManager : MonoBehaviour
         else
             Destroy(this);
 
-        scenario.difficulty = Difficulty.Standard;
         SOTPResolved.Clear();
-;   }
+    }
 
-    public string pathName;
+    //temp
+    public VillainData villain;
     public List<CardData> RemovedFromGame { get; private set; } = new();
 
+    public Difficulty Difficulty;
     public List<Player> SOTPResolved { get; set; } = new();
 
-    public Scenario scenario = new();
-
     public static ObservableCollection<SchemeCard> sideSchemes = new();
+
+    public List<string> EncounterSets = new();
 
     public Deck EncounterDeck;
 
     public List<SchemeCardData> MainSchemeDeck = new();
+    public MainSchemeCard MainScheme { get; private set; }
+    public Villain ActiveVillain { get; set; }
 
-    public void GenerateDeck()
+    private void Start()
     {
-        EncounterDeck = new(pathName);
+        ActiveVillain = GameObject.Find("VillainIdentityProfile").GetComponent<Villain>();
+        ActiveVillain.LoadData(villain);
+        GenerateDeck(villain.deckPath);
+    }
 
-        List<CardData> mainschemeCards = new(EncounterDeck.deck.FindAll(x => x.cardType is CardType.MainScheme));
-        EncounterDeck.deck.RemoveAll(x => x.cardType is CardType.MainScheme);
+    public async void GenerateDeck(string deckPath)
+    {
+        EncounterDeck = new(deckPath + ".txt");
+
+        List<CardData> mainschemeCards = new(EncounterDeck.deck.Where(x => x.cardType is CardType.MainScheme));
+
+        for (int i = EncounterDeck.deck.Count-1; i >= 0; i--)
+        {
+            if (EncounterDeck.deck[i].cardType == CardType.MainScheme)
+                EncounterDeck.deck.RemoveAt(i);
+        }
 
         for (int i = 1; i <= mainschemeCards.Count; i++)
         {
             MainSchemeDeck.Add(mainschemeCards.Find(x => x.cardID.Contains(i.ToString("000"))) as SchemeCardData);
         }
 
-        GameObject mainScheme = Instantiate(PrefabFactory.Instance.CreateEncounterCard(MainSchemeDeck[0]), GameObject.Find("MainScheme").transform, false);
-        mainScheme.name = MainSchemeDeck[0].cardName;
-        mainScheme.GetComponent<MainSchemeCard>().LoadCardData(MainSchemeDeck[0], FindObjectOfType<Villain>());
+        MainScheme = CreateCardFactory.Instance.CreateCard(MainSchemeDeck[0], GameObject.Find("MainScheme").transform) as MainSchemeCard;
+
+        if (MainSchemeDeck[0].effect != null)
+            await MainSchemeDeck[0].effect.WhenRevealed(ActiveVillain, MainScheme, null);
+
+        MainScheme.Threat.WhenCompleted += NextMainScheme;
+
+        foreach (string s in EncounterSets)
+        {
+            EncounterDeck.AddToDeck(TextReader.PopulateDeck(s + ".txt"));
+        }
+
+        switch (Difficulty)
+        {
+            case Difficulty.Standard:
+                EncounterDeck.AddToDeck(TextReader.PopulateDeck("Standard.txt"));
+                break;
+            case Difficulty.Expert:
+                EncounterDeck.AddToDeck(TextReader.PopulateDeck("Standard.txt"));
+                EncounterDeck.AddToDeck(TextReader.PopulateDeck("Expert.txt"));
+                break;
+        }
     }
 
     public void RemoveFromGame(CardData card)
@@ -71,5 +105,39 @@ public class ScenarioManager : MonoBehaviour
         }
 
         RemovedFromGame.Add(card);
+    }
+
+    private async void NextMainScheme()
+    {
+        MainScheme.Threat.WhenCompleted -= NextMainScheme;
+        await MainScheme.Effect.WhenCompleted();
+        MainSchemeDeck.RemoveAt(0);
+
+        if (MainSchemeDeck.Count == 0)
+        {
+            Debug.Log("You Lose");
+            Time.timeScale = 0;
+        }
+        else
+        {
+            MainScheme = CreateCardFactory.Instance.CreateCard(MainSchemeDeck[0], GameObject.Find("MainScheme").transform) as MainSchemeCard;
+
+            if (MainSchemeDeck[0].effect != null)
+                await MainSchemeDeck[0].effect.WhenRevealed(ActiveVillain, MainScheme, null);
+
+            MainScheme.Threat.WhenCompleted += NextMainScheme;
+        }
+    }
+
+    public void Surge(Player p)
+    {
+        Debug.Log("Surging");
+
+        p.EncounterCards.AddCard(EncounterDeck.DealCard());
+    }
+
+    public bool ThreatPresent()
+    {
+        return (sideSchemes.Where(x => x.Threat.CurrentThreat > 0).Count() > 0 || MainScheme.Threat.CurrentThreat > 0);
     }
 }

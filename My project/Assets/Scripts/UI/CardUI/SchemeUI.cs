@@ -24,17 +24,20 @@ public class SchemeUI : EncounterCardUI
         if (scheme == null)
         {
             TryGetComponent(out scheme);
+
+            if (scheme == null)
+                transform.parent.TryGetComponent(out scheme);
+
             scheme.SetupComplete += LoadData;
+            return;
+        }
 
-            if (_threat == null) TryGetComponent(out _threat);
-            _threat.ThreatChanged += UpdateThreat;
+        _threat.ThreatChanged += UpdateThreat;
 
-            if (scheme is MainSchemeCard)
-            {
-                _threat.MaxThreatChanged += UpdateMaxThreat;
-                _threat.AccelerationChanged += UpdateAcceleration;
-            }
-                
+        if (scheme is MainSchemeCard)
+        {
+            _threat.MaxThreatChanged += UpdateMaxThreat;
+            _threat.AccelerationChanged += UpdateAcceleration;
         }
     }
 
@@ -48,6 +51,15 @@ public class SchemeUI : EncounterCardUI
     protected override void LoadData()
     {
         base.LoadData();
+
+        _threat = scheme.Threat;
+        _threat.ThreatChanged += UpdateThreat;
+
+        if (scheme is MainSchemeCard)
+        {
+            _threat.MaxThreatChanged += UpdateMaxThreat;
+            _threat.AccelerationChanged += UpdateAcceleration;
+        }
 
         currentThreatText.text = scheme.StartingThreat.ToString();
 

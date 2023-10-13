@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Pepper Potts", menuName = "MarvelChampions/Card Effects/Iron Man/Pepper Potts")]
-public class PepperPotts : PlayerCardEffect, IResourceGenerator
+public class PepperPotts : PlayerCardEffect, IGenerate
 {
     public bool CanGenerateResource(ICard cardToPlay)
     {

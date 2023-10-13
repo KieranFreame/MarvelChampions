@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Web-Shooter", menuName = "MarvelChampions/Card Effects/Spider-Man (Peter Parker)/Web-Shooter")]
-public class WebShooter : PlayerCardEffect, IResourceGenerator
+public class WebShooter : PlayerCardEffect, IGenerate
 {
     Counters counters;
 

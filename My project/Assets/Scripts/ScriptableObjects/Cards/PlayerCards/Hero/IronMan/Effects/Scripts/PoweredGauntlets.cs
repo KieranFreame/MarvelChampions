@@ -22,8 +22,8 @@ public class PoweredGauntlets : PlayerCardEffect
         Card.Exhaust();
 
         if (_owner.Identity.IdentityTraits.Contains("Aerial"))
-            await _owner.CharStats.InitiateAttack(new(2, new List<TargetType>() { TargetType.TargetVillain, TargetType.TargetMinion }, owner: _owner));
+            await _owner.CharStats.InitiateAttack(new(2, owner: _owner, card: Card));
         else
-            await _owner.CharStats.InitiateAttack(new(1, new List<TargetType>() { TargetType.TargetVillain, TargetType.TargetMinion }, owner: _owner));
+            await _owner.CharStats.InitiateAttack(new(1, owner: _owner, card: Card));
     }
 }

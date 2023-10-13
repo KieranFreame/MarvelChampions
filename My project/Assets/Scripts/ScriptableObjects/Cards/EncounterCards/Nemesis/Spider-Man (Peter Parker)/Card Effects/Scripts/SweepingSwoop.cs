@@ -16,7 +16,7 @@ public class SweepingSwoop : EncounterCardEffect
 
         if (VillainTurnController.instance.MinionsInPlay.FirstOrDefault(x => x.CardName == "The Vulture") != default)
         {
-            owner.Surge(player);
+            ScenarioManager.inst.Surge(player);
         }
 
         await Task.Yield();
@@ -30,17 +30,19 @@ public class SweepingSwoop : EncounterCardEffect
         var attack = action as AttackAction;
 
         charHp = attack.Target.CharStats.Health.CurrentHealth;
-        AttackSystem.OnAttackComplete += AttackComplete;
+        AttackSystem.Instance.OnAttackCompleted.Add(AttackComplete);
 
         await Task.Yield();
     }
 
-    private void AttackComplete(Action action)
+    private Task AttackComplete(Action action)
     {
-        AttackSystem.OnAttackComplete -= AttackComplete;
+        AttackSystem.Instance.OnAttackCompleted.Remove(AttackComplete);
         var attack = action as AttackAction;
 
         if (attack.Target.CharStats.Health.CurrentHealth < charHp)
             attack.Target.CharStats.Attacker.Stunned = true;
+
+        return Task.CompletedTask;
     }
 }

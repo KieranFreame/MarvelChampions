@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using UnityEngine;
@@ -10,25 +11,23 @@ public class EncounterCard : MonoBehaviour, ICard
     public Villain Owner { get; private set; }
     public int BoostIcons { get; set; }
     public EncounterCardData Data { get; set; }
-    public EncounterCardEffect Effect { get; set; }
     public Zone CurrZone { get; set; }
     public Zone PrevZone { get; set; }
     public bool InPlay { get; set; }
     public bool FaceUp { get; set; }
     public string CardName { get => Data.cardName; }
     public string CardDesc { get => Data.cardDesc; }
+    public CardType CardType { get => Data.cardType; }
+    public ObservableCollection<string> CardTraits { get; protected set; } = new();
 
     public event UnityAction OnBoost;
     public event UnityAction SetupComplete;
 
-    protected virtual void WhenDefeated()
-    {
-        Effect.OnExitPlay();
-        ScenarioManager.inst.EncounterDeck.Discard(this);
-    }
+    protected EncounterCardEffect effect;
+
     public async Task OnRevealCard()
     {
-        await Effect.OnEnterPlay(Owner, this, FindObjectOfType<Player>());
+        await effect.WhenRevealed(Owner, this, FindObjectOfType<Player>());
     }
     public void OnBoostCard() => OnBoost?.Invoke();
     public virtual void LoadCardData(EncounterCardData data, Villain owner)
@@ -38,13 +37,27 @@ public class EncounterCard : MonoBehaviour, ICard
         BoostIcons = data.boostIcons;
 
         Data = data;
-        GetComponent<CardUI>().CardArt = Data.cardArt;
+
+        foreach (string trait in Data.cardTraits)
+            CardTraits.Add(trait);
+
+        TryGetComponent(out CardUI cardUI);
+
+        if (cardUI == null)
+            cardUI = GetComponentInChildren<CardUI>();
+
+        cardUI.CardArt = Data.cardArt;
 
         if (Data.effect != null)
-            Effect = Instantiate(Data.effect);
+            effect = Instantiate(Data.effect);
 
         SetupComplete?.Invoke();
     }
 
     public void Flip() { return; }
+
+    public virtual EncounterCardEffect Effect
+    {
+        get => effect;
+    }
 }

@@ -6,11 +6,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "The Triskelion", menuName = "MarvelChampions/Card Effects/Leadership/The Triskelion")]
 public class Triskelion : PlayerCardEffect
 {
-    public override async Task OnEnterPlay()
+    public override Task OnEnterPlay()
     {
         _owner.CardsInPlay.AllyLimit++;
-
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 
     public override async void OnExitPlay()
@@ -19,7 +18,7 @@ public class Triskelion : PlayerCardEffect
 
         if (_owner.CardsInPlay.ReachedAllyLimit())
         {
-            await PlayCardSystem.instance.DiscardAlly();
+            await PlayCardSystem.Instance.DiscardAlly();
         }
     }
 }

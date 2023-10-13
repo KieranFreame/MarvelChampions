@@ -8,6 +8,6 @@ public class Uppercut : PlayerCardEffect
 {
     public override async Task OnEnterPlay()
     {
-        await _owner.CharStats.InitiateAttack(new(5, new List<TargetType>() { TargetType.TargetMinion, TargetType.TargetVillain }, owner: _owner));
+        await _owner.CharStats.InitiateAttack(new(5, owner: _owner, card:Card));
     }
 }

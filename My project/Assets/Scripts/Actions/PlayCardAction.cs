@@ -4,13 +4,11 @@ using UnityEngine;
 
 public class PlayCardAction : Action
 {
-    public List<PlayerCard> Candidates { get; private set; } = new List<PlayerCard>();
     public PlayerCard CardToPlay { get; private set; }
 
-    public PlayCardAction(ICharacter owner, List<PlayerCard> candidates, PlayerCard cardToPlay) : base ()
+    public PlayCardAction(PlayerCard cardToPlay) : base ()
     {
-        Owner = owner;
-        Candidates = candidates;
+        Owner = cardToPlay.Owner;
         CardToPlay = cardToPlay;
     }
 }

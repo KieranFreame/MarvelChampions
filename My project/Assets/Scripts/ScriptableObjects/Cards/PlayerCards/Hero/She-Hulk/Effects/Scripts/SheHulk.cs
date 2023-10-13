@@ -17,6 +17,6 @@ public class SheHulk : IdentityEffect
 
         if (enemies.Count == 0) return;
 
-       await DamageSystem.instance.ApplyDamage(new(enemies, 2));
+       await DamageSystem.Instance.ApplyDamage(new(enemies, 2));
     }
 }

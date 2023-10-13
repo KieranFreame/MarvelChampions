@@ -6,7 +6,7 @@ public class PrefabFactory
 {
     public static PrefabFactory instance = new();
 
-    public GameObject CreatePlayerCard(PlayerCardData card)
+    public GameObject GetPrefab(CardData card)
     {
         return card.cardType switch
         {
@@ -15,20 +15,13 @@ public class PrefabFactory
             CardType.Support => Resources.Load<GameObject>("Prefabs/SupportTemplate"),
             CardType.Event => Resources.Load<GameObject>("Prefabs/EventTemplate"),
             CardType.Resource => Resources.Load<GameObject>("Prefabs/ResourceTemplate"),
-            _ => null,
-        };
-        ;
-    }
-    public GameObject CreateEncounterCard(EncounterCardData card)
-    {
-        return card.cardType switch
-        {
             CardType.Minion => Resources.Load<GameObject>("Prefabs/MinionTemplate"),
             CardType.SideScheme => Resources.Load<GameObject>("Prefabs/SideSchemeTemplate"),
             CardType.Treachery => Resources.Load<GameObject>("Prefabs/TreacheryTemplate"),
             CardType.Attachment => Resources.Load<GameObject>("Prefabs/AttachmentTemplate"),
             CardType.Obligation => Resources.Load<GameObject>("Prefabs/ObligationTemplate"),
             CardType.MainScheme => Resources.Load<GameObject>("Prefabs/MainSchemeTemplate"),
+            CardType.Environment => Resources.Load<GameObject>("Prefabs/TreacheryTemplate"),
             _ => null,
         };
     }

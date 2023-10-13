@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd59bffae62c9843892e230b19351f6, type: 3}
+  m_Name: Mimicry
+  m_EditorClassIdentifier: 
+  cardID: TASKMASTER-T-001
+  cardName: Mimicry
+  cardDesc: Discard the top 5 cards of your deck. If an Attack (Hero Form) or Thwart
+    (Alter-Ego Form) card was discarded, Taskmaster activates.
+  cardType: 7
+  cardTraits: []
+  cardArt: {fileID: 0}
+  boostIcons: 1
+  boostDescription: 
+  effect: {fileID: 11400000, guid: fda7bb9a98744474ba3f115ba82b752a, type: 2}

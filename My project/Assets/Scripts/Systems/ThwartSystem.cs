@@ -3,42 +3,55 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
-public class ThwartSystem : MonoBehaviour
+public class ThwartSystem// : MonoBehaviour
 {
-    public static ThwartSystem instance;
+    private static ThwartSystem instance = new();
 
-    private void Awake()
+    public static ThwartSystem Instance
     {
-        //Singleton
-        if (instance == null)
-            instance = this;
-        else
-            Destroy(this);
+        get => instance;
     }
 
     #region Events
     public static event UnityAction OnThwartComplete;
     #endregion
 
-    #region Fields
-    public ThwartAction Action { get; private set; }
-    public Threat Target { get; private set; }
+    #region Modifiers
+    public delegate Task<ThwartAction> ModifyThreat(ThwartAction action);
+    public List<ModifyThreat> Modifiers { get; private set; } = new();
+    public List<SchemeCard> Crisis { get; set; } = new();
     #endregion
 
     public async Task InitiateThwart(ThwartAction action)
     {
-        instance.Action = action;
+        List<SchemeCard> targets = new();
+        targets.AddRange(ScenarioManager.sideSchemes);
 
-        List<Threat> targets = new() { FindObjectOfType<MainSchemeCard>().GetComponent<Threat>() };
-        foreach (SchemeCard s in ScenarioManager.sideSchemes)
-            targets.Add(s.GetComponent<Threat>());
+        if (Crisis.Count == 0)
+        {
+            targets.Add(ScenarioManager.inst.MainScheme);
+        }
+
+        targets.RemoveAll(x => x.Threat.CurrentThreat == 0);
 
         if (targets.Count > 1)
-            Target = await TargetSystem.instance.SelectTarget(targets);
+            action.Target = await TargetSystem.instance.SelectTarget(targets);
         else
-            Target = targets[0];
+            action.Target = targets[0];
 
-        Target.RemoveThreat(Action.Value);
+        for (int i = Modifiers.Count - 1; i >= 0; i--)
+        {
+            if (Modifiers[i] == null)
+            {
+                Modifiers.RemoveAt(i);
+                continue;
+            }
+
+            action = await Modifiers[i](action);
+            if (action.Value < 0) action.Value = 0;
+        }
+
+        action.Target.Threat.RemoveThreat(action.Value);
 
         OnThwartComplete?.Invoke();
     }

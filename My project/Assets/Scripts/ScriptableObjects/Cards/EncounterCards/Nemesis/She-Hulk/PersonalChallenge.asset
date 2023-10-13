@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardID: WALTERS-SS-001
   cardName: Personal Challenge
-  cardDesc: Gains 1 threat per player. Crisis.
+  cardDesc: Hinder 1 per player. Crisis.
   cardType: 8
   cardTraits: []
   cardArt: {fileID: 0}

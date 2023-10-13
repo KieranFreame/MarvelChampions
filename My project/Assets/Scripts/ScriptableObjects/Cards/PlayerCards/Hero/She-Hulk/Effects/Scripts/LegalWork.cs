@@ -36,6 +36,6 @@ public class LegalWork : EncounterCardEffect
             }
         }
 
-        FindObjectOfType<MainSchemeCard>().GetComponent<Threat>().Acceleration++;
+        ScenarioManager.inst.MainScheme.Threat.Acceleration++;
     }
 }

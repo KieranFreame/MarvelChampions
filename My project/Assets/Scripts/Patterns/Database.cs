@@ -4,8 +4,6 @@ using UnityEngine;
 public class Database : MonoBehaviour
 {
     public CardDatabase cards;
-    public CardSetDatabase cardSets;
-
     private static Database inst;
 
     private void Awake()
@@ -22,10 +20,5 @@ public class Database : MonoBehaviour
     public static CardData GetCardDataById(string id)
     {
         return inst.cards.database.FirstOrDefault(i => i.cardID == id);
-    }
-
-    public static CardSet GetCardSetByName(string name)
-    {
-        return inst.cardSets.database.FirstOrDefault(i => i.name == name);
     }
 }

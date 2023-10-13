@@ -17,20 +17,23 @@ public class YonRogg : EncounterCardEffect
         await Task.Yield();
     }
 
-    private void AttackInitiated() => AttackSystem.OnAttackComplete += AttackComplete;
+    private void AttackInitiated() => AttackSystem.Instance.OnAttackCompleted.Add(AttackComplete);
 
-    private void AttackComplete(Action Attack)
+    private Task AttackComplete(Action Attack)
     {
-        AttackSystem.OnAttackComplete -= AttackComplete;
+        AttackSystem.Instance.OnAttackCompleted.Remove(AttackComplete);
 
         SchemeCard psychemagnitron = ScenarioManager.sideSchemes.FirstOrDefault(x => x.CardName == "The Psyche-Magnitron");
 
         if (psychemagnitron != default)
-            psychemagnitron.GetComponent<Threat>().GainThreat(1);
+            psychemagnitron.Threat.GainThreat(1);
+
+        return Task.CompletedTask;
     }
 
-    public override void OnExitPlay()
+    public override Task WhenDefeated()
     {
         _owner.CharStats.AttackInitiated -= AttackInitiated;
+        return Task.CompletedTask;
     }
 }

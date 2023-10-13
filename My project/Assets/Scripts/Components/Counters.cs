@@ -7,7 +7,17 @@ using UnityEngine.Events;
 public class Counters : MonoBehaviour
 {
     public GameObject Counter { get; set; }
-    public int CountersLeft { get; set; } = 0;
+
+    private int countersLeft;
+
+    public int CountersLeft {
+        get => countersLeft; 
+        set
+        {
+            countersLeft = value;
+            Counter.GetComponentInChildren<TMP_Text>().text = CountersLeft.ToString();
+        }
+    }
 
     private void Awake()
     {

@@ -47,7 +47,7 @@ public class EvictionNotice : EncounterCardEffect
         parker.Hand.Remove(discard);
         parker.Deck.Discard(discard);
 
-        _owner.Surge(currPlayer);
+        ScenarioManager.inst.Surge(currPlayer);
 
     }
 }

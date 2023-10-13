@@ -16,8 +16,8 @@ MonoBehaviour:
   alterEgoTags:
   - King
   - Wakanda
-  alterEgoArt: {fileID: 0}
+  alterEgoArt: {fileID: 21300000, guid: 88afad1254a55e846a1b8ba0108bcfd4, type: 3}
   baseREC: 4
   baseHP: 11
   baseHandSize: 6
-  effect: {fileID: 0}
+  effect: {fileID: 11400000, guid: d54daa0ca322b3646b77e75b8da4f2ae, type: 2}

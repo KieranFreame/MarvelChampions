@@ -30,8 +30,6 @@ public class TurnManager : MonoBehaviour
     {
         Players.AddRange(FindObjectsOfType<Player>());
         CurrPlayer = FirstPlayer = Players[FirstPlayerIndex];
-
-        ScenarioManager.inst.GenerateDeck();
     }
 
     public void ChangeFirstPlayer()

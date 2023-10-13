@@ -10,10 +10,10 @@ public class EnergyChannel : PlayerCardEffect
     [SerializeField, TextArea] private string effectA;
     [SerializeField, TextArea] private string effectB;
 
-    public override async Task OnEnterPlay()
+    public override Task OnEnterPlay()
     {
         counters = Card.gameObject.AddComponent<Counters>();
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 
     public override bool CanActivate()
@@ -50,14 +50,14 @@ public class EnergyChannel : PlayerCardEffect
 
     private async Task AddCounters()
     {
-        await PayCostSystem.instance.GetResources(Resource.Energy, 5);
+        await PayCostSystem.instance.GetResources(Resource.Energy, 5, true);
         counters.AddCounters(PayCostSystem.instance.Resources.Count);
     }
 
     private async Task DealDamage()
     {
-        var action = new AttackAction(attack: (counters.CountersLeft <= 10 ? counters.CountersLeft * 2 : 10), new List<TargetType>() { TargetType.TargetMinion, TargetType.TargetVillain }, owner : _owner);
-        await AttackSystem.instance.InitiateAttack(action);
+        var action = new AttackAction(attack: (counters.CountersLeft <= 10 ? counters.CountersLeft * 2 : 10), owner : _owner);
+        await AttackSystem.Instance.InitiateAttack(action);
 
         _owner.CardsInPlay.Permanents.Remove(Card);
         _owner.Deck.Discard(Card);

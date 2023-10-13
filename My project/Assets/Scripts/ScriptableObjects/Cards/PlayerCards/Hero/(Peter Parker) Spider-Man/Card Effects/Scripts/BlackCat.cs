@@ -12,7 +12,7 @@ public class BlackCat : PlayerCardEffect
         {
             if ((_owner.Deck.deck[0] as PlayerCardData).cardResources.Contains(Resource.Scientific))
             {
-                DrawCardSystem.instance.DrawCards(new(1, _owner));
+                DrawCardSystem.Instance.DrawCards(new(1, _owner));
             }
             else
             {

@@ -12,11 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88ea0e913420b64499ffc02f6cd7188f, type: 3}
   m_Name: SquirrelGirl
   m_EditorClassIdentifier: 
-  _cardName: Squirrel Girl
-  _cardDesc: When this card enters play, deal 1 damage to each enemy.
-  _cardType: 0
+  cardID: LEADERSHIP-A-005
+  cardName: Squirrel Girl
+  cardDesc: 'On Enter Play: Deal 1 damage to each enemy.'
+  cardType: 0
+  cardTraits:
+  - Avenger
+  cardArt: {fileID: 0}
   cardCost: 2
+  isUnique: 1
   cardAspect: 2
+  cardResources: 01000000
+  effect: {fileID: 11400000, guid: 430b3a51642ec554dab970a6021d0ffc, type: 2}
   alterEgo: Doreen Green
   BaseATK: 1
   ATKConsq: 1

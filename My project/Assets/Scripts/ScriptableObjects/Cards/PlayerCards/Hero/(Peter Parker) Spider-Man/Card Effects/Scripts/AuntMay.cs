@@ -10,10 +10,15 @@ public class AuntMay : PlayerCardEffect
 {
     public override bool CanBePlayed()
     {
-        if (_owner.CardsInPlay.Permanents.Any(x => x.CardName == Card.CardName))
-            return false;
+        if (base.CanBePlayed())
+        {
+            if (_owner.CardsInPlay.Permanents.Any(x => x.CardName == "Aunt May"))
+                return false;
 
-        return base.CanBePlayed();
+            return true;
+        }
+
+        return false;
     }
 
     public override bool CanActivate()

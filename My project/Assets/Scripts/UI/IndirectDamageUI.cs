@@ -37,12 +37,22 @@ public class IndirectDamageUI : MonoBehaviour
     public void IncreaseDamage()
     {
         totalDamage++;
-        Mathf.Clamp(totalDamage, 0, target.CharStats.Health.CurrentHealth);
+
+        if (totalDamage > target.CharStats.Health.CurrentHealth)
+            totalDamage = target.CharStats.Health.CurrentHealth;
+        
     }
 
     public void DecreaseDamage()
     {
         totalDamage--;
-        Mathf.Clamp(totalDamage, 0, target.CharStats.Health.CurrentHealth);
+        if (totalDamage < 0)
+            totalDamage = 0;
+    }
+
+    public void ApplyDamage()
+    {
+        finished = true;
+        gameObject.SetActive(false);
     }
 }

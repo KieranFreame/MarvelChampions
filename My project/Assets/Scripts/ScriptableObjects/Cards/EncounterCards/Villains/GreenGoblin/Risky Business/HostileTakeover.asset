@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24ed65fa8c0dfd741bb3d89887077480, type: 3}
+  m_Name: HostileTakeover
+  m_EditorClassIdentifier: 
+  cardID: RISKY-MS-001
+  cardName: Hostile Takeover
+  cardDesc: 'When Completed: Place 1 counter per player on Criminal Enterprise. Then,
+    discard 1 card from each player''s deck for each counter on Criminal Enterprise.'
+  cardType: 9
+  cardTraits: []
+  cardArt: {fileID: 0}
+  boostIcons: 0
+  boostDescription: 
+  effect: {fileID: 11400000, guid: cbfe40abc4b69b2449edbde5ae16d474, type: 2}
+  IsMainScheme: 1
+  StartingThreat: 2
+  MaximumThreat: 7
+  Acceleration: 1

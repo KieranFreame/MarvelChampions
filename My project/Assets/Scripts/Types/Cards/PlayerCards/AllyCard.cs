@@ -1,29 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UnityEngine;
 
 public class AllyCard : PlayerCard, ICharacter, IExhaust
 {
-    public List<IAttachment> Attachments { get; set; } = new List<IAttachment>();
+    public ObservableCollection<IAttachment> Attachments { get; set; } = new();
     public CharacterStats CharStats { get; set; }
-
     public int ThwartConsq { get; set; }
     public int AttackConsq { get; set; }
+    public bool CanAttack { get; set; } = true;
+    public bool CanThwart { get; set; } = true;
 
-    protected override void OnEnable()
+    public async void WhenDefeated()
     {
-        base.OnEnable();
-    }
-
-    protected override void OnDisable()
-    {
-        base.OnDisable();
-        CharStats.Health.Defeated -= WhenDefeated;
-    }
-
-    protected void WhenDefeated()
-    {
-        Effect.OnExitPlay();
+        await Effect.WhenDefeated();
         Owner.CardsInPlay.Allies.Remove(this);
         Owner.Deck.Discard(this);
     }
@@ -31,7 +22,6 @@ public class AllyCard : PlayerCard, ICharacter, IExhaust
     public override void LoadCardData(PlayerCardData data, Player owner)
     {
         CharStats = new(this, data);
-        CharStats.Health.Defeated += WhenDefeated;
 
         ThwartConsq = (data as AllyCardData).THWConsq;
         AttackConsq = (data as AllyCardData).ATKConsq;

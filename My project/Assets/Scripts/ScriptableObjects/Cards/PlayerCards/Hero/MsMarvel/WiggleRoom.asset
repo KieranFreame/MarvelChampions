@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
+  m_Name: WiggleRoom
+  m_EditorClassIdentifier: 
+  cardID: KHAN-E-003
+  cardName: Wiggle Room
+  cardDesc: When you would take damage; discard this and reduce it by 3. Draw 1 Card
+  cardType: 1
+  cardTraits:
+  - Defense
+  - Superpower
+  cardArt: {fileID: 0}
+  cardCost: 0
+  isUnique: 0
+  cardAspect: 5
+  cardResources: 03000000
+  effect: {fileID: 11400000, guid: 68b8bac2054657d4a85e97de4dc4b9a5, type: 2}

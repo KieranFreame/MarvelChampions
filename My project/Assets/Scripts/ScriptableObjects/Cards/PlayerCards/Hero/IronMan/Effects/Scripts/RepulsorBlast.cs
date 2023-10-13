@@ -6,18 +6,21 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Repulsor Blast", menuName = "MarvelChampions/Card Effects/Iron Man/Repulsor Blast")]
 public class RepulsorBlast : PlayerCardEffect
 {
-    List<ICharacter> enemies = new();
+    readonly List<ICharacter> enemies = new();
 
     public override bool CanBePlayed()
     {
-        enemies.Clear();
+        if (base.CanBePlayed())
+        {
+            enemies.Clear();
 
-        enemies.Add(FindObjectOfType<Villain>());
-        enemies.AddRange(FindObjectsOfType<MinionCard>());
+            enemies.Add(FindObjectOfType<Villain>());
+            enemies.AddRange(FindObjectsOfType<MinionCard>());
 
-        if (enemies.Count == 0) return false;
+            return enemies.Count > 0;
+        }
 
-        return true;
+        return false;
     }
 
     public override async Task OnEnterPlay()
@@ -29,8 +32,8 @@ public class RepulsorBlast : PlayerCardEffect
             return;
         }
 
-        var _target = await TargetSystem.instance.SelectTarget(enemies, true);
-        await DamageSystem.instance.ApplyDamage(new(_target, 1));
+        var _target = await TargetSystem.instance.SelectTarget(enemies);
+        await DamageSystem.Instance.ApplyDamage(new(_target, 1, card: Card));
 
         int damage = 0;
 
@@ -46,7 +49,7 @@ public class RepulsorBlast : PlayerCardEffect
             _owner.Deck.Mill(1);
         }
 
-        var attack = new DamageAction(_target, damage);
-        await DamageSystem.instance.ApplyDamage(attack);
+        var attack = new DamageAction(_target, damage, card:Card);
+        await DamageSystem.Instance.ApplyDamage(attack);
     }
 }

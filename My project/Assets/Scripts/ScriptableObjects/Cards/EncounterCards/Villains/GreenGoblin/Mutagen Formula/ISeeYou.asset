@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd59bffae62c9843892e230b19351f6, type: 3}
+  m_Name: ISeeYou
+  m_EditorClassIdentifier: 
+  cardID: MUTAGEN-T-002
+  cardName: I See You
+  cardDesc: Green Goblin attacks you. If you are in Alter-Ego, Goblin doesn't get
+    a Boost Card for this activation.
+  cardType: 7
+  cardTraits: []
+  cardArt: {fileID: 0}
+  boostIcons: 1
+  boostDescription: +1 boost icon if there's a Goblin minion in play
+  effect: {fileID: 11400000, guid: 937ec69c3b5614645b98e5a7c3164f14, type: 2}

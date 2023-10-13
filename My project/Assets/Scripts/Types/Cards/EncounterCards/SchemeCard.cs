@@ -5,29 +5,20 @@ using UnityEngine;
 public class SchemeCard : EncounterCard
 {
     public int StartingThreat { get => (Data as SchemeCardData).StartingThreat; }
-
-    private void OnEnable()
-    {
-        GetComponent<Threat>().WhenDefeated += WhenDefeated;
-    }
-
-    private void OnDisable()
-    {
-        GetComponent<Threat>().WhenDefeated -= WhenDefeated;
-    }
+    public Threat Threat { get; protected set; }
 
     public override void LoadCardData(EncounterCardData data, Villain owner)
     {
         if (this is not MainSchemeCard)
-            GetComponent<Threat>().SetThreat((data as SchemeCardData).StartingThreat);
+            Threat = new Threat(this, (data as SchemeCardData).StartingThreat);
 
         base.LoadCardData(data, owner);
     }
 
-    protected override async void WhenDefeated()
+    public virtual async void WhenDefeated()
     {
-        ScenarioManager.sideSchemes.Remove(this);
         await Effect.WhenDefeated();
-        base.WhenDefeated();
+        ScenarioManager.sideSchemes.Remove(this);
+        ScenarioManager.inst.EncounterDeck.Discard(this);
     }
 }

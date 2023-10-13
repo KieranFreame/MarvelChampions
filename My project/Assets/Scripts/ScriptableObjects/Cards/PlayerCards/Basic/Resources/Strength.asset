@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
   m_Name: Strength
   m_EditorClassIdentifier: 
-  cardID: BASIC-R-001
+  cardID: BASIC-R-003
   cardName: Strength
   cardDesc: Max 2 per Deck
   cardType: 2
   cardTraits: []
+  cardArt: {fileID: 0}
   cardCost: 0
   isUnique: 0
   cardAspect: 4
   cardResources: 0200000002000000
+  effect: {fileID: 0}

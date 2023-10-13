@@ -4,52 +4,58 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Genetically Enhanced", menuName = "MarvelChampions/Card Effects/Nemesis/She-Hulk/Genetically Enhanced")]
-public class GeneticallyEnhanced : EncounterCardEffect
+public class GeneticallyEnhanced : AttachmentCardEffect
 {
-    MinionCard attach;
-
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
         Card = card;
 
         int high = int.MinValue;
-        attach = null;
 
         foreach (MinionCard m in VillainTurnController.instance.MinionsInPlay)
         {
             if (m.CharStats.Health.BaseHP > high)
             {
                 high = m.CharStats.Health.BaseHP;
-                attach = m;
+                attached = m;
             }
         }
 
-        if (attach != null)
+        if (attached != null)
         {
-            attach.Attachments.Add(Card as IAttachment);
-
-            Card.transform.SetParent(attach.transform, false);
-            Card.transform.SetAsFirstSibling();
-            Card.transform.localPosition = new Vector3(-30, 0, 0);
-
-            attach.CharStats.Health.IncreaseMaxHealth(3);
+            Attach();
         }
         else
         {
-            owner.Surge(player);
+            ScenarioManager.inst.Surge(player);
             ScenarioManager.inst.EncounterDeck.Discard(Card);
         }
 
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 
-    public override void OnExitPlay()
+    public override void Attach()
     {
-        if (attach != null)
-        {
-            attach.Attachments.Remove(Card as IAttachment);
-            attach.CharStats.Health.IncreaseMaxHealth(-3);
-        }
+        attached.Attachments.Add(Card as IAttachment);
 
+        Card.transform.SetParent((attached as MonoBehaviour).transform, false);
+        Card.transform.SetAsFirstSibling();
+        Card.transform.localPosition = new Vector3(-30, 0, 0);
+
+        attached.CharStats.Health.IncreaseMaxHealth(3);
+    }
+
+    public override void Detach()
+    {
+        attached.Attachments.Remove(Card as IAttachment);
+        attached.CharStats.Health.IncreaseMaxHealth(-3);
+    }
+
+    public override Task WhenDefeated()
+    {
+        if (attached != null)
+            Detach();
+
+        return Task.CompletedTask;
     }
 }

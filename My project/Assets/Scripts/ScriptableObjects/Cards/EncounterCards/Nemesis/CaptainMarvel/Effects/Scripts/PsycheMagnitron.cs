@@ -11,15 +11,17 @@ public class PsycheMagnitron : EncounterCardEffect
         _owner = owner;
         Card = card;
 
-        Card.GetComponent<Threat>().GainThreat(1 * TurnManager.Players.Count);
+        (Card as SchemeCard).Threat.GainThreat(1 * TurnManager.Players.Count);
 
         VillainTurnController.instance.HazardCount++;
 
         await Task.Yield();
     }
 
-    public override void OnExitPlay()
+    public override Task WhenDefeated()
     {
         VillainTurnController.instance.HazardCount--;
+
+        return Task.CompletedTask;
     }
 }

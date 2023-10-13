@@ -9,17 +9,18 @@ public class Hulk : PlayerCardEffect
 {
     readonly List<ICharacter> enemies = new();
 
-    public override async Task OnEnterPlay()
+    public override Task OnEnterPlay()
     {
         (Card as AllyCard).CharStats.AttackInitiated += AttackInitiated;
-        await Task.Yield();
+        (Card as AllyCard).CanThwart = false;
+        return Task.CompletedTask;
     }
 
-    private void AttackInitiated() => AttackSystem.OnAttackComplete += AttackComplete;
+    private void AttackInitiated() {AttackSystem.Instance.OnAttackCompleted.Add(AttackComplete); } 
 
-    private async void AttackComplete(Action action)
+    private async Task AttackComplete(Action action)
     {
-        AttackSystem.OnAttackComplete -= AttackComplete;
+        AttackSystem.Instance.OnAttackCompleted.Remove(AttackComplete);
 
         var attack = action as AttackAction;
 
@@ -56,7 +57,7 @@ public class Hulk : PlayerCardEffect
     {
         enemies.Add(FindObjectOfType<Villain>());
         enemies.AddRange(FindObjectsOfType<MinionCard>());
-        await DamageSystem.instance.ApplyDamage(new(enemies, 2));
+        await DamageSystem.Instance.ApplyDamage(new(enemies, 2, card:Card));
     }
 
     private async Task EnergyEffect()
@@ -65,13 +66,18 @@ public class Hulk : PlayerCardEffect
         enemies.AddRange(FindObjectsOfType<MinionCard>());
         enemies.Add(_owner);
         enemies.AddRange(_owner.CardsInPlay.Allies);
-        await DamageSystem.instance.ApplyDamage(new(enemies, 1, true));
+        await DamageSystem.Instance.ApplyDamage(new(enemies, 1, true, card:Card));
     }
 
     private void ScientificEffect()
     {
-        AttackSystem.OnAttackComplete -= AttackComplete;
+        (Card as AllyCard).CharStats.AttackInitiated -= AttackInitiated;
         _owner.CardsInPlay.Allies.Remove(Card as AllyCard);
         _owner.Deck.Discard(Card);
+    }
+
+    public override void OnExitPlay()
+    {
+        (Card as AllyCard).CharStats.AttackInitiated -= AttackInitiated;
     }
 }

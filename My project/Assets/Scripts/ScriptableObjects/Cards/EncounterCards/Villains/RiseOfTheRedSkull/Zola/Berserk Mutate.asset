@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8500fc7aedc00204b8366777dadbcc23, type: 3}
+  m_Name: Berserk Mutate
+  m_EditorClassIdentifier: 
+  cardID: ZOLA-M-003
+  cardName: Berserk Mutate
+  cardDesc: Quickstrike
+  cardType: 5
+  cardTraits:
+  - Hydra
+  - Mutate
+  cardArt: {fileID: 0}
+  boostIcons: 0
+  boostDescription: The main schemes gets +1 Test Counter. Zola gains +1 to this
+    activation for each Test Counter.
+  effect: {fileID: 11400000, guid: 9d5e9b0066fc456478383337c36fa0e9, type: 2}
+  baseAttack: 2
+  baseScheme: 0
+  baseHealth: 3

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd59bffae62c9843892e230b19351f6, type: 3}
+  m_Name: MastersOfMayhem
+  m_EditorClassIdentifier: 
+  cardID: MASTERS-T-001
+  cardName: Masters of Mayhem
+  cardDesc: Each Masters of Evil minion attacks. If no attacks were made this way
+    deach the encounter deck and discard pile for a Masters of Evil minion and put
+    it into play.
+  cardType: 7
+  cardTraits: []
+  cardArt: {fileID: 0}
+  boostIcons: 2
+  boostDescription: 
+  effect: {fileID: 11400000, guid: 7a54e12bc2cb97f48ad747b4f597a3dd, type: 2}

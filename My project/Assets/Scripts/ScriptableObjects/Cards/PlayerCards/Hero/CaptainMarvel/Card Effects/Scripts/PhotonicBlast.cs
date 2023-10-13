@@ -9,18 +9,20 @@ public class PhotonicBlast : PlayerCardEffect
 {
     public override bool CanBePlayed()
     {
-        if (_owner.Identity.ActiveIdentity is not Hero)
-            return false;
-
-        return base.CanBePlayed();
+        if (base.CanBePlayed())
+        {
+            return _owner.Identity.ActiveIdentity is Hero;
+        }
+        
+        return false;
     }
 
     public override async Task OnEnterPlay()
     {
-        var action = new AttackAction(5, new List<TargetType>() { TargetType.TargetMinion, TargetType.TargetVillain}, owner:_owner);
+        var action = new AttackAction(5, owner:_owner, card: Card);
         await _owner.CharStats.InitiateAttack(action);
 
         if (PayCostSystem.instance.Resources.Contains(Resource.Energy))
-            DrawCardSystem.instance.DrawCards(new DrawCardsAction(1));
+            DrawCardSystem.Instance.DrawCards(new DrawCardsAction(1));
     }
 }

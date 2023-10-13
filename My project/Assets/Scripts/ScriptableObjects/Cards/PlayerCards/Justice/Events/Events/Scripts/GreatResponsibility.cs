@@ -1,17 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Great Responsibility", menuName = "MarvelChampions/Card Effects/Justice/Great Responsibility")]
-public class GreatResponsibility : PlayerCardEffect, IModifyThreat
+public class GreatResponsibility : PlayerCardEffect
 {
     SchemeAction _action;
 
-    public override void OnDrawn(Player player, PlayerCard card)
+    public override void OnDrawn()
     {
-        base.OnDrawn(player, card);
-        SchemeSystem.instance.Modifiers.Add(this);
+        SchemeSystem.Instance.Modifiers.Add(ModifyScheme);
     }
 
     public override bool CanBePlayed()
@@ -19,13 +19,13 @@ public class GreatResponsibility : PlayerCardEffect, IModifyThreat
         return false;
     }
 
-    public override async Task OnEnterPlay()
+    public override Task OnEnterPlay()
     {
-        _owner.CharStats.Health.TakeDamage(_action.Value);
+        _owner.CharStats.Health.CurrentHealth -= _action.Value;
         _action.Value = 0;
-        SchemeSystem.instance.Modifiers.Remove(this);
+        SchemeSystem.Instance.Modifiers.Remove(ModifyScheme);
 
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 
     public async Task<SchemeAction> ModifyScheme(SchemeAction action)
@@ -38,7 +38,7 @@ public class GreatResponsibility : PlayerCardEffect, IModifyThreat
         if (decision)
         {
             _action = action;
-            await PlayCardSystem.instance.InitiatePlayCard(new(_owner, _owner.Hand.cards, Card));
+            await PlayCardSystem.Instance.InitiatePlayCard(new(Card));
         }
 
         return action;
@@ -46,6 +46,6 @@ public class GreatResponsibility : PlayerCardEffect, IModifyThreat
 
     public override void OnDiscard()
     {
-        SchemeSystem.instance.Modifiers.Remove(this);
+        SchemeSystem.Instance.Modifiers.Remove(ModifyScheme);
     }
 }

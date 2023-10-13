@@ -6,27 +6,31 @@ using UnityEngine.Events;
 using System.Threading.Tasks;
 using System.Threading;
 
-public class DefendSystem : MonoBehaviour
+public class DefendSystem
 {
-    public static DefendSystem instance;
+    private static DefendSystem instance;
 
-    private void Awake()
+    public static DefendSystem Instance
     {
-        //Singleton
-        if (instance == null)
-            instance = this;
-        else
-            Destroy(this);
+        get
+        {
+            if (instance == null)
+                instance = new();
+
+            return instance;
+        }
     }
 
     #region Events
     public event UnityAction<Player> OnSelectingDefender;
-    public event UnityAction OnDefenderSelected;
+    public event UnityAction<ICharacter> OnDefenderSelected;
+    public event UnityAction<ICharacter> OnTargetSelected;
     #endregion
 
     #region Fields
     public ICharacter Target { get; set; }
-    private readonly List<ICharacter> candidates = new();
+    public readonly List<ICharacter> candidates = new();
+    public bool Defended { get; private set; }
     #endregion
 
     #region Methods
@@ -35,17 +39,18 @@ public class DefendSystem : MonoBehaviour
     {
         candidates.Clear();
 
-        OnSelectingDefender?.Invoke(targetOwner);
-
         Debug.Log("Select Defender");
 
         candidates.AddRange(targetOwner.CardsInPlay.Allies);
 
         candidates.RemoveAll(x => x == null);
-        candidates.RemoveAll(x => (x as AllyCard).Exhausted);
+        candidates.RemoveAll(x => !(x as AllyCard).Effect.CanDefend());
 
-        if (targetOwner.Identity.ActiveIdentity is Hero && !targetOwner.Identity.Exhausted)
+        if (targetOwner.Identity.ActiveIdentity is Hero && !targetOwner.Exhausted)
             candidates.Add(targetOwner);
+
+        OnSelectingDefender?.Invoke(targetOwner);
+        Target = targetOwner;
 
         if (candidates.Count > 0)
         {
@@ -54,20 +59,24 @@ public class DefendSystem : MonoBehaviour
             Target = await TargetSystem.instance.SelectTarget(candidates, token:token);
 
             CancelButton.ToggleCancelBtn(false, DefenderSelectionCanceled);
-            OnDefenderSelected?.Invoke();
+
+            OnDefenderSelected?.Invoke(Target);
+
+            Defended = Target == null;
         }
         else
         {
             Debug.Log("No Defenders Available");
-            TargetSystem.SingleTarget(targetOwner);
+            Defended = false;
+            Target = null;
         }
-
+        
         if (Target != null)
         {
             if (Target is Player)
             {
-                int defence = Target.CharStats.Defender.Defend();
-                AttackSystem.instance.Action.Value -= defence;
+                int defence = await Target.CharStats.Defender.Defend();
+                AttackSystem.Instance.Action.Value -= defence;
             }
             else
             {
@@ -75,12 +84,15 @@ public class DefendSystem : MonoBehaviour
             }
         }
 
+        Target ??= targetOwner;
+
+        OnTargetSelected?.Invoke(Target);
+
         return Target;
     }
 
     private void DefenderSelectionCanceled()
     {
-        Target = null;
         CancelButton.ToggleCancelBtn(false, DefenderSelectionCanceled);
     }
     #endregion

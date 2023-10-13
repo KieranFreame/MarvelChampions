@@ -1,25 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class Retaliate
 {
-    private dynamic _owner;
+    private ICharacter _owner;
     private Health _health;
     [SerializeField] private int _damage;
-
-    /// <summary>
-    /// Use for Identities, Villains or Permanents (Zola, Black Panther, Cap's Shield)
-    /// </summary>
-    public Retaliate(dynamic owner, int damage)
-    {
-        _owner = owner;
-        _damage = damage;
-        _health = _owner.CharStats.Health;
-
-        _health.Defeated += WhenDefeated;
-        _health.OnTakeDamage += Effect;
-    }
 
     /// <summary>
     /// Use for Allies & Minions
@@ -30,19 +18,40 @@ public class Retaliate
         _damage = damage;
         _health = _owner.CharStats.Health;
 
-        _health.Defeated += WhenDefeated;
+        _health.Defeated.Add(WhenDefeated);
         _health.OnTakeDamage += Effect;
     }
 
-    private async void Effect()
+    private async void Effect(DamageAction action)
     {
-        if (AttackSystem.instance.Action.Owner != null)
-            await DamageSystem.instance.ApplyDamage(new(AttackSystem.instance.Action.Owner, _damage));
+        if (action.IsAttack)
+            await DamageSystem.Instance.ApplyDamage(new(action.Owner, _damage));
     }
 
-    private void WhenDefeated()
+    private Task WhenDefeated()
     {
-        _health.Defeated -= WhenDefeated;
+        _health.Defeated.Remove(WhenDefeated);
         _health.OnTakeDamage -= Effect;
+        return Task.CompletedTask;
+    }
+
+    public void WhenRemoved()
+    {
+        _health.Defeated.Remove(WhenDefeated);
+        _health.OnTakeDamage -= Effect;
+    }
+
+    public void OnFlip(bool subscribe)
+    {
+        if (subscribe)
+        {
+            _health.Defeated.Add(WhenDefeated);
+            _health.OnTakeDamage += Effect;
+        }
+        else
+        {
+            _health.Defeated.Remove(WhenDefeated);
+            _health.OnTakeDamage -= Effect;
+        }
     }
 }

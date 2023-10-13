@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
-using static UnityEngine.UI.GridLayoutGroup;
 
 public class Identity : IExhaust
 {
@@ -13,17 +12,24 @@ public class Identity : IExhaust
     [SerializeField] private AlterEgoData _AlterEgoData;
 
     #region Properties 
+    public Player Owner { get;private set; }
     public Hero Hero { get; set; }
     public AlterEgo AlterEgo { get; set; }
     public dynamic ActiveIdentity { get; set; }
-    public string IdentityName { get; protected set; }
-    public ObservableCollection<string> IdentityTraits { get; protected set; } = new ObservableCollection<string>();
+    public string IdentityName { get => ActiveIdentity.Name; }
+    public ObservableCollection<string> IdentityTraits
+    {
+        get
+        {
+            return ActiveIdentity.Traits;
+        }
+    }
     public List<Keywords> Keywords { get; } = new List<Keywords>();
     public int BaseHP { get => AlterEgo.BaseHP; }
     public bool HasFlipped { get; set; } = false;
     public bool Exhausted { get; set; } = false;
     public List<IAttachment> Attachments { get; } = new List<IAttachment>();
-    public IdentityEffect ActiveEffect { get; private set; }
+    public IdentityEffect ActiveEffect { get => ActiveIdentity.Effect; }
     #endregion
 
     private readonly Animator animator;
@@ -31,17 +37,17 @@ public class Identity : IExhaust
     private readonly AlterEgoUI alterEgoUI;
 
     #region Events
-    public event UnityAction FlippedToHero;
+    public event UnityAction<Player> FlippedToHero;
     public event UnityAction FlippedToAlterEgo;
     #endregion
 
     public Identity(Player p, HeroData h, AlterEgoData a)
-    { 
+    {
+        Owner = p;
         Hero = new Hero(h, p);
         AlterEgo = new AlterEgo(a, p);
 
         ActiveIdentity = AlterEgo;
-        ActiveEffect = AlterEgo.Effect;
            
         animator = p.GetComponent<Animator>();
         heroUI = p.transform.parent.Find("HeroInfo").GetComponent<HeroUI>();
@@ -49,6 +55,7 @@ public class Identity : IExhaust
 
         TurnManager.OnEndPlayerPhase += EndPlayerPhase;
     }
+
     protected virtual void OnDisable()
     {
         TurnManager.OnEndPlayerPhase -= EndPlayerPhase;
@@ -64,42 +71,29 @@ public class Identity : IExhaust
 
         HasFlipped = true;
     }
+
     public void FlipToHero()
     {
+        ActiveEffect.OnFlipDown();
+
         ActiveIdentity = Hero;
-        IdentityName = Hero.Name;
 
-        IdentityTraits.ToList().RemoveAll(x => AlterEgo.Traits.Contains(x));
-
-        foreach (string trait in Hero.Traits)
-            IdentityTraits.Add(trait);
-        
         alterEgoUI.gameObject.SetActive(false);
         heroUI.gameObject.SetActive(true);
 
-        ActiveEffect.OnFlipDown();
-        ActiveEffect = Hero.Effect;
         ActiveEffect.OnFlipUp();
 
-        FlippedToHero?.Invoke();
+        FlippedToHero?.Invoke(Owner);
     }
     public void FlipToAlterEgo()
     {
+        ActiveEffect.OnFlipDown();
+
         ActiveIdentity = AlterEgo;
-        IdentityName = AlterEgo.Name;
 
-        IdentityTraits.ToList().RemoveAll(x => Hero.Traits.Contains(x));
-
-        foreach (string trait in AlterEgo.Traits)
-        {
-            IdentityTraits.Add(trait);
-        }
-            
         alterEgoUI.gameObject.SetActive(true);
         heroUI.gameObject.SetActive(false);
-
-        ActiveEffect.OnFlipDown();
-        ActiveEffect = AlterEgo.Effect;
+        
         ActiveEffect.OnFlipUp();
 
         FlippedToAlterEgo?.Invoke();

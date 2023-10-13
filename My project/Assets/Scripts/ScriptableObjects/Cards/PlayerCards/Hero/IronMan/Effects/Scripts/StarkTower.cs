@@ -29,12 +29,7 @@ public class StarkTower : PlayerCardEffect
         _owner.Deck.discardPile.Remove(card);
         _owner.Deck.limbo.Add(card);
         
-
-        PlayerCard inst = Instantiate(PrefabFactory.instance.CreatePlayerCard(card), GameObject.Find("PlayerHandTransform").transform).GetComponent<PlayerCard>();
-        inst.gameObject.name = card.cardName;
-        inst.LoadCardData(card, _owner);
-        _owner.Hand.AddToHand(inst);
-        
+        _owner.Hand.AddToHand(CreateCardFactory.Instance.CreateCard(card, GameObject.Find("PlayerHandTransform").transform) as PlayerCard);
 
         await Task.Yield();
     }

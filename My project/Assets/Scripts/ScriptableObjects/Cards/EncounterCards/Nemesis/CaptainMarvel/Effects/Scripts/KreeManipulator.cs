@@ -12,9 +12,9 @@ public class KreeManipulator : EncounterCardEffect
         _owner = owner;
         Card = card;
 
-        _owner.Surge(player);
+        ScenarioManager.inst.Surge(player);
 
-        FindObjectOfType<MainSchemeCard>().GetComponent<Threat>().GainThreat(1);
+        ScenarioManager.inst.MainScheme.Threat.GainThreat(1);
 
         await Task.Yield();
     }
@@ -22,9 +22,9 @@ public class KreeManipulator : EncounterCardEffect
     public override async Task Boost(Action action)
     {
         if (action is not AttackAction) return;
-        if (DefendSystem.instance.Target != null) return;
+        if (DefendSystem.Instance.Target != null) return;
 
-        FindObjectOfType<MainSchemeCard>().GetComponent<Threat>().GainThreat(1);
+        ScenarioManager.inst.MainScheme.Threat.GainThreat(1);
 
         await Task.Yield();
     }

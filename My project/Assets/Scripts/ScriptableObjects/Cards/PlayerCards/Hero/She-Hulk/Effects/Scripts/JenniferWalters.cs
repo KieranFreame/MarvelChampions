@@ -6,24 +6,24 @@ using UnityEngine;
 namespace CoreSet
 {
     [CreateAssetMenu(fileName = "Jennifer Walters", menuName = "MarvelChampions/Identity Effects/She-Hulk/Alter-Ego")]
-    public class JenniferWalters : IdentityEffect, IModifyThreat
+    public class JenniferWalters : IdentityEffect
     {
         public override void LoadEffect(Player _owner)
         {
             owner = _owner;
 
-            SchemeSystem.instance.Modifiers.Add(this);
+            SchemeSystem.Instance.Modifiers.Add(ModifyScheme);
             TurnManager.OnEndPlayerPhase += Reset;
         }
 
         public override void OnFlipDown()
         {
-            SchemeSystem.instance.Modifiers.Remove(this);
+            SchemeSystem.Instance.Modifiers.Remove(ModifyScheme);
         }
 
         public override void OnFlipUp()
         {
-            SchemeSystem.instance.Modifiers.Add(this);
+            SchemeSystem.Instance.Modifiers.Add(ModifyScheme);
         }
 
         public async Task<SchemeAction> ModifyScheme(SchemeAction action)

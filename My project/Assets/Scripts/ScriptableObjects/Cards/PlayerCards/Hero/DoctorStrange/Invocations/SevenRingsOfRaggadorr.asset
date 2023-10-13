@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
+  m_Name: SevenRingsOfRaggadorr
+  m_EditorClassIdentifier: 
+  cardID: STRANGE-I-003
+  cardName: Seven Rings Of Raggadorr
+  cardDesc: Give up to 3 characters a tough status card.
+  cardType: 1
+  cardTraits:
+  - Invocation
+  cardArt: {fileID: 0}
+  cardCost: 1
+  isUnique: 0
+  cardAspect: 5
+  cardResources: 
+  effect: {fileID: 11400000, guid: e87b8b3e9f7e60e499582edd3d94b0bf, type: 2}

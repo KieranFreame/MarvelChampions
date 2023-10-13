@@ -10,10 +10,10 @@ public class Daredevil : PlayerCardEffect
     /// After Daredevil thwarts, deal 1 damage to an enemy.
     /// </summary>
 
-    public override async Task OnEnterPlay()
+    public override Task OnEnterPlay()
     {
         (Card as AllyCard).CharStats.ThwartInitiated += ThwartInitiated;
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 
     private void ThwartInitiated() => ThwartSystem.OnThwartComplete += OnThwartComplete;
@@ -25,7 +25,7 @@ public class Daredevil : PlayerCardEffect
         List<ICharacter> enemies = new() { FindObjectOfType<Villain>() };
         enemies.AddRange(FindObjectsOfType<MinionCard>());
         
-        await DamageSystem.instance.ApplyDamage(new DamageAction(enemies, 1));
+        await DamageSystem.Instance.ApplyDamage(new DamageAction(enemies, 1, card:Card));
     }
 
     public override void OnExitPlay()

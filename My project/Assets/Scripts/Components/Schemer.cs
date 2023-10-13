@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Schemer : IConfusable, IStat
+public class Schemer : IConfusable
 {
     private int _scheme;
-    public int BaseScheme { get; private set; }
+    public int BaseScheme { get; set; }
     private bool _confused;
     public List<string> keywords = new(); //temp?
 
@@ -15,11 +16,14 @@ public class Schemer : IConfusable, IStat
     public event UnityAction<bool> OnToggleConfuse;
     public event UnityAction SchemeChanged;
 
+    public delegate Task<SchemeAction> CancelScheme(SchemeAction schemeAction);
+    public List<CancelScheme> SchemeCancel { get; private set; } = new();
+
     public Schemer(Villain owner)
     {
         Owner = owner;
         CurrentScheme = BaseScheme = owner.BaseScheme;
-        owner.StageAdvanced += AdvanceStage;
+        owner.Stages.StageAdvanced += AdvanceStage;
     }
 
     public Schemer(MinionCard owner, MinionCardData data)
@@ -28,7 +32,7 @@ public class Schemer : IConfusable, IStat
         CurrentScheme = BaseScheme = data.baseScheme;
     }
 
-    public SchemeAction Scheme()
+    public async Task<SchemeAction> Scheme()
     {
         if (Confused)
         {
@@ -37,10 +41,19 @@ public class Schemer : IConfusable, IStat
         }
 
         var scheme = new SchemeAction(_scheme, Owner);
+
+        for (int i = SchemeCancel.Count-1; i >= 0; i--)
+        {
+            scheme = await SchemeCancel[i](scheme);
+
+            if (scheme == null)
+                break;
+        }
+
         return scheme;
     }
 
-    private void AdvanceStage(int amount) => CurrentScheme += Owner.BaseScheme - BaseScheme;
+    private void AdvanceStage() => CurrentScheme += Owner.BaseScheme - BaseScheme;
 
     public bool Confused
     {

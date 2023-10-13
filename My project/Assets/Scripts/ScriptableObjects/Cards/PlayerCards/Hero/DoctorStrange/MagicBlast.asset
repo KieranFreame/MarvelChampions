@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
+  m_Name: MagicBlast
+  m_EditorClassIdentifier: 
+  cardID: STRANGE-E-002
+  cardName: Magic Blast
+  cardDesc: 'Deal 5 damage to an enemy and discard the top card of your main deck.
+    Apply the effects according to it''s printed resources:
+
+    Physical: Stun that
+    enemy
+
+    Energy: Deal 2 damage  to that enemy
+
+    Scientific: Confuse that
+    enemy
+
+    Wild: All of the above.'
+  cardType: 1
+  cardTraits:
+  - Attack
+  - Spell
+  cardArt: {fileID: 0}
+  cardCost: 3
+  isUnique: 0
+  cardAspect: 5
+  cardResources: 03000000
+  effect: {fileID: 11400000, guid: ee96224a3b865dc4eb43b2b9e8fe3a74, type: 2}

@@ -1,15 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "One-Two Punch", menuName = "MarvelChampions/Card Effects/She-Hulk/One-Two Punch")]
 public class OneTwoPunch : PlayerCardEffect
 {
-    public override void OnDrawn(Player player, PlayerCard card)
+    public override void OnDrawn()
     {
-        base.OnDrawn(player, card);
-
         FindObjectOfType<IdentityActions>(true).OnBasicAttack += OnBasicAttack;
     }
 
@@ -26,20 +25,20 @@ public class OneTwoPunch : PlayerCardEffect
         if (_owner.CharStats.Attacker.Stunned)
             return;
 
-        AttackSystem.OnActivationComplete += OnActivationComplete;
+        AttackSystem.Instance.OnAttackCompleted.Add(OnAttackComplete);
     }
 
-    private async void OnActivationComplete()
+    private async Task OnAttackComplete(Action action)
     {
-        AttackSystem.OnActivationComplete -= OnActivationComplete;
+        AttackSystem.Instance.OnAttackCompleted.Remove(OnAttackComplete);
 
-        if (_owner.ResourcesAvailable(Card) < Card.CardCost) return;
+        if (_owner.ResourcesAvailable(Card) < Card.CardCost || !_owner.Exhausted) return;
 
         bool decision = await ConfirmActivateUI.MakeChoice(Card);
 
         if (decision)
         {
-            await PlayCardSystem.instance.InitiatePlayCard(new(_owner, _owner.Hand.cards, Card));
+            await PlayCardSystem.Instance.InitiatePlayCard(new(Card));
         }
     }
 

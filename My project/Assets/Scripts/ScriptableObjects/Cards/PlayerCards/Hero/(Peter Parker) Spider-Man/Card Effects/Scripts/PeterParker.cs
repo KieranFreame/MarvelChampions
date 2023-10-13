@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Peter Parker", menuName = "MarvelChampions/Identity Effects/Spider-Man (Peter Parker)/AlterEgo")]
-public class PeterParker : IdentityEffect, IResourceGenerator
+public class PeterParker : IdentityEffect, IGenerate
 {
     public override void LoadEffect(Player _owner)
     {

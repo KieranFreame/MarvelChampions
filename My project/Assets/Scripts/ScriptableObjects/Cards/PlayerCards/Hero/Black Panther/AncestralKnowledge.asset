@@ -18,9 +18,9 @@ MonoBehaviour:
     them in to your deck.'
   cardType: 1
   cardTraits: []
-  cardArt: {fileID: 0}
+  cardArt: {fileID: 21300000, guid: 5d65c83aa94adab4f97438d18d4ff886, type: 3}
   cardCost: 1
   isUnique: 0
   cardAspect: 5
   cardResources: 01000000
-  effect: {fileID: 0}
+  effect: {fileID: 11400000, guid: 770b5af6035a160438cc074876bf64a2, type: 2}

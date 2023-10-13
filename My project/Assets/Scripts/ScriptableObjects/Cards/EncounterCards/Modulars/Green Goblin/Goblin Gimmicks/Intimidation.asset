@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd59bffae62c9843892e230b19351f6, type: 3}
+  m_Name: Intimidation
+  m_EditorClassIdentifier: 
+  cardID: GIMMICKS-T-001
+  cardName: Intimidation
+  cardDesc: 'Choose One: Spend 2 resources or give the villain a face-down boost
+    card.'
+  cardType: 7
+  cardTraits: []
+  cardArt: {fileID: 0}
+  boostIcons: 1
+  boostDescription: Give the villain a face-down boost card.
+  effect: {fileID: 11400000, guid: 0405073e80b15444c882662771011769, type: 2}

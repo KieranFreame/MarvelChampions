@@ -20,9 +20,12 @@ public class CancelButton : MonoBehaviour
 
     public delegate void CancelAction();
     public static CancelAction OnCancelAction;
+    public static bool CanEnable { get; set; } = true;
 
     public static CancellationToken ToggleCancelBtn(bool toggle, CancelAction func)
     {
+        if (!CanEnable) return default;
+
         inst.cancelBtn.SetActive(toggle);
 
         if (toggle)

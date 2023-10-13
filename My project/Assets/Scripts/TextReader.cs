@@ -7,7 +7,7 @@ public class TextReader
 {
     public static List<CardData> PopulateDeck(string filename)
     {
-        string path = "Assets/Decklists/" + filename;
+        string path = "Assets/CardLists/" + filename;
 
         List<CardData> deckToReturn = new();
         List<string> lines = new(); 
@@ -15,6 +15,9 @@ public class TextReader
 
         foreach (string line in lines)
         {
+            if (Database.GetCardDataById(line) == null)
+                Debug.Log(line + " is not in the database");
+
             deckToReturn.Add(Database.GetCardDataById(line));
         }
 

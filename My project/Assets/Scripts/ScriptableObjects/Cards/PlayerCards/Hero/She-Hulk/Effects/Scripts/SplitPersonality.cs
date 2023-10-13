@@ -13,7 +13,7 @@ public class SplitPersonality : PlayerCardEffect
         _owner.Identity.HasFlipped = HasFlipped;
 
         while (_owner.Hand.cards.Count != _owner.Identity.ActiveIdentity.BaseHandSize)
-            DrawCardSystem.instance.DrawCards(new(1, _owner));
+            DrawCardSystem.Instance.DrawCards(new(1, _owner));
 
         await Task.Yield();
     }

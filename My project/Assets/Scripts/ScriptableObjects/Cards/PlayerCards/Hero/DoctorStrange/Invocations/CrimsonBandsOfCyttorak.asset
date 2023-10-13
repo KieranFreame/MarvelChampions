@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
+  m_Name: CrimsonBandsOfCyttorak
+  m_EditorClassIdentifier: 
+  cardID: STRANGE-I-001
+  cardName: Crimson Bands of Cyttorak
+  cardDesc: Stun an enemy and deal 7 damage to it
+  cardType: 1
+  cardTraits:
+  - Invocation
+  cardArt: {fileID: 0}
+  cardCost: 2
+  isUnique: 0
+  cardAspect: 5
+  cardResources: 
+  effect: {fileID: 11400000, guid: c1e6400aaa68a9e45bf186592ec0f34f, type: 2}

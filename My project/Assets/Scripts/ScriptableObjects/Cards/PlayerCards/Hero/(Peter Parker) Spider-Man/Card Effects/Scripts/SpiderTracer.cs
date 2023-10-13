@@ -7,22 +7,25 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Spider-Tracer", menuName = "MarvelChampions/Card Effects/Spider-Man (Peter Parker)/Spider-Tracer")]
 public class SpiderTracer : PlayerCardEffect
 {
-    List<MinionCard> minions = new();
+    readonly List<MinionCard> minions = new();
     MinionCard target;
 
     public override bool CanBePlayed()
     {
-        minions.Clear();
+        if (base.CanBePlayed())
+        {
+            minions.Clear();
 
-        if (VillainTurnController.instance.MinionsInPlay.Count == 0)
-            return false;
+            if (VillainTurnController.instance.MinionsInPlay.Count == 0)
+                return false;
 
-        minions.AddRange(VillainTurnController.instance.MinionsInPlay);
-        minions.RemoveAll(x => x.Attachments.FirstOrDefault(x => (x as ICard).CardName == Card.CardName) != default);
+            minions.AddRange(VillainTurnController.instance.MinionsInPlay);
+            minions.RemoveAll(x => x.Attachments.FirstOrDefault(x => (x as ICard).CardName == Card.CardName) != default);
 
-        if (minions.Count > 0) return true;
+            if (minions.Count > 0) return true;
+        }
 
-        return base.CanBePlayed();
+        return false;
     }
 
     public override async Task OnEnterPlay()
@@ -35,19 +38,19 @@ public class SpiderTracer : PlayerCardEffect
         Card.transform.SetAsFirstSibling();
         Card.transform.localPosition = new Vector3(-50, 0, 0);
 
-        target.CharStats.Health.Defeated += WhenDefeated;
+        target.CharStats.Health.Defeated.Add(WhenDefeated);
     }
 
-    public override async void WhenDefeated()
+    public override async Task WhenDefeated()
     {
-        target.CharStats.Health.Defeated -= WhenDefeated;
+        target.CharStats.Health.Defeated.Remove(WhenDefeated);
 
         Card.transform.SetParent(null);
 
-        if (ScenarioManager.sideSchemes.Count == 0 && FindObjectOfType<MainSchemeCard>().GetComponent<Threat>().CurrentThreat == 0)
+        if (ScenarioManager.sideSchemes.Count == 0 && ScenarioManager.inst.MainScheme.Threat.CurrentThreat == 0)
             return;
 
-        await ThwartSystem.instance.InitiateThwart(new(3));
+        await ThwartSystem.Instance.InitiateThwart(new(3));
 
         _owner.CardsInPlay.Permanents.Remove(Card);
         _owner.Deck.Discard(Card);

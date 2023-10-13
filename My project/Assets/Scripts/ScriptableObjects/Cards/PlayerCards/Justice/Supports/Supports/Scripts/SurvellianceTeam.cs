@@ -26,7 +26,7 @@ public class SurvellianceTeam : PlayerCardEffect
         Card.Exhaust();
         counters.RemoveCounters(1);
 
-        await ThwartSystem.instance.InitiateThwart(new(1));
+        await ThwartSystem.Instance.InitiateThwart(new(1));
 
         if (counters.CountersLeft == 0)
         {

@@ -6,16 +6,25 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class PlayCardSystem : MonoBehaviour
+public class PlayCardSystem
 {
-    public static PlayCardSystem instance;
-    private void Awake()
+    private static PlayCardSystem instance;
+    public static PlayCardSystem Instance
     {
-        //Singleton
-        if (instance == null)
-            instance = this;
-        else
-            Destroy(this);
+        get
+        {
+            if (instance == null)
+                instance = new();
+
+            return instance;
+        }
+    }
+
+    PlayCardSystem()
+    {
+        alliesTransform = GameObject.Find("AlliesTransform").transform;
+        permanentsTransform = GameObject.Find("PermanentsTransform").transform;
+        eventsTransform = GameObject.Find("EncounterCards").transform;
     }
 
     public PlayCardAction Action { get; private set; }
@@ -26,8 +35,9 @@ public class PlayCardSystem : MonoBehaviour
     public event UnityAction<PlayerCard> OnCardPlayed;
     #endregion
 
-    [SerializeField] private Transform alliesTransform;
-    [SerializeField] private Transform permanentsTransform;
+    private Transform alliesTransform;
+    private Transform permanentsTransform;
+    private Transform eventsTransform;
 
     public async Task InitiatePlayCard(PlayCardAction action)
     {
@@ -37,19 +47,25 @@ public class PlayCardSystem : MonoBehaviour
         if (CardToPlay.CardCost > 0)
             await PayCostSystem.instance.PayForCard(CardToPlay);
 
-        _player.Hand.Remove(CardToPlay);
+        if (CardToPlay.CurrZone == Zone.Hand)
+            _player.Hand.Remove(CardToPlay);
+
+        OnCardPlayed?.Invoke(CardToPlay);
 
         await ChangeZones();
         await CardToPlay.OnEnterPlay();
 
-        OnCardPlayed?.Invoke(CardToPlay);
+        if (CardToPlay.CardType == CardType.Event && CardToPlay.InPlay)
+            _player.Deck.Discard(CardToPlay);
     }
 
     private async Task ChangeZones()
     {
+        CardToPlay.PrevZone = CardToPlay.CurrZone;
+        CardToPlay.InPlay = true;
+
         if (CardToPlay.Data.cardType is CardType.Ally)
         {
-            CardToPlay.transform.SetParent(alliesTransform);
             _player.CardsInPlay.Allies.Add(CardToPlay as AllyCard);
 
             if (_player.CardsInPlay.ReachedAllyLimit())
@@ -58,22 +74,21 @@ public class PlayCardSystem : MonoBehaviour
                 await DiscardAlly();
             }
 
-            CardToPlay.PrevZone = CardToPlay.CurrZone;
+            CardToPlay.transform.SetParent(alliesTransform);
             CardToPlay.CurrZone = Zone.Ally;
-            CardToPlay.InPlay = true;
         }
         else if (CardToPlay.Data.cardType is CardType.Upgrade || CardToPlay.Data.cardType is CardType.Support)
         {
             CardToPlay.transform.SetParent(permanentsTransform);
             _player.CardsInPlay.Permanents.Add(CardToPlay);
-
-            CardToPlay.PrevZone = CardToPlay.CurrZone;
             CardToPlay.CurrZone = Zone.Support;
-            CardToPlay.InPlay = true;
         }
         else
-            _player.Deck.Discard(CardToPlay);
-        
+        {
+            CardToPlay.transform.SetParent(eventsTransform, false);
+            CardToPlay.transform.localPosition = Vector3.zero;
+            await Task.Delay(2000);
+        }
     }
     public async Task DiscardAlly()
     {

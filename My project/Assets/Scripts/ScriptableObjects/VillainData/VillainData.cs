@@ -6,7 +6,10 @@ using UnityEngine;
 public class VillainData : ScriptableObject
 {
     public string villainName;
+    public List<string> villainTraits;
     public string deckPath;
     public Sprite villainArt;
+
+    public VillainEffect villainEffect;
     public List<VillainStage> stages = new();
 }

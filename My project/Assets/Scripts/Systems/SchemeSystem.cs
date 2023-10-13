@@ -4,27 +4,27 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class SchemeSystem : MonoBehaviour
+public class SchemeSystem
 {
-    #region Singleton Pattern
-    public static SchemeSystem instance;
+    private static SchemeSystem instance;
 
-    private void Awake()
+    public static SchemeSystem Instance
     {
-        if (instance == null)
-            instance = this;
-        else
-            Destroy(this);
-    }
-    #endregion
+        get
+        {
+            if (instance == null)
+                instance = new();
 
-    #region Events
-    public static event UnityAction<Action> OnSchemeComplete;
-    public static event UnityAction OnActivationComplete;
-    #endregion
+            return instance;
+        }
+    }
+
+    public delegate Task OnSchemeComplete(SchemeAction schemeAction);
+    public List<OnSchemeComplete> SchemeComplete { get; private set; } = new();
 
     #region Modifiers
-    public List<IModifyThreat> Modifiers { get; private set; } = new();
+    public delegate Task<SchemeAction> ModifyThreat(SchemeAction action);
+    public List<ModifyThreat> Modifiers { get; private set; } = new();
     #endregion
 
     #region Fields
@@ -39,11 +39,11 @@ public class SchemeSystem : MonoBehaviour
 
         if (Action.Owner is Villain || Action.Keywords.Contains(Keywords.Villainous))
         {
-            BoostSystem.instance.DealBoostCards();
-            Action.Value += await BoostSystem.instance.FlipCard(Action);
+            BoostSystem.Instance.DealBoostCards();
+            Action.Value += await BoostSystem.Instance.FlipCard(Action);
         }
 
-        Target = FindObjectOfType<MainSchemeCard>().GetComponent<Threat>();
+        Target = ScenarioManager.inst.MainScheme.Threat;
 
         for (int i = Modifiers.Count - 1; i >= 0; i--)
         {
@@ -53,14 +53,16 @@ public class SchemeSystem : MonoBehaviour
                 continue;
             }
 
-            action = await Modifiers[i].ModifyScheme(action);
+            action = await Modifiers[i](action);
             if (action.Value < 0) action.Value = 0;
         }
 
         Debug.Log((Action.Owner as MonoBehaviour).gameObject.name + " is placing " + Action.Value + " threat on the main scheme");
         Target.GainThreat(Action.Value);
 
-        OnActivationComplete?.Invoke();
-        OnSchemeComplete?.Invoke(Action);
+        for (int i = SchemeComplete.Count -1; i >= 0; --i)
+        {
+            await SchemeComplete[i](Action);
+        }
     }
 }

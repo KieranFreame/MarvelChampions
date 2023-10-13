@@ -3,11 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Threat : MonoBehaviour
+public class Threat //: MonoBehaviour
 {
-    SchemeCard owner;
+    public SchemeCard Owner { get; private set; }
     public int StartingThreat { get; set; }
-    public int CurrentThreat { get; set; }
+    private int currentThreat;
+    public int CurrentThreat 
+    { 
+        get => currentThreat;
+        set
+        {
+            currentThreat = value;
+            ThreatChanged?.Invoke(currentThreat);
+        } 
+    }
 
     //Main Scheme
     private int maxThreat;
@@ -31,15 +40,24 @@ public class Threat : MonoBehaviour
     }
         
 
-    public event UnityAction WhenDefeated;
+    public event UnityAction WhenDefeated; //make delegate?
     public event UnityAction<int> ThreatChanged;
     public event UnityAction<int> MaxThreatChanged;
     public event UnityAction<int> AccelerationChanged;
     public event UnityAction WhenCompleted;
 
-    private void OnEnable()
+    public Threat(SchemeCard _owner, int startThreat) //Side Scheme
     {
-        owner = GetComponent<SchemeCard>();
+        Owner = _owner;
+        CurrentThreat = StartingThreat = startThreat;
+    }
+    
+    public Threat(SchemeCard _owner, int startThreat, int acceleration, int maxThreat) //Main Scheme
+    {
+        Owner = _owner;
+        CurrentThreat = StartingThreat = startThreat;
+        Acceleration = acceleration * TurnManager.Players.Count;
+        MaxThreat = maxThreat * TurnManager.Players.Count;
     }
 
     public void RemoveThreat(int thwart)
@@ -50,40 +68,25 @@ public class Threat : MonoBehaviour
 
             if (CurrentThreat <= 0)
             {
-                if (owner is not MainSchemeCard)
+                if (Owner is not MainSchemeCard)
+                {
                     WhenDefeated?.Invoke();
+                    Owner.WhenDefeated();
+                }
                 else
                     CurrentThreat = 0;
             }
         }
-
-        ThreatChanged?.Invoke(CurrentThreat);
     }
 
     public void GainThreat(int threat)
     {
         CurrentThreat += threat;
 
-        if (owner is MainSchemeCard)
+        if (Owner is MainSchemeCard)
         {
             if (CurrentThreat >= MaxThreat)
                 WhenCompleted?.Invoke();
         }
-
-        ThreatChanged?.Invoke(CurrentThreat);
-    }
-
-    public void SetThreat(int startThreat)
-    {
-        CurrentThreat = StartingThreat = startThreat;
-    }
-    
-    public void SetThreat(int startThreat, int acceleration, int maxThreat) //MainScheme
-    {
-        CurrentThreat = StartingThreat = startThreat;
-        Acceleration = acceleration * TurnManager.Players.Count;
-        MaxThreat = maxThreat * TurnManager.Players.Count;
-
-        MaxThreatChanged?.Invoke(MaxThreat);
     }
 }

@@ -15,18 +15,24 @@ public class Player : MonoBehaviour, ICharacter, IExhaust
     public Deck Deck;
     public Hand Hand = new();
     private List<IAttachment> attachments = new();
-    public List<IAttachment> Attachments { get => CardsInPlay.Attachments.ToList(); set => attachments = new(); }
+    public ObservableCollection<IAttachment> Attachments { get => CardsInPlay.Attachments; set => attachments = new(); }
     public PlayerCards CardsInPlay { get; private set; } = new();
-    public PlayerEncounterCards EncounterCards { get; private set; } = new();
+    public PlayerEncounterCards EncounterCards { get; private set; }
     public bool Exhausted { get => Identity.Exhausted; set => Identity.Exhausted = value; }
+    public bool CanAttack { get; set; } = true;
+    public bool CanThwart { get; set; } = true;
 
     #endregion
     private void Awake()
     {
-        Identity = new Identity(this, a:alterEgoData, h:heroData);
+        Deck = new(path);
+
+        EncounterCards = new(GameObject.Find("EncounterCards").transform);
+        Identity = new Identity(this, a: alterEgoData, h: heroData);
         CharStats = new(this, heroData, alterEgoData);
 
-        Deck = new(path);
+        Identity.Hero.Effect.LoadEffect(this);
+        Identity.AlterEgo.Effect.LoadEffect(this);
 
         transform.parent.Find("AlterEgoInfo").GetComponent<AlterEgoUI>().LoadUI(this);
         transform.parent.Find("HeroInfo").GetComponent<HeroUI>().LoadUI(this);
@@ -41,9 +47,9 @@ public class Player : MonoBehaviour, ICharacter, IExhaust
         TurnManager.OnEndPlayerPhase -= DrawToHandSize;
         TurnManager.OnEndPlayerPhase -= Identity.EndPlayerPhase;
     }
-    private void Start()
+    private async void Start()
     {
-        List<CardData> obligations = Deck.deck.FindAll(x => x is EncounterCardData);
+        List<CardData> obligations = Deck.deck.Where(x => x is EncounterCardData).Cast<CardData>().ToList();
 
         foreach (CardData c in obligations)
         {
@@ -51,15 +57,25 @@ public class Player : MonoBehaviour, ICharacter, IExhaust
             ScenarioManager.inst.EncounterDeck.AddToDeck(c);
         }
 
-        Deck.deck.RemoveAll(x => x == null);
+        for (int i = Deck.deck.Count -1; i >= 0; i--)
+        {
+            if (Deck.deck[i] == null)
+            {
+                Deck.deck.RemoveAt(i);
+            }
+        }
 
-        DrawCardSystem.instance.DrawCards(new DrawCardsAction(Identity.ActiveIdentity.HandSize, this));
+        DrawCardSystem.Instance.DrawCards(new DrawCardsAction(Identity.ActiveIdentity.HandSize, this));
+
+        await Identity.ActiveEffect.Setup();
     }
+    public void WhenDefeated() { }
+
     private void DrawToHandSize()
     {
         while (Hand.cards.Count < Identity.ActiveIdentity.HandSize)
         {
-            DrawCardSystem.instance.DrawCards(new DrawCardsAction(1));
+            DrawCardSystem.Instance.DrawCards(new DrawCardsAction(1));
         }
     }
     public void Recover() => CharStats.InitiateRecover();
@@ -80,12 +96,38 @@ public class Player : MonoBehaviour, ICharacter, IExhaust
         }
 
         foreach (PlayerCard c in CardsInPlay.Permanents)
-            if (c.Effect is IResourceGenerator)
+            if (c.Effect is IGenerate)
                 resourceCount++;
 
-        if (Identity.ActiveEffect is IResourceGenerator)
+        if (Identity.ActiveEffect is IGenerate)
             resourceCount++;
 
         return resourceCount;
+    }
+    public bool HaveResource(Resource resource, int amount = 1)
+    {
+        int count = 0;
+
+        foreach (PlayerCard c in Hand.cards)
+        {
+            if (c.Resources.Contains(resource))
+            {
+                count++;
+            }
+        }
+
+        if (Identity.ActiveEffect is IGenerate)
+        {
+            IGenerate eff = (IGenerate)Identity.ActiveEffect;
+
+            if (eff.CompareResource(resource))
+            {
+                count++;
+            }
+        }
+
+        count += CardsInPlay.HaveResource(resource, amount);
+
+        return count >= amount;
     }
 }

@@ -56,7 +56,7 @@ public class VillainUI : MonoBehaviour
     #region Setup
     public void SetUI(Villain owner)
     {
-        switch (owner.Stage)
+        switch (owner.Stages.Stage)
         {
             case 1:
                 villainStage.text = "I";
@@ -87,6 +87,10 @@ public class VillainUI : MonoBehaviour
 
         _health.OnToggleTough += ToggleTough;
         _health.HealthChanged += HealthChanged;
+
+        AttackChanged();
+        SchemeChanged();
+        HealthChanged();
     }
     #endregion
 

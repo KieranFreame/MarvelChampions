@@ -28,7 +28,7 @@ public class YonRoggsTreason : EncounterCardEffect
         }
         else
         {
-            owner.Surge(player);
+            ScenarioManager.inst.Surge(player);
         }
 
         await Task.Yield();

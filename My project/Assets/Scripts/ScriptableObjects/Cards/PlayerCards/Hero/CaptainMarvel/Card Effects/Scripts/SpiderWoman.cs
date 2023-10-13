@@ -6,11 +6,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "SpiderWoman", menuName = "MarvelChampions/Card Effects/Captain Marvel/Spider-Woman")]
 public class SpiderWoman : PlayerCardEffect
 {
-    public override async Task OnEnterPlay()
+    public override Task OnEnterPlay()
     {
-        var villain = FindObjectOfType<Villain>();
+        var villain = ScenarioManager.inst.ActiveVillain;
         villain.CharStats.Schemer.Confused = true;
 
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 }

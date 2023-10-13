@@ -8,10 +8,12 @@ public class GammaSlam : PlayerCardEffect
 {
     public override bool CanBePlayed()
     {
-        if (_owner.Identity.ActiveIdentity is not Hero)
-            return false;
+        if (base.CanBePlayed())
+        {
+            return _owner.Identity.ActiveIdentity is Hero;
+        }
 
-        return true;
+        return false;
     }
 
     public override async Task OnEnterPlay()
@@ -21,6 +23,6 @@ public class GammaSlam : PlayerCardEffect
 
         if (damage > 15) damage = 15;
 
-        await _owner.CharStats.InitiateAttack(new(damage, new List<TargetType>() { TargetType.TargetVillain, TargetType.TargetMinion }, owner: _owner));
+        await _owner.CharStats.InitiateAttack(new(damage, owner: _owner, card: Card));
     }
 }

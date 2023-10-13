@@ -40,6 +40,6 @@ public class FamilyEmergency : EncounterCardEffect
         }
 
         danvers.CharStats.Attacker.Stunned = true;
-        owner.Surge(player);
+        ScenarioManager.inst.Surge(player);
     }
 }

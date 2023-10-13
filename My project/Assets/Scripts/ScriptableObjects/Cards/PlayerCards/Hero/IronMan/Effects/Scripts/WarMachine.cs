@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -13,13 +14,15 @@ namespace CoreSet
 
         public override bool CanBePlayed()
         {
-            foreach (AllyCard a in _owner.CardsInPlay.Allies)
+            if (base.CanBePlayed())
             {
-                if (a.CardName == "War Machine" && (a.Data as AllyCardData).alterEgo == "James Rhodes")
-                    return false;
+                foreach (AllyCard a in _owner.CardsInPlay.Allies)
+                {
+                    return _owner.CardsInPlay.Allies.Any(x => (x.Data as AllyCardData).alterEgo == "James Rhodes");
+                }
             }
 
-            return base.CanBePlayed();
+            return false;
         }
 
         public override bool CanActivate()
@@ -37,9 +40,9 @@ namespace CoreSet
         public override async Task Activate()
         {
             Card.Exhaust();
-            (Card as AllyCard).CharStats.Health.TakeDamage(2);
+            (Card as AllyCard).CharStats.Health.CurrentHealth -= 2;
 
-            await DamageSystem.instance.ApplyDamage(new(enemies, 1, true));
+            await DamageSystem.Instance.ApplyDamage(new(enemies, 1, true, card: Card));
         }
     }
 }

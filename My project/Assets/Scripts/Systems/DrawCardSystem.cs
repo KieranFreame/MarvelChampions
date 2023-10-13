@@ -3,20 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using static UnityEngine.UI.GridLayoutGroup;
 
-public class DrawCardSystem : MonoBehaviour
+public class DrawCardSystem
 {
-    #region Singleton Pattern
-    public static DrawCardSystem instance;
+    private static DrawCardSystem instance;
 
-    private void Awake()
+    public static DrawCardSystem Instance
     {
-        if (instance == null)
-            instance = this;
-        else
-            Destroy(this);
+        get
+        {
+            if (instance == null)
+                instance = new();
+
+            return instance;
+        }
     }
-    #endregion
+
+    private DrawCardSystem()
+    {
+        PlayerHand = GameObject.Find("PlayerHandTransform").transform;
+    }
 
     #region Fields
     private Player _player;
@@ -36,12 +43,8 @@ public class DrawCardSystem : MonoBehaviour
 
             CardData draw = _player.Deck.DealCard();
 
-            PlayerCard inst = Instantiate(PrefabFactory.instance.CreatePlayerCard(draw as PlayerCardData), PlayerHand).GetComponent<PlayerCard>();
-            inst.gameObject.name = draw.cardName;
-
-            inst.LoadCardData(draw as PlayerCardData, _player);
+            var inst = CreateCardFactory.Instance.CreateCard(draw, PlayerHand) as PlayerCard;
             _player.Hand.AddToHand(inst);
-
             OnCardDrawn?.Invoke(inst);
         }
     }

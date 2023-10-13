@@ -27,4 +27,9 @@ public class AttachmentCard : EncounterCard, IAttachment
     {
         get => _thwSchModifier;
     }
+
+    public new AttachmentCardEffect Effect
+    {
+        get => effect as AttachmentCardEffect;
+    }
 }

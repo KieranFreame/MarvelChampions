@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 [CreateAssetMenu(fileName = "Captain Marvel's Helmet", menuName = "MarvelChampions/Card Effects/Captain Marvel/Captain Marvel's Helmet")]
 public class CaptainMarvelsHelmet : PlayerCardEffect
 {
-    public override async Task OnEnterPlay()
+    public override Task OnEnterPlay()
     {
         _owner.CharStats.Defender.CurrentDefence += (_owner.Identity.IdentityTraits.Contains("Aerial") ? 2 : 1);
 
         _owner.Identity.IdentityTraits.CollectionChanged += OnTraitsChange;
 
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 
     private void OnTraitsChange(object sender, NotifyCollectionChangedEventArgs e)

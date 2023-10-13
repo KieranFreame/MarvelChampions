@@ -12,24 +12,16 @@ public class RocketBoots : PlayerCardEffect
         if (Card.Exhausted)
             return false;
 
-        if (_owner.Hand.cards.Any(x => x.Resources.Contains(Resource.Scientific) || x.Resources.Contains(Resource.Wild)))
-            return true;
+        if (!_owner.HaveResource(Resource.Scientific))
+            return false;
 
-        foreach (PlayerCard c in _owner.CardsInPlay.Permanents)
-        {
-            if (c.Effect is IResourceGenerator)
-                if ((c.Effect as IResourceGenerator).CompareResource(Resource.Scientific))
-                    return true;
-        }
-
-        return false;
+        return true;
     }
 
     public override async Task Activate()
     {
-        Card.Exhaust();
-
         await PayCostSystem.instance.GetResources(Resource.Scientific, 1);
+        Card.Exhaust();
 
         _owner.Identity.IdentityTraits.Add("Aerial");
         TurnManager.OnEndPlayerPhase += EndOfPhase;

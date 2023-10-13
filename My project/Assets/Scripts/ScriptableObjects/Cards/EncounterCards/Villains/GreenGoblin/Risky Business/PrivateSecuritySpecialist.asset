@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8500fc7aedc00204b8366777dadbcc23, type: 3}
+  m_Name: PrivateSecuritySpecialist
+  m_EditorClassIdentifier: 
+  cardID: RISKY-M-002
+  cardName: Private Security Specialist
+  cardDesc: Guard
+  cardType: 5
+  cardTraits:
+  - Mercenary
+  cardArt: {fileID: 0}
+  boostIcons: 1
+  boostDescription: Place 1 counters on Criminal Enterprise. If you can't, remove
+    1 counters from State of Madness
+  effect: {fileID: 11400000, guid: 6ea66d4141215b94e88cab7e53b7ec2a, type: 2}
+  baseAttack: 1
+  baseScheme: 0
+  baseHealth: 4

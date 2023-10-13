@@ -19,6 +19,10 @@ public class EncounterCardUI : CardUI
         if (encounterCard == null)
         {
             TryGetComponent(out encounterCard);
+
+            if (encounterCard == null)
+                transform.parent.TryGetComponent(out encounterCard);
+
             encounterCard.SetupComplete += LoadData;
         }
     }

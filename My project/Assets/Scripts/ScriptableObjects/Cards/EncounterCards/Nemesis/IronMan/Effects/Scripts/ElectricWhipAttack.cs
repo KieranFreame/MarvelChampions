@@ -12,7 +12,7 @@ public class ElectricWhipAttack : EncounterCardEffect
     {
         if (player.CardsInPlay.Permanents.Any(x => x.Data.cardType == CardType.Upgrade) == false)
         {
-            owner.Surge(player);
+            ScenarioManager.inst.Surge(player);
             return;
         }
 
@@ -31,8 +31,8 @@ public class ElectricWhipAttack : EncounterCardEffect
             if (choice == 1)
             {
                 int damage = player.CardsInPlay.Permanents.Count(x => x.Data.cardType == CardType.Upgrade);
-                DamageAction action = new(player, damage);
-                await DamageSystem.instance.ApplyDamage(action);
+                DamageAction action = new(player, damage, card: Card);
+                await DamageSystem.Instance.ApplyDamage(action);
             }
             else
             {
@@ -58,7 +58,7 @@ public class ElectricWhipAttack : EncounterCardEffect
     public override async Task Boost(Action action)
     {
         if (action is not AttackAction) return;
-        if (DefendSystem.instance.Target != null) return;
+        if (DefendSystem.Instance.Target != null) return;
 
         var attack = action as AttackAction;
         await SecondEffect(attack.Target as Player);

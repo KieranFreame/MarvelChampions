@@ -16,9 +16,9 @@ public class RelentlessAssault : PlayerCardEffect
         AttackAction attack;
 
         if (PayCostSystem.instance.Resources.Contains(Resource.Physical))
-            attack = new(5, new List<TargetType>() { TargetType.TargetMinion }, new List<Keywords>() { Keywords.Overkill }, _owner);
+            attack = new(5, new List<Keywords>() { Keywords.Overkill }, _owner);
         else
-            attack = new(5, new List<TargetType>() { TargetType.TargetMinion }, owner:_owner);
+            attack = new(5, owner:_owner);
 
         await _owner.CharStats.InitiateAttack(attack);
     }

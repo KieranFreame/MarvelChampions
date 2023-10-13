@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8500fc7aedc00204b8366777dadbcc23, type: 3}
+  m_Name: HiredGun
+  m_EditorClassIdentifier: 
+  cardID: RISKY-M-001
+  cardName: Hired Gun
+  cardDesc: 'Choose to either give the villain a face-down boost card or place 2
+    infamy counters on Criminal Enterprise. '
+  cardType: 5
+  cardTraits:
+  - Criminal
+  cardArt: {fileID: 0}
+  boostIcons: 2
+  boostDescription: Place 1 Infamy counter on Criminal Enterprise. If you can't,
+    remove 1 Madness counter fromm State of Madness.
+  effect: {fileID: 11400000, guid: bba7789d38bc24c4baade2679fb19e0d, type: 2}
+  baseAttack: 2
+  baseScheme: 2
+  baseHealth: 3

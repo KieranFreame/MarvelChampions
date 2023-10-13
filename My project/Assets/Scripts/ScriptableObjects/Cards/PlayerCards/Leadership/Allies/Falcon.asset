@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88ea0e913420b64499ffc02f6cd7188f, type: 3}
+  m_Name: Falcon
+  m_EditorClassIdentifier: 
+  cardID: LEADERSHIP-A-004
+  cardName: Falcon
+  cardDesc: 'On Enter Play: Look at the top 3 cards of the encounter deck. Remove
+    1 threat from a scheme for each treachery looked at this way.'
+  cardType: 0
+  cardTraits:
+  - Aerial
+  - Avenger
+  cardArt: {fileID: 0}
+  cardCost: 4
+  isUnique: 1
+  cardAspect: 2
+  cardResources: 02000000
+  effect: {fileID: 11400000, guid: da64c7714607b204d92a39c45eef5c3a, type: 2}
+  alterEgo: Sam Wilson
+  BaseATK: 2
+  ATKConsq: 1
+  BaseTHW: 2
+  THWConsq: 1
+  BaseHP: 3

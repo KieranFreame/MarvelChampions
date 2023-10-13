@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8500fc7aedc00204b8366777dadbcc23, type: 3}
+  m_Name: GoblinKnight
+  m_EditorClassIdentifier: 
+  cardID: MUTAGEN-M-001
+  cardName: Goblin Knight
+  cardDesc: After this attacks you. Discard the top card of the encounter deck. If
+    it's a Goblin minion, put it into play.
+  cardType: 5
+  cardTraits:
+  - Elite
+  - Goblin
+  cardArt: {fileID: 0}
+  boostIcons: 2
+  boostDescription: Shuffle this back into the Encounter Deck
+  effect: {fileID: 11400000, guid: 63b4768501f9bd949a57bf318c66ddcb, type: 2}
+  baseAttack: 2
+  baseScheme: 2
+  baseHealth: 7

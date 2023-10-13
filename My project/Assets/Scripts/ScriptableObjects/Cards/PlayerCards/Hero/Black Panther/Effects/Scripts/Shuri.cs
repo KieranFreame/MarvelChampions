@@ -27,6 +27,8 @@ public class Shuri : PlayerCardEffect
         cardToAdd.transform.SetParent(GameObject.Find("PlayerHandTransform").transform, false);
         _owner.Hand.AddToHand(cardToAdd);
 
+        CardViewerUI.inst.DisablePanel();
+
         _owner.Deck.Shuffle();
     }
 }

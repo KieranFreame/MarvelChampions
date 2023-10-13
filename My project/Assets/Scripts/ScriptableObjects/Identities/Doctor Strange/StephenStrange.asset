@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b208795f8f9f95a498699e1be8e6b4f0, type: 3}
+  m_Name: StephenStrange
+  m_EditorClassIdentifier: 
+  alterEgoName: Stephen Strange
+  alterEgoTags:
+  - Mystic
+  alterEgoArt: {fileID: 0}
+  baseREC: 3
+  baseHP: 10
+  baseHandSize: 6
+  effect: {fileID: 11400000, guid: fe4d97a3288e0584d817e0ec4f213374, type: 2}

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ThwartAction : Action
 {
+    public SchemeCard Target { get; set; }
     public bool IgnoreCrisis { get; private set; } = false;
 
     public ThwartAction(int _thwart, bool ignoreCrisis = false)

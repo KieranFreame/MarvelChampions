@@ -22,8 +22,9 @@ public class Titania : EncounterCardEffect
         (Card as MinionCard).CharStats.Attacker.CurrentAttack = (Card as MinionCard).CharStats.Health.CurrentHealth;
     }
 
-    public override void OnExitPlay()
+    public override Task WhenDefeated()
     {
         (Card as MinionCard).CharStats.Health.HealthChanged -= HealthChanged;
+        return Task.CompletedTask;
     }
 }

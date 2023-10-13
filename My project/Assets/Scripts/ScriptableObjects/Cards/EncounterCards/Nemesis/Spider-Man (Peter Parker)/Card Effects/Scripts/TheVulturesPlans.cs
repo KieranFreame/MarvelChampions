@@ -27,7 +27,7 @@ public class TheVulturesPlans : EncounterCardEffect
 
         if (resources.Count > 0)
         {
-            FindObjectOfType<MainSchemeCard>().GetComponent<Threat>().GainThreat(resources.Count);
+            ScenarioManager.inst.MainScheme.Threat.GainThreat(resources.Count);
         }
 
         await Task.Yield();

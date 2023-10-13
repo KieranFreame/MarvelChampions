@@ -6,10 +6,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Mark V Armor", menuName = "MarvelChampions/Card Effects/Iron Man/Mark V Armor")]
 public class MarkVArmor : PlayerCardEffect
 {
-    public override async Task OnEnterPlay()
+    public override Task OnEnterPlay()
     {
         _owner.CharStats.Health.IncreaseMaxHealth(6);
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 
     public override void OnExitPlay()

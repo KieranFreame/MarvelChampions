@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace CoreSet
@@ -12,14 +13,17 @@ namespace CoreSet
             owner = _owner;
         }
 
-        private void AttackInitiated() => DefendSystem.instance.OnSelectingDefender += SelectingDefender;
+        private void AttackInitiated()
+        {
+            DefendSystem.Instance.OnSelectingDefender += SelectingDefender;
+        }
 
         private void SelectingDefender(Player target)
         {
-            DefendSystem.instance.OnSelectingDefender -= SelectingDefender;
+            DefendSystem.Instance.OnSelectingDefender -= SelectingDefender;
 
             if (target == owner)
-                DrawCardSystem.instance.DrawCards(new(1, owner));
+                DrawCardSystem.Instance.DrawCards(new(1, owner));
         }
 
         public override void OnFlipUp()

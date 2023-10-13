@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24ed65fa8c0dfd741bb3d89887077480, type: 3}
+  m_Name: Hydra Prison
+  m_EditorClassIdentifier: 
+  cardID: ZOLA-SS-001
+  cardName: Hydra Prison
+  cardDesc: Each Hero ally has been captured! This gains threat equal to their combined
+    cost. Defeat this to add them back to your hand.
+  cardType: 8
+  cardTraits: []
+  cardArt: {fileID: 0}
+  boostIcons: 0
+  boostDescription: 
+  effect: {fileID: 11400000, guid: 0a27d65226dd4ce46a36cd05ca1193c0, type: 2}
+  IsMainScheme: 0
+  StartingThreat: 1
+  MaximumThreat: 0
+  Acceleration: 0

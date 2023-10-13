@@ -25,4 +25,4 @@ MonoBehaviour:
   isUnique: 0
   cardAspect: 5
   cardResources: 02000000
-  effect: {fileID: 0}
+  effect: {fileID: 11400000, guid: 53de736237535ac4098bf8fd62ecaf74, type: 2}

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
+  m_Name: NightNurse
+  m_EditorClassIdentifier: 
+  cardID: PROTECTION-S-002
+  cardName: The Night Nurse
+  cardDesc: Uses 3 Counters. Exhaust Night Nurse and remove 1 counter; remove 1 status
+    card from your hero and heal 1 damage.
+  cardType: 3
+  cardTraits:
+  - Persona
+  cardArt: {fileID: 0}
+  cardCost: 1
+  isUnique: 1
+  cardAspect: 3
+  cardResources: 01000000
+  effect: {fileID: 11400000, guid: 80bee63a18a1c67438bdb71c1dc74c94, type: 2}

@@ -6,28 +6,31 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Ground Stomp", menuName = "MarvelChampions/Card Effects/She-Hulk/Ground Stomp")]
 public class GroundStomp : PlayerCardEffect
 {
-    List<ICharacter> enemies = new();
+    readonly List<ICharacter> enemies = new();
 
     public override bool CanBePlayed()
     {
-        if (_owner.Identity.ActiveIdentity is not Hero)
-            return false;
+        if (base.CanBePlayed())
+        {
+            if (_owner.Identity.ActiveIdentity is not Hero)
+                return false;
 
-        enemies.Clear();
+            enemies.Clear();
 
-        enemies.Add(FindObjectOfType<Villain>());
-        enemies.AddRange(FindObjectsOfType<MinionCard>());
+            enemies.Add(FindObjectOfType<Villain>());
+            enemies.AddRange(FindObjectsOfType<MinionCard>());
 
-        if (enemies.Count == 0) return false;
+            return enemies.Count > 0;
+        }
 
-        return true;
+        return false;
     }
 
     public override async Task OnEnterPlay()
     {
         foreach (var enemy in enemies)
         {
-           await DamageSystem.instance.ApplyDamage(new(enemy, 1));
+           await DamageSystem.Instance.ApplyDamage(new(enemy, 1, card: Card));
         }
     }
 }

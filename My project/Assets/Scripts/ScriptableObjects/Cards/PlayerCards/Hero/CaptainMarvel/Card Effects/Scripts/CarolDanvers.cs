@@ -20,7 +20,7 @@ public class CarolDanvers : IdentityEffect
 
     public override void Activate()
     {
-        DrawCardSystem.instance.DrawCards(new(1));
+        DrawCardSystem.Instance.DrawCards(new(1));
         hasActivated = true;
     }
 }

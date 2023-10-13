@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29ef56e8914e65340af83778e47883f8, type: 3}
+  m_Name: ProgramTransmitter
+  m_EditorClassIdentifier: 
+  cardID: ULTRON-A-001
+  cardName: Program Transmitter
+  cardDesc: After Ultron schemes, Incite 1 on each side scheme. Exhaust your hero
+    and spend 2 science resources to remove this.
+  cardType: 6
+  cardTraits:
+  - Item
+  - Tech
+  cardArt: {fileID: 0}
+  boostIcons: 1
+  boostDescription: 
+  effect: {fileID: 11400000, guid: 86f5a8d2d65f0bc4cb046516b460dc9e, type: 2}
+  ATKModifier: 0
+  THWSCHModifier: 1

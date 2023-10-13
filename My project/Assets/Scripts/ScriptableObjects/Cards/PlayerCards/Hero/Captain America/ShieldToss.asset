@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
+  m_Name: ShieldToss
+  m_EditorClassIdentifier: 
+  cardID: ROGERS-E-004
+  cardName: Shield Toss
+  cardDesc: Discard X cards from your hand, then return Captain America's Shield
+    to your hand; deal 4 damage to X enemies.
+  cardType: 1
+  cardTraits:
+  - Attack
+  - Superpower
+  cardArt: {fileID: 0}
+  cardCost: 0
+  isUnique: 0
+  cardAspect: 5
+  cardResources: 03000000
+  effect: {fileID: 11400000, guid: a1288d909a25063459b83b4fb1be49fc, type: 2}

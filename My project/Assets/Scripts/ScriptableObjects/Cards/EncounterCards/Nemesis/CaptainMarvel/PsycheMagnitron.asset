@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardID: DANVERS-SS-001
   cardName: The Psyche-Magnitron
-  cardDesc: Starts with an additional threat per player. Hazard.
+  cardDesc: Hinder 1 per player. Hazard.
   cardType: 8
   cardTraits: []
   cardArt: {fileID: 0}

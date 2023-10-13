@@ -9,6 +9,6 @@ public class SwingingWebKick : PlayerCardEffect
 {
     public override async Task OnEnterPlay()
     {
-        await _owner.CharStats.InitiateAttack(new(8, new List<TargetType>() { TargetType.TargetVillain, TargetType.TargetMinion }, owner:_owner));
+        await _owner.CharStats.InitiateAttack(new(8, owner: _owner, card: Card));
     }
 }

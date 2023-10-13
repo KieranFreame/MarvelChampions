@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class IndirectDamageHandler : MonoBehaviour
 {
-    private static IndirectDamageHandler inst;
+    public static IndirectDamageHandler inst;
 
     private void Awake()
     {
@@ -23,16 +23,18 @@ public class IndirectDamageHandler : MonoBehaviour
 
     private IndirectDamageUI UI;
 
-    public static void HandleIndirectDamage(List<ICharacter> candidates,int damage)
+    public async Task HandleIndirectDamage(List<ICharacter> candidates,int damage)
     {
-        inst._candidates = candidates;
-        inst._damageToApply = damage;
-        inst._actions.Clear();
+        _candidates = candidates;
+        _damageToApply = damage;
+        _actions.Clear();
 
-        inst.IndirectDamage();
+        Debug.Log("Dealing Indirect Damage: " + _damageToApply);
+
+        await inst.IndirectDamage();
     }
 
-    private async void IndirectDamage()
+    private async Task IndirectDamage()
     {
         ICharacter h;
 
@@ -44,11 +46,12 @@ public class IndirectDamageHandler : MonoBehaviour
             int damageApplied = await UI.SetIndirectDamage(h);
             _actions.Add(new(h, damageApplied));
             _damageToApply -= damageApplied;
+            Debug.Log("Damage Remaining: " + _damageToApply);
         }
 
         foreach (DamageAction d in _actions)
         {
-           await DamageSystem.instance.ApplyDamage(d);
+           await DamageSystem.Instance.ApplyDamage(d);
         }
     }
 }

@@ -1,21 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UnityEngine;
 
 [System.Serializable]
 public class Hand
 {
-    public List<PlayerCard> cards;
+    public ObservableCollection<PlayerCard> cards;
 
     public Hand()
     {
-        cards = new List<PlayerCard>();
+        cards = new();
     }
 
     public void AddToHand(PlayerCard card)
     {
         cards.Add(card);
-        card.Effect?.OnDrawn(card.Owner, card);
+        card.PrevZone = card.CurrZone;
+        card.CurrZone = Zone.Hand;
+        card.Effect?.OnDrawn();
     }
 
     public bool Contains(PlayerCard card)

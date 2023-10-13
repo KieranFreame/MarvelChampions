@@ -7,19 +7,20 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Heroic Intuition", menuName = "MarvelChampions/Card Effects/Justice/Heroic Intuition")]
 public class HeroicIntuition : PlayerCardEffect
 {
-    public override async Task OnEnterPlay()
+    public override Task OnEnterPlay()
     {
         _owner.CharStats.Thwarter.CurrentThwart++;
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 
     public override bool CanBePlayed()
     {
-        //There is not already a Heroic Intuition in play
-        if (_owner.CardsInPlay.Permanents.Any(x => x.CardName == "Heroic Intuition"))
-            return false;
-
-        return base.CanBePlayed();
+        if (base.CanBePlayed())
+        {
+            return !_owner.CardsInPlay.Permanents.Any(x => x.CardName == "Heroic Intuition");
+        }
+        
+        return false;
     }
 
     public override void OnExitPlay()

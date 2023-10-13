@@ -42,25 +42,12 @@ public class TargetSystem : MonoBehaviour
     public Action Action { get; private set; }
 
     public static event UnityAction<dynamic> TargetAcquired; 
-    public static event UnityAction<List<ICharacter>> CheckGuard;
-    public static event UnityAction<List<Threat>> CheckPatrolAndCrisis;
     
-    public static void SingleTarget(dynamic target)
-    {
-        TargetAcquired?.Invoke(target);
-    }
-
-    public async Task<T> SelectTarget<T>(List<T> candidates, bool isAttack = false, CancellationToken token = default)
+    public async Task<T> SelectTarget<T>(List<T> candidates, CancellationToken token = default)
     {
         T comp = default;
 
         this.candidates.Clear();
-
-        if (isAttack)
-            CheckGuard?.Invoke(candidates as List<ICharacter>);
-
-        if (typeof(T).ToString() is "Threat")
-            CheckPatrolAndCrisis?.Invoke(candidates as List<Threat>);
 
         while (!token.IsCancellationRequested)
         {
@@ -89,7 +76,7 @@ public class TargetSystem : MonoBehaviour
         return comp;
     }
 
-    public async Task<List<T>> SelectTargets<T>(List<T> candidates, int amount, CancellationToken token = default) where T : Component
+    public async Task<List<T>> SelectTargets<T>(List<T> candidates, int amount, CancellationToken token)
     {
         List<T> selections = new();
 

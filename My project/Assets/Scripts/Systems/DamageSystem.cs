@@ -3,23 +3,19 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.TextCore.Text;
 
-public class DamageSystem : MonoBehaviour
+public class DamageSystem
 {
-    public static DamageSystem instance;
+    private static DamageSystem instance = new();
 
-    private void Awake()
+    public static DamageSystem Instance
     {
-        //Singleton Pattern
-        if (instance == null)
-            instance = this;
-        else
-            Destroy(this);
+        get => instance;
     }
 
-    #region Events
-    public static event UnityAction OnDamageApplied;
+    #region Delegate
+    public delegate Task<DamageAction> ModifyDamage(DamageAction action);
+    public List<ModifyDamage> Modifiers { get; private set; } = new();
     #endregion
 
     public async Task ApplyDamage(DamageAction action)
@@ -30,12 +26,15 @@ public class DamageSystem : MonoBehaviour
             action.DamageTargets.RemoveAll(x => x != target);
         }
 
-        foreach (ICharacter target in action.DamageTargets)
+        for (int i = Modifiers.Count - 1; i >= 0; i--)
         {
-           target.CharStats.Health.TakeDamage(action.Value);
+            action = await Modifiers[i](action);
         }
 
-        OnDamageApplied?.Invoke();
+        foreach (ICharacter target in action.DamageTargets)
+        {
+            target.CharStats.Health.TakeDamage(action);
+        }
     }
 }
 

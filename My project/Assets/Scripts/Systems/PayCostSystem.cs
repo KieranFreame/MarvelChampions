@@ -36,8 +36,8 @@ public class PayCostSystem : MonoBehaviour
 
     #region Fields
     //readonly List<PlayerCard> candidates = new();
-    private readonly List<ICard> _discards = new();
-    private readonly List<IResourceGenerator> _effects = new();
+    public readonly List<ICard> _discards = new();
+    private readonly List<IGenerate> _effects = new();
     private readonly List<Resource> _resources = new();
     PlayerCard _cardToPlay;
     //List<PlayerCard> zone;
@@ -87,9 +87,9 @@ public class PayCostSystem : MonoBehaviour
                     {
                         Player p = r.gameObject.GetComponent<Player>();
 
-                        if (p.Identity.ActiveEffect is IResourceGenerator)
+                        if (p.Identity.ActiveEffect is IGenerate)
                         {
-                            IResourceGenerator eff = p.Identity.ActiveEffect as IResourceGenerator;
+                            IGenerate eff = p.Identity.ActiveEffect as IGenerate;
 
                             if (!_effects.Contains(eff))
                             {
@@ -137,14 +137,16 @@ public class PayCostSystem : MonoBehaviour
         cardToPlay.Owner.Deck.Discard(_discards);
         UIManager.MakingSelection = false;
     }
-    public async Task GetResources(Resource resourceToCheck = Resource.Any, int amount = 0, PlayerCard cardToCheck = null)
+    public async Task<bool> GetResources(Resource resourceToCheck = Resource.Any, int amount = 0, bool enableFinish = false)
     {
         UIManager.MakingSelection = true;
-        CancellationToken token = FinishButton.ToggleFinishButton(true, FinishedSelecting);
+        CancellationToken token = enableFinish ? FinishButton.ToggleFinishButton(true, FinishedSelecting) : default;
         Player player = FindObjectOfType<Player>();
         Clear();
 
         int resourceCount = 0;
+
+        Debug.Log($"Spend {amount} {resourceToCheck} resources");
 
         while (!token.IsCancellationRequested && resourceCount < amount)
         {
@@ -165,26 +167,24 @@ public class PayCostSystem : MonoBehaviour
                     {
                         PlayerCard card = r.gameObject.GetComponent<PlayerCard>();
 
-                        if (card != cardToCheck)
+                        if (card.Resources.Contains(resourceToCheck) || card.Resources.Contains(Resource.Wild) || resourceToCheck == Resource.Any)
                         {
-                            if (card.Resources.Contains(resourceToCheck))
-                            {
-                                resourceCount += HandleCardSelected(card);
-                                continue;
-                            }
+                            resourceCount += HandleCardSelected(card);
+                            continue;
                         }
+                        
                     }
                     else if (r.gameObject.GetComponent<Player>() != null)
                     {
                         Player p = r.gameObject.GetComponent<Player>();
 
-                        if (p.Identity.ActiveEffect is IResourceGenerator)
+                        if (p.Identity.ActiveEffect is IGenerate)
                         {
-                            IResourceGenerator eff = p.Identity.ActiveEffect as IResourceGenerator;
+                            IGenerate eff = p.Identity.ActiveEffect as IGenerate;
 
                             if (!_effects.Contains(eff))
                             {
-                                if (eff.CompareResource(resourceToCheck) && eff.CanGenerateResource(cardToCheck))
+                                if (eff.CompareResource(resourceToCheck))
                                 {
                                     _effects.Add(eff);
                                     resourceCount++;
@@ -203,31 +203,40 @@ public class PayCostSystem : MonoBehaviour
             await Task.Yield();
         }
 
-        foreach (var eff in _effects)
+        if (resourceCount > 0)
         {
-            _resources.AddRange(eff.GenerateResource());
-        }
-
-        foreach (PlayerCard card in _discards.Cast<PlayerCard>())
-        {
-            if (card.Data.cardType is CardType.Resource)
+            foreach (var eff in _effects)
             {
-                _resources.AddRange((card as ResourceCard).GetResources());
-
-                if (card.Effect != null)
-                    await (card.Effect as ResourceCardEffect).WhenSpent();
-            }
-            else
-            {
-                _resources.AddRange(card.Resources);
+                _resources.AddRange(eff.GenerateResource());
             }
 
-            player.Hand.Remove(card);
+            foreach (PlayerCard card in _discards.Cast<PlayerCard>())
+            {
+                if (card.Data.cardType is CardType.Resource)
+                {
+                    _resources.AddRange((card as ResourceCard).GetResources());
+
+                    if (card.Effect != null)
+                        await (card.Effect as ResourceCardEffect).WhenSpent();
+                }
+                else
+                {
+                    _resources.AddRange(card.Resources);
+                }
+
+                player.Hand.Remove(card);
+            }
+
+            player.Deck.Discard(_discards);
         }
 
-        player.Deck.Discard(_discards);
+        
         UIManager.MakingSelection = false;
-        FinishButton.ToggleFinishButton(false, FinishedSelecting);
+
+        if (token != default)
+            FinishButton.ToggleFinishButton(false, FinishedSelecting);
+
+        return resourceCount > 0;
     }
 
     private int HandleCardSelected(PlayerCard card)
@@ -253,10 +262,10 @@ public class PayCostSystem : MonoBehaviour
         }
         else
         {
-            if (card.Effect is IResourceGenerator)
+            if (card.Effect is IGenerate)
             {
-                IResourceGenerator eff = card.Effect as IResourceGenerator;
-                if (_effects.Contains(eff))
+                IGenerate eff = card.Effect as IGenerate;
+                if (!_effects.Contains(eff))
                 {
                     if (eff.CanGenerateResource(_cardToPlay))
                     {

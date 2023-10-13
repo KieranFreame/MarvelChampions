@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
+  m_Name: Quinjet
+  m_EditorClassIdentifier: 
+  cardID: LEADERSHIP-S-002
+  cardName: Quinjet
+  cardDesc: Gains a counter at the start of each turn. You can discard this to put
+    an Avenger ally into play (from your hand) with cost less than or equal to the
+    number of counters on this card.
+  cardType: 3
+  cardTraits:
+  - Avenger
+  - Vehicle
+  cardArt: {fileID: 0}
+  cardCost: 1
+  isUnique: 0
+  cardAspect: 2
+  cardResources: 03000000
+  effect: {fileID: 11400000, guid: 1aad3916d39afff48aa6d76856474fd7, type: 2}

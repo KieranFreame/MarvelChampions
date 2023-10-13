@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24ed65fa8c0dfd741bb3d89887077480, type: 3}
+  m_Name: UndergroundDistribution
+  m_EditorClassIdentifier: 
+  cardID: KLAW-MS-001
+  cardName: Underground Distribution
+  cardDesc: Defense Network starts in play. Discard cards from the encounter deck
+    until a minion is discarded. Put that minion into play.
+  cardType: 9
+  cardTraits: []
+  cardArt: {fileID: 0}
+  boostIcons: 0
+  boostDescription: 
+  effect: {fileID: 11400000, guid: 520ccd7d6f4abb44ab32d5236f77d654, type: 2}
+  IsMainScheme: 1
+  StartingThreat: 0
+  MaximumThreat: 6
+  Acceleration: 1

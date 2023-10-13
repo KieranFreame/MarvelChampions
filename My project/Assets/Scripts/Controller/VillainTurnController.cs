@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
@@ -30,35 +31,44 @@ public class VillainTurnController : MonoBehaviour
     public int HazardCount { get; set; }
 
     #region Fields
-    public List<MinionCard> MinionsInPlay { get; private set; } = new();
-    public Villain ActiveVillain;
-    MainSchemeCard mainScheme;
+    bool villainActivated;
+    public ObservableCollection<MinionCard> MinionsInPlay { get; private set; } = new();
+    #endregion
+
+    #region Delegates
+    public delegate Task ActivationComplete();
+    public List<ActivationComplete> OnActivationComplete { get; private set; } = new();
     #endregion
 
     private void StartVillainPhase()
     {
-        ActiveVillain ??= FindObjectOfType<Villain>();
-        mainScheme ??= FindObjectOfType<MainSchemeCard>();
         VillainPhase();
     }
 
     private async void VillainPhase()
     {
         Debug.Log("Step 1: Accelerating");
-        await mainScheme.Accelerate();
+        await ScenarioManager.inst.MainScheme.Accelerate();
 
         Debug.Log("Step 2: The Villain Activates");
         foreach (Player p in TurnManager.Players)
         {
             if (p.Identity.ActiveIdentity is Hero)
             {
-                await ActiveVillain.CharStats.InitiateAttack();
+                villainActivated = await ScenarioManager.inst.ActiveVillain.CharStats.InitiateAttack();
             }
             else
             {
-                await ActiveVillain.CharStats.InitiateScheme();
+                villainActivated = await ScenarioManager.inst.ActiveVillain.CharStats.InitiateScheme();
             }
-                
+
+            if (villainActivated)
+            {
+                foreach (var task in OnActivationComplete)
+                {
+                    await task.Invoke();
+                }
+            }
         }
 
         Debug.Log("Step 3: The Minions Activate");
@@ -85,12 +95,12 @@ public class VillainTurnController : MonoBehaviour
 
     private async Task ActivateMinions(Player p)
     {
-        foreach (MinionCard m in MinionsInPlay)
+        for (int i = MinionsInPlay.Count-1; i >= 0; i--)
         {
             if (p.Identity.ActiveIdentity is Hero)
-                await m.CharStats.InitiateAttack();
+                await MinionsInPlay[i].CharStats.InitiateAttack();
             else
-                await m.CharStats.InitiateScheme();
+                await MinionsInPlay[i].CharStats.InitiateScheme();
         }
     }
 

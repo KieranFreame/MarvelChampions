@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Thwarter : IConfusable, IStat
+public class Thwarter : IConfusable
 {
     #region Properties
     private int _currThwart;
@@ -14,6 +14,10 @@ public class Thwarter : IConfusable, IStat
         set
         {
             _currThwart = value;
+
+            if (_currThwart < BaseThwart)
+                _currThwart = BaseThwart;
+
             ThwartChanged?.Invoke();
         } 
     }

@@ -6,45 +6,44 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Interrogation Room", menuName = "MarvelChampions/Card Effects/Justice/Interrogation Room")]
 public class InterrogationRoom : PlayerCardEffect
 {
-    ICharacter _target;
+    MinionCard _target;
 
-    public override async Task OnEnterPlay()
+    public override Task OnEnterPlay()
     {
         _owner.CharStats.AttackInitiated += AttackInitiated;
-
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 
     private void AttackInitiated()
     {
-        if (ScenarioManager.sideSchemes.Count > 0 || FindObjectOfType<MainSchemeCard>().GetComponent<Threat>().CurrentThreat > 0)
-            TargetSystem.TargetAcquired += CheckTarget;
+        if (_target != null)
+            _target.CharStats.Health.Defeated.Remove(Defeated);
+
+        if (ScenarioManager.sideSchemes.Count > 0 || ScenarioManager.inst.MainScheme.Threat.CurrentThreat > 0)
+            AttackSystem.TargetAcquired += CheckTarget;
     }
 
-    private void CheckTarget(dynamic target)
+    private void CheckTarget(ICharacter target)
     {
-        TargetSystem.TargetAcquired -= CheckTarget;
+        AttackSystem.TargetAcquired -= CheckTarget;
 
         if (target is MinionCard)
         {
-            _target = target;
-            AttackSystem.OnAttackComplete += AttackComplete;
+            _target = target as MinionCard;
+            _target.CharStats.Health.Defeated.Add(Defeated);
         }
     }
 
-    private async void AttackComplete(Action action)
+    private async Task Defeated()
     {
-        AttackSystem.OnAttackComplete -= AttackComplete;
+        _target.CharStats.Health.Defeated.Remove(Defeated);
 
-        if (_target.CharStats.Health.CurrentHealth == 0) //defeated
+        bool decision = await ConfirmActivateUI.MakeChoice(Card);
+
+        if (decision)
         {
-            bool decision = await ConfirmActivateUI.MakeChoice(Card);
-
-            if (decision)
-            {
-                Card.Exhaust();
-                await ThwartSystem.instance.InitiateThwart(new(1));
-            }
+            Card.Exhaust();
+            await ThwartSystem.Instance.InitiateThwart(new(1));
         }
     }
 

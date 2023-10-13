@@ -12,11 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88ea0e913420b64499ffc02f6cd7188f, type: 3}
   m_Name: WonderMan
   m_EditorClassIdentifier: 
-  _cardName: Wonder Man
-  _cardDesc: As an additional cost for attacking, discard 1 card from your hand.
-  _cardType: 0
+  cardID: LEADERSHIP-A-006
+  cardName: Wonder Man
+  cardDesc: As an additional cost to attack, you must discard 1 card from your hand.
+  cardType: 0
+  cardTraits:
+  - Avenger
+  cardArt: {fileID: 0}
   cardCost: 2
+  isUnique: 1
   cardAspect: 2
+  cardResources: 02000000
+  effect: {fileID: 11400000, guid: 212650ddbd91ef2489dd89bca8fb750a, type: 2}
   alterEgo: Simon Williams
   BaseATK: 3
   ATKConsq: 1

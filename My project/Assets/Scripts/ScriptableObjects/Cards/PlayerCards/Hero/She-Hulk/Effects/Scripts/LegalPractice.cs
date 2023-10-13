@@ -10,10 +10,12 @@ public class LegalPractice : PlayerCardEffect
 {
     public override bool CanBePlayed()
     {
-        if (_owner.Identity.ActiveIdentity is not AlterEgo)
-            return false;
+        if (base.CanBePlayed())
+        {
+            return _owner.Identity.ActiveIdentity is AlterEgo;
+        }
 
-        return true;
+        return false;
     }
 
     public override async Task OnEnterPlay()
@@ -26,7 +28,7 @@ public class LegalPractice : PlayerCardEffect
 
         CancellationToken token = FinishButton.ToggleFinishButton(true, CardsSelected);
 
-        List<PlayerCard> discards = await TargetSystem.instance.SelectTargets(_owner.Hand.cards, 5, token);
+        List<PlayerCard> discards = await TargetSystem.instance.SelectTargets(_owner.Hand.cards.ToList(), 5, token);
 
         FinishButton.ToggleFinishButton(false, CardsSelected);
 

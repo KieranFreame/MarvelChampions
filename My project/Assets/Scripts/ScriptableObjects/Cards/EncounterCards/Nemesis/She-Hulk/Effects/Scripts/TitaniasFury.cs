@@ -15,7 +15,7 @@ public class TitaniasFury : EncounterCardEffect
         MinionCard titania = VillainTurnController.instance.MinionsInPlay.FirstOrDefault(x => x.CardName == "Titania");
 
         if (titania == default)
-            owner.Surge(player);
+            ScenarioManager.inst.Surge(player);
         else
         {
             if (player.Identity.ActiveIdentity is Hero)
@@ -27,7 +27,7 @@ public class TitaniasFury : EncounterCardEffect
                 if (!didAttack)
                 {
                     titania.CharStats.Health.RecoverHealth(6);
-                    owner.Surge(player);
+                    ScenarioManager.inst.Surge(player);
                 }
 
                 titania.CharStats.AttackInitiated -= AttackInitiated;
@@ -35,16 +35,16 @@ public class TitaniasFury : EncounterCardEffect
             else //alter-ego
             {
                 titania.CharStats.Health.RecoverHealth(6);
-                owner.Surge(player);
+                ScenarioManager.inst.Surge(player);
             }
         }
     }
 
-    private void AttackInitiated() => didAttack = true;
+    private void AttackInitiated() { didAttack = true; }
 
     public override async Task Boost(Action action)
     {
-        BoostSystem.instance.DealBoostCards();
+        BoostSystem.Instance.DealBoostCards();
         await Task.Yield();
     }
 }

@@ -22,8 +22,8 @@ public class AllyActions : PlayerCardActions
 
         if (card.CurrZone == Zone.Ally)
         {
-            attackBtn.SetActive(!card.Exhausted);
-            thwartBtn.SetActive(!card.Exhausted);
+            attackBtn.SetActive((card as AllyCard).CanAttack);
+            thwartBtn.SetActive((card as AllyCard).CanThwart);
         }
         else
         {

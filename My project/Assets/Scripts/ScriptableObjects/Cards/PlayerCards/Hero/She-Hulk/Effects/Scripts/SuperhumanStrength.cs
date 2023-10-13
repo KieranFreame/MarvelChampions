@@ -6,23 +6,22 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Superhuman Strength", menuName = "MarvelChampions/Card Effects/She-Hulk/Superhuman Strength")]
 public class SuperhumanStrength : PlayerCardEffect
 {
-    public override async Task OnEnterPlay()
+    public override Task OnEnterPlay()
     {
         _owner.CharStats.Attacker.CurrentAttack += 2;
-
         _owner.CharStats.AttackInitiated += AttackInitiated;
 
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 
     private void AttackInitiated()
     {
-        AttackSystem.OnAttackComplete += AttackComplete;
+        AttackSystem.Instance.OnAttackCompleted.Add(AttackComplete);
     }
 
-    private void AttackComplete(Action action)
+    private Task AttackComplete(Action action)
     {
-        AttackSystem.OnAttackComplete -= AttackComplete;
+        AttackSystem.Instance.OnAttackCompleted.Remove(AttackComplete);
         var attack = action as AttackAction;
 
         if (attack.Target.CharStats.Health.CurrentHealth > 0)
@@ -35,5 +34,7 @@ public class SuperhumanStrength : PlayerCardEffect
 
         _owner.CardsInPlay.Permanents.Remove(Card);
         _owner.Deck.Discard(Card);
+
+        return Task.CompletedTask;
     }
 }

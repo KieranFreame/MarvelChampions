@@ -24,7 +24,7 @@ public class ElectromagneticBacklash : EncounterCardEffect
                 p.Deck.Mill(1);
             }
 
-            await DamageSystem.instance.ApplyDamage(new(p, damage));
+            await DamageSystem.Instance.ApplyDamage(new(p, damage, card:Card));
         }
     }
 }

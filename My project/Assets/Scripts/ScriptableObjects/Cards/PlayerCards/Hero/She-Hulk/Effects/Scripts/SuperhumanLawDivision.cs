@@ -12,21 +12,14 @@ public class SuperhumanLawDivision : PlayerCardEffect
         if (_owner.Identity.ActiveIdentity is not AlterEgo)
             return false;
 
-        if (!FindObjectsOfType<Threat>().Any(x => x.CurrentThreat > 0))
+        if (!FindObjectsOfType<SchemeCard>().Any(x => x.Threat.CurrentThreat > 0))
             return false;
 
         if (Card.Exhausted)
             return false;
 
-        if (_owner.Hand.cards.Any(x => x.Resources.Contains(Resource.Scientific) || x.Resources.Contains(Resource.Wild)))
+        if (_owner.HaveResource(Resource.Scientific))
             return true;
-
-        foreach (PlayerCard c in _owner.CardsInPlay.Permanents)
-        {
-            if (c.Effect is IResourceGenerator)
-                if ((c.Effect as IResourceGenerator).CompareResource(Resource.Scientific))
-                    return true;
-        }
 
         return false;
     }

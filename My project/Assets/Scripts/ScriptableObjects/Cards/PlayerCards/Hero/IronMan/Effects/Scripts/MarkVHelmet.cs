@@ -12,7 +12,7 @@ public class MarkVHelmet : PlayerCardEffect
         if (_owner.Identity.ActiveIdentity is not Hero)
             return false;
 
-        if (!FindObjectsOfType<Threat>().Any(x => x.CurrentThreat > 0))
+        if (!FindObjectsOfType<SchemeCard>().Any(x => x.Threat.CurrentThreat > 0))
             return false;
 
         if (Card.Exhausted)
@@ -33,10 +33,10 @@ public class MarkVHelmet : PlayerCardEffect
                 return;
             }
 
-            foreach (Threat t in FindObjectsOfType<Threat>())
+            foreach (SchemeCard s in FindObjectsOfType<SchemeCard>())
             {
-                if (t.CurrentThreat > 0)
-                    t.RemoveThreat(1);
+                if (s.Threat.CurrentThreat > 0)
+                    s.Threat.RemoveThreat(1);
             }
         }
         else

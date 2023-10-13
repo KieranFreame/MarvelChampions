@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
   m_Name: ArmoredVest
   m_EditorClassIdentifier: 
-  cardID: PROTECTION-E-001
+  cardID: PROTECTION-U-001
   cardName: Armored Vest
   cardDesc: Your hero gets +1 DEF
   cardType: 4

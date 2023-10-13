@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8500fc7aedc00204b8366777dadbcc23, type: 3}
+  m_Name: Killmonger
+  m_EditorClassIdentifier: 
+  cardID: TCHALLA-M-001
+  cardName: Killmonger
+  cardDesc: Killmonger cannot be damaged by Black Panther upgrades
+  cardType: 5
+  cardTraits:
+  - Assassin
+  - Elite
+  - Mercenary
+  - Nemesis
+  cardArt: {fileID: 0}
+  boostIcons: 2
+  boostDescription: 
+  effect: {fileID: 11400000, guid: 79bb5c0d114d27f40836819516f90cf1, type: 2}
+  baseAttack: 2
+  baseScheme: 2
+  baseHealth: 5

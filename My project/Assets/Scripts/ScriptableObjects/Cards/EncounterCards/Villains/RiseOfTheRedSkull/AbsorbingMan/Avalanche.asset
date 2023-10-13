@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24ed65fa8c0dfd741bb3d89887077480, type: 3}
+  m_Name: Avalanche
+  m_EditorClassIdentifier: 
+  cardID: ABSORBING-SS-001
+  cardName: Avalanche!
+  cardDesc: Each player must spend an energy resource or take 2 indirect damage (3
+    if 5> Delay counters). ACCELERATION.
+  cardType: 8
+  cardTraits: []
+  cardArt: {fileID: 0}
+  boostIcons: 3
+  boostDescription: 
+  effect: {fileID: 11400000, guid: 4f7e1c0f037676743a9e86d8f7f9d30f, type: 2}
+  IsMainScheme: 0
+  StartingThreat: 2
+  MaximumThreat: 0
+  Acceleration: 0

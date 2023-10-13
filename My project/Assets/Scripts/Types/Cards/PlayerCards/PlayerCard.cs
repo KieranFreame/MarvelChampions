@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
@@ -25,8 +26,8 @@ public class PlayerCard : MonoBehaviour, ICard, IExhaust
     }
     protected virtual void OnDisable()
     {
-        if (InPlay || Owner.Hand.Contains(this))
-            Effect?.OnExitPlay();
+        if ((InPlay || Owner.Hand.Contains(this)) && Effect != null)
+            Effect.OnExitPlay();
 
         TurnManager.OnEndPlayerPhase -= Ready;
     }
@@ -35,14 +36,17 @@ public class PlayerCard : MonoBehaviour, ICard, IExhaust
         Owner = owner;
         Data = data;
 
-        CurrZone = Zone.Hand;
         cardCost = BaseCardCost = Data.cardCost;
         
         GetComponent<CardUI>().CardArt = Data.cardArt;
 
+        foreach (string trait in Data.cardTraits)
+            CardTraits.Add(trait);
+
         if (Data.effect != null)
         {
             Effect = Instantiate(Data.effect);
+            Effect.LoadEffect(Owner, this);
         }
 
         SetupComplete?.Invoke();
@@ -94,4 +98,6 @@ public class PlayerCard : MonoBehaviour, ICard, IExhaust
     public bool FaceUp { get; set; }
     public string CardName { get => Data.cardName; }
     public string CardDesc { get => Data.cardDesc; }
+    public CardType CardType { get => Data.cardType; }
+    public ObservableCollection<string> CardTraits { get; protected set; } = new();
 }

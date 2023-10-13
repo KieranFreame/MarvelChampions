@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd59bffae62c9843892e230b19351f6, type: 3}
+  m_Name: DeathFromAbove
+  m_EditorClassIdentifier: 
+  cardID: MUTAGEN-T-001
+  cardName: Death From Above
+  cardDesc: 'X is equal to Green Goblin''s stage number
+
+    Alter-Ego: Green Goblin
+    schemes with +X SCH
+
+    Hero: Green Goblin attacks with +X ATK'
+  cardType: 7
+  cardTraits: []
+  cardArt: {fileID: 0}
+  boostIcons: 1
+  boostDescription: 
+  effect: {fileID: 11400000, guid: 0fd9e217905c48f40894980b6503b1cb, type: 2}

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd59bffae62c9843892e230b19351f6, type: 3}
+  m_Name: PiercingThorns
+  m_EditorClassIdentifier: 
+  cardID: ABSORBING-T-004
+  cardName: Piercing Thorns
+  cardDesc: Discard 1 card from your hand. If Absorbing Man has the Wood trait, discard
+    1 card you control.
+  cardType: 7
+  cardTraits: []
+  cardArt: {fileID: 0}
+  boostIcons: 1
+  boostDescription: If Absorbing Man has the Wood or Stone trait, you are stunned
+  effect: {fileID: 11400000, guid: 96c9fc13d8e97e44fb49f9db33c895ee, type: 2}

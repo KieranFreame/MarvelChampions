@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,11 +12,9 @@ public class CharacterStats
     public Attacker Attacker { get; private set; }
     public Schemer Schemer { get; private set; }
     public Thwarter Thwarter { get; private set; }
-    public Health Health { get; private set; }
+    public Health Health { get; set; }
     public Defender Defender { get; private set; }
     public Recovery Recovery { get; private set; }
-
-    public List<ICancelAttack> AttackCancel { get; private set; } = new();
 
     public event UnityAction AttackInitiated;
     public event UnityAction ThwartInitiated;
@@ -27,7 +26,7 @@ public class CharacterStats
         Attacker = new Attacker(owner, hData);
         Thwarter = new Thwarter(owner.Identity, hData);
         Defender = new Defender(owner.Identity, hData);
-        Health = new Health(owner.Identity, aData);
+        Health = new Health(owner, aData);
         Recovery = new Recovery(owner.Identity, Health, aData);
     }
 
@@ -51,53 +50,59 @@ public class CharacterStats
             Thwarter = new Thwarter(owner as AllyCard, data as AllyCardData);
     }
 
-    public async Task InitiateAttack(AttackAction _attack = null)
+    public async Task<bool> InitiateAttack(AttackAction _attack = null)
     {
-        AttackAction attack = Attacker.Attack(_attack);
+        _attack = await Attacker.Attack(_attack);
 
-        if (attack is null) return;
-
-        foreach (var card in AttackCancel)
-        {
-            attack = card.CancelAttack();
-
-            if (attack == null)
-                return;
-        }
+        if (_attack == null) return false;
 
         AttackInitiated?.Invoke();
 
-        await AttackSystem.instance.InitiateAttack(attack);
+        await AttackSystem.Instance.InitiateAttack(_attack);
 
         if (Owner is AllyCard)
-            Health.TakeDamage((Owner as AllyCard).AttackConsq);
+        {
+            Health.TakeDamage(new(Owner, (Owner as AllyCard).AttackConsq));
+        }
+
+        return true;
+            
     }
-    public async Task InitiateScheme()
+    public async Task<bool> InitiateScheme()
     {
-        SchemeAction scheme = Schemer.Scheme();
+        SchemeAction scheme = await Schemer.Scheme();
+
+        if (scheme == null) return false;
 
         SchemeInitiated?.Invoke();
-        if (scheme == null)
-            return;
 
-        await SchemeSystem.instance.InitiateScheme(scheme);
+        await SchemeSystem.Instance.InitiateScheme(scheme);
+
+        return true;
     }
-    public async Task InitiateThwart(ThwartAction _thwart = null)
+    public async Task<bool> InitiateThwart(ThwartAction _thwart = null)
     {
         ThwartAction thwart = Thwarter.Thwart(_thwart);
 
-        ThwartInitiated?.Invoke();
-        if (thwart == null)
-            return;
+        if (thwart == null) return false;
 
-        await ThwartSystem.instance.InitiateThwart(thwart);
+        ThwartInitiated?.Invoke();
+
+        await ThwartSystem.Instance.InitiateThwart(thwart);
 
         if (Owner is AllyCard)
-            Health.TakeDamage((Owner as AllyCard).ThwartConsq);
+            Health.TakeDamage(new(Owner, (Owner as AllyCard).ThwartConsq));
+
+        return true;
     }
     public void InitiateRecover()
     {
         Recovery.Recover();
+    }
+
+    public bool Afflicted()
+    {
+        return (Attacker.Stunned || Confusable.Confused || Health.Tough);
     }
 
     public IConfusable Confusable

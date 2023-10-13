@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
+  m_Name: Shrink
+  m_EditorClassIdentifier: 
+  cardID: KHAN-U-003
+  cardName: Shrink
+  cardDesc: When you play an Thwart event; exhaust this to increase the threat removed
+    by that event by 2.
+  cardType: 4
+  cardTraits:
+  - Condition
+  - Superpower
+  cardArt: {fileID: 0}
+  cardCost: 2
+  isUnique: 1
+  cardAspect: 5
+  cardResources: 01000000
+  effect: {fileID: 11400000, guid: 661cb1a5e254bda41b0e10192a7e2f85, type: 2}

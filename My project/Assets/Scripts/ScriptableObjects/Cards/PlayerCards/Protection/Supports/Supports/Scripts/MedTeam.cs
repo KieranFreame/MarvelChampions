@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Med Team", menuName = "MarvelChampions/Card Effects/Protection/Med Team")]
+[CreateAssetMenu(fileName = "Med Team", menuName = "MarvelChampions/Card Effects/Protection/Supports/Med Team")]
 public class MedTeam : PlayerCardEffect
 {
-    List<ICharacter> friendlies = new();
+    readonly List<ICharacter> friendlies = new();
     private Counters counters;
 
     public override async Task OnEnterPlay()

@@ -7,28 +7,31 @@ using System.Threading.Tasks;
 [CreateAssetMenu(fileName = "CrisisInterdiction", menuName = "MarvelChampions/Card Effects/Captain Marvel/Crisis Interdiction")]
 public class CrisisInterdiction : PlayerCardEffect
 {
-    Threat prevTarget;
+    SchemeCard prevTarget;
 
     public override bool CanBePlayed()
     {
-        if (!FindObjectsOfType<Threat>().Any(x => x.CurrentThreat > 0))
-            return false;
+        if (base.CanBePlayed())
+        {
+            return (ScenarioManager.sideSchemes.Any(x => x.Threat.CurrentThreat > 0) && ScenarioManager.inst.MainScheme.Threat.CurrentThreat > 0);
+        }
 
-        return base.CanBePlayed();
+        return false;
     }
 
     public override async Task OnEnterPlay()
     {
-        await ThwartSystem.instance.InitiateThwart(new(2));
+        ThwartAction action = new(2);
+        await ThwartSystem.Instance.InitiateThwart(action);
 
         if (_owner.Identity.IdentityTraits.Contains("Aerial"))
         {
-            prevTarget = ThwartSystem.instance.Target;
+            prevTarget = action.Target;
             List<SchemeCard> schemes = new();
             schemes.AddRange(FindObjectsOfType<SchemeCard>());
 
             //If there are no schemes, or the previous scheme is the only target.
-            if (schemes.Count() == 0 || (schemes.Count() == 1 && schemes[0] == prevTarget))
+            if (schemes.Count() == 0 || (schemes.Count() == 1 && schemes[0].Threat == prevTarget.Threat))
                 return;
 
             ThwartSystem.OnThwartComplete += SecondThwart;
@@ -39,7 +42,7 @@ public class CrisisInterdiction : PlayerCardEffect
     {
         TargetSystem.instance.candidates.CollectionChanged += CandidateAdded;
         
-        await ThwartSystem.instance.InitiateThwart(new(2));
+        await ThwartSystem.Instance.InitiateThwart(new(2));
 
         ThwartSystem.OnThwartComplete -= SecondThwart;
         TargetSystem.instance.candidates.CollectionChanged -= CandidateAdded;

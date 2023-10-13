@@ -6,6 +6,7 @@ using UnityEngine;
 public class CardViewerUI : MonoBehaviour
 {
     Transform cardViewerPanel;
+    public Transform content;
     public Transform aside;
 
     public static CardViewerUI inst;
@@ -25,34 +26,19 @@ public class CardViewerUI : MonoBehaviour
         List<ICard> cardsOnDisplay = new();
         _cardsOnDisplay = cardsToDisplay;
         cardViewerPanel.gameObject.SetActive(true);
-        GameObject card;
 
         foreach (CardData c in cardsToDisplay)
         {
-            if (c is EncounterCardData)
-            {
-                card = Instantiate(PrefabFactory.instance.CreateEncounterCard(c as EncounterCardData), cardViewerPanel);
-            }
-            else
-            {
-                card = Instantiate(PrefabFactory.instance.CreatePlayerCard(c as PlayerCardData), cardViewerPanel);
-                card.GetComponent<PlayerCard>().LoadCardData(c as PlayerCardData, TurnManager.instance.CurrPlayer);
-            }
-
-            cardsOnDisplay.Add(card.GetComponent<ICard>());
+            ICard card = CreateCardFactory.Instance.CreateCard(c, content);
+            cardsOnDisplay.Add(card);
         }
 
-        TargetSystem.TargetAcquired += DisablePanel;
         return cardsOnDisplay;
     }
 
-    private void DisablePanel(dynamic card)
+    public void DisablePanel()
     {
-        TargetSystem.TargetAcquired -= DisablePanel;
-
-        card.transform.SetParent(aside, false);
-
-        foreach (Transform child in cardViewerPanel.transform)
+        foreach (Transform child in content.transform)
             Destroy(child.gameObject);
 
         cardViewerPanel.gameObject.SetActive(false);

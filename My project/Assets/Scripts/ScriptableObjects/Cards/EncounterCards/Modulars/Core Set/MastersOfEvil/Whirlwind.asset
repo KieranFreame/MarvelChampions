@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8500fc7aedc00204b8366777dadbcc23, type: 3}
+  m_Name: Whirlwind
+  m_EditorClassIdentifier: 
+  cardID: MASTERS-M-002
+  cardName: Whirlwind
+  cardDesc: When Whirlwind attacks you, also resolve his attack against the other
+    heroes.
+  cardType: 5
+  cardTraits:
+  - Masters of Evil
+  cardArt: {fileID: 0}
+  boostIcons: 0
+  boostDescription: Deal 1 damage to each hero.
+  effect: {fileID: 11400000, guid: f9a66fdc2eedaec4dbd99a94054ee745, type: 2}
+  baseAttack: 2
+  baseScheme: 1
+  baseHealth: 6

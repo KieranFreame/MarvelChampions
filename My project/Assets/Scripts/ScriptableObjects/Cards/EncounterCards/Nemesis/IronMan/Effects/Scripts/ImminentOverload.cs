@@ -8,14 +8,15 @@ public class ImminentOverload : EncounterCardEffect
 {
     public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
-        card.GetComponent<Threat>().GainThreat(1 * TurnManager.Players.Count);
-        FindObjectOfType<MainSchemeCard>().GetComponent<Threat>().Acceleration++;
+        (card as SchemeCard).Threat.GainThreat(1 * TurnManager.Players.Count);
+        ScenarioManager.inst.MainScheme.Threat.Acceleration++;
 
         await Task.Yield();
     }
 
-    public override void OnExitPlay()
+    public override Task WhenDefeated()
     {
-        FindObjectOfType<MainSchemeCard>().GetComponent<Threat>().Acceleration--;
+        ScenarioManager.inst.MainScheme.Threat.Acceleration--;
+        return Task.CompletedTask;
     }
 }

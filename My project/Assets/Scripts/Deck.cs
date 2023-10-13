@@ -1,6 +1,7 @@
-using System;
+//using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
@@ -12,17 +13,21 @@ public class Deck
     public List<CardData> limbo;
     public List<CardData> discardPile;
 
+    private DeckUI deckUI;
+
+    public event UnityAction<CardData> DeckChanged;
     public event UnityAction OnDeckReset;
 
     public Deck(string path)
     {
-        deck = new List<CardData>();
+        deck = new();
         limbo = new List<CardData>();
         discardPile = new List<CardData>();
 
+        deckUI = GameObject.FindObjectOfType<DeckUI>();
+
         AddToDeck(TextReader.PopulateDeck(path));
     }
-
     public void ResetDeck()
     {
         Debug.Log("Resetting Deck");
@@ -48,17 +53,24 @@ public class Deck
     {
         deck.Add(cardToAdd);
         Shuffle();
+
+        DeckChanged?.Invoke(cardToAdd);
     }
-    public void AddToDeck(List<CardData> cardToAdd)
+    public void AddToDeck(List<CardData> cardsToAdd)
     {
-        deck.AddRange(cardToAdd);
-        Shuffle();
+        foreach (var data in cardsToAdd)
+            AddToDeck(data);
     }
     public CardData DealCard()
     {
+        if (deck.Count == 0)
+            ResetDeck();
+
         CardData cardToDeal = deck[0];
         limbo.Add(cardToDeal);
         deck.Remove(cardToDeal);
+
+        DeckChanged?.Invoke(null);
 
         return cardToDeal;
     }
@@ -66,44 +78,44 @@ public class Deck
     {
         CardData d = limbo.FirstOrDefault(x => x.cardName == discard.CardName);
 
-        if (d == null) return;
+        if (d == default) return;
 
         discardPile.Add(d);
         limbo.Remove(d);
 
-        if ((discard as MonoBehaviour).gameObject != null) //hasn't already been destroyed
-            UnityEngine.Object.Destroy((discard as MonoBehaviour).gameObject);
+        if (discard is PlayerCard)
+            deckUI.SetDiscardPile(discard);
+        else
+        {
+            if ((discard as MonoBehaviour).gameObject != null) //hasn't already been destroyed
+                if (discard is SchemeCard || discard is MinionCard)
+                    Object.Destroy((discard as MonoBehaviour).transform.parent.gameObject);
+                else
+                    Object.Destroy((discard as MonoBehaviour).gameObject);
+        }
     }
     public void Discard(List<ICard> discards)
     {
         foreach (ICard c in discards)
         {
-            foreach (CardData data in limbo)
-            {
-                if (data == null)
-                {
-                    limbo.Remove(data);
-                    continue;
-                }
-
-                if (data.cardName == c.CardName)
-                {
-                    discardPile.Add(data);
-                    limbo.Remove(data);
-                    break;
-                }
-            }
-
-            UnityEngine.Object.Destroy((c as MonoBehaviour).gameObject);
+            Discard(c);
         }
     }
     public void Mill(int amount = 1)
     {
         for (int i = 0; i < amount; i++)
         {
+            if (deck.Count == 0)
+            {
+                ResetDeck();
+                break;
+            }
+
             discardPile.Add(deck[0]);
             deck.RemoveAt(0);
         }
+
+        DeckChanged?.Invoke(null);
     }
     public void Shuffle()
     {
@@ -120,6 +132,38 @@ public class Deck
     }
     public bool Contains(CardData data)
     {
-        return (deck.Contains(data) || limbo.Contains(data) || discardPile.Contains(data));
+        return (deck.Contains(data) || discardPile.Contains(data));
     }
+    public CardData Search(string cardName, bool searchDiscard = false)
+    {
+        if (limbo.Find(x => x.cardName == cardName) != null)
+            return null;
+
+        CardData data = deck.FirstOrDefault(x => x.cardName == cardName);
+
+        if (data != null)
+        {
+            deck.Remove(data);
+            limbo.Add(data);
+        }
+        else
+        {
+            if (searchDiscard)
+            {
+                data = discardPile.FirstOrDefault(x => x.cardName == cardName);
+
+                if (data != null)
+                {
+                    discardPile.Remove(data);
+                    limbo.Add(data);
+                }
+            }
+        }
+
+        Shuffle();
+
+        DeckChanged?.Invoke(data);
+
+        return data;
+    }       
 }

@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Health : IStat
+public class Health
 {
     #region Properties
         public int BaseHP { get; private set; }
@@ -28,17 +29,20 @@ public class Health : IStat
             }
         }
     #endregion
-    public dynamic Owner { get; private set; }
+    public ICharacter Owner { get; private set; }
     #region Events
-    public event UnityAction Defeated;
     public event UnityAction<bool> OnToggleTough;
     public event UnityAction HealthChanged;
-    public event UnityAction OnTakeDamage;
+    public event UnityAction<DamageAction> OnTakeDamage;
     #endregion
 
-    public List<IModifyDamage> Modifiers { get; private set; } = new();
+    public delegate Task<DamageAction> ModifyDamage(DamageAction action);
+    public List<ModifyDamage> Modifiers { get; private set; } = new();
 
-    public Health(Identity owner, AlterEgoData data)
+    public delegate Task WhenDefeated();
+    public List<WhenDefeated> Defeated { get; private set; } = new();
+
+    public Health(Player owner, AlterEgoData data)
     {
         Owner = owner;
         CurrentHealth = BaseHP = data.baseHP;
@@ -48,12 +52,12 @@ public class Health : IStat
     {
         Owner = owner;
         CurrentHealth = BaseHP = owner.BaseHP;
-        owner.StageAdvanced += AdvanceStage;
+        owner.Stages.StageAdvanced += AdvanceStage;
 
     }
     public Health(ICard owner, CardData data)
     {
-        Owner = owner;
+        Owner = owner as ICharacter;
 
         if (Owner is MinionCard)
             CurrentHealth = BaseHP = (data as MinionCardData).baseHealth;
@@ -61,39 +65,46 @@ public class Health : IStat
             CurrentHealth = BaseHP = (data as AllyCardData).BaseHP;
     }
 
-    public async void TakeDamage(int damage)
+    public async void TakeDamage(DamageAction action)
     {
-        if (damage > 0)
+        if (action.Value > 0)
         {
             if (Tough)
             {
                 Tough = false;
-                return;
+                action.Value = 0;
             }
 
             for (int i = Modifiers.Count - 1; i >= 0; i--)
             {
-                damage = await Modifiers[i].OnTakeDamage(damage);
-
-                if (damage < 0)
-                {
-                    damage = 0;
-                    break;
-                } 
+                action = await Modifiers[i](action);
             }
-
-            CurrentHealth -= damage;
-
-            if (CurrentHealth <= 0)
-            {
-                CurrentHealth = 0;
-                Defeated?.Invoke();
-                return;
-            }
-
-            OnTakeDamage?.Invoke();
         }
+
+        if (action.Value < 0)
+            action.Value = 0;
+
+        CurrentHealth -= action.Value;
+
+        if (CurrentHealth <= 0)
+        {
+            CurrentHealth = 0;
+            
+            for (int i = Defeated.Count -1; i >= 0; i--)
+            {
+                await Defeated[i]();
+            }
+
+            if (CurrentHealth == 0)
+            {
+                (Owner as MonoBehaviour).SendMessage("WhenDefeated", SendMessageOptions.DontRequireReceiver);
+                return;
+            } 
+        }
+
+        OnTakeDamage?.Invoke(action);
     }
+
     public void RecoverHealth(int healing)
     {
         CurrentHealth += healing;
@@ -101,11 +112,13 @@ public class Health : IStat
         if (CurrentHealth > BaseHP)
             CurrentHealth = BaseHP;
     }
+
     public void IncreaseMaxHealth(int amount)
     {
         BaseHP += amount;
         RecoverHealth(amount);
     }
-    private void AdvanceStage(int amount) => CurrentHealth = BaseHP = Owner.BaseHP;
+
+    private void AdvanceStage() => CurrentHealth = BaseHP = (Owner as Villain).BaseHP;
     public bool Damaged() => CurrentHealth < BaseHP;
 }

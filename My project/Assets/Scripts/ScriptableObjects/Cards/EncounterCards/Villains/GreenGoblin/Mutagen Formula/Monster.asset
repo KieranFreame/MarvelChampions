@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8500fc7aedc00204b8366777dadbcc23, type: 3}
+  m_Name: Monster
+  m_EditorClassIdentifier: 
+  cardID: MUTAGEN-M-004
+  cardName: Monster
+  cardDesc: You are Stunned. If you are already stunned, take 2 damage
+  cardType: 5
+  cardTraits:
+  - Elite
+  - Goblin
+  cardArt: {fileID: 0}
+  boostIcons: 2
+  boostDescription: Shuffle this back into the encounter deck
+  effect: {fileID: 11400000, guid: 8668ae1bf761fe849a72c9cfef300d93, type: 2}
+  baseAttack: 3
+  baseScheme: 1
+  baseHealth: 6

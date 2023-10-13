@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Recovery : IStat
+public class Recovery
 {
     private int _recovery;
     public int REC
@@ -37,5 +37,5 @@ public class Recovery : IStat
         Owner.Exhaust();
         //OnRecover?.Invoke();
     }
-    
+
 }

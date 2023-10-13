@@ -3,17 +3,21 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
-using static UnityEngine.UI.GridLayoutGroup;
 
-public class RevealEncounterCardSystem : MonoBehaviour
+public class RevealEncounterCardSystem
 {
-    public static RevealEncounterCardSystem instance;
+    private static RevealEncounterCardSystem instance = new();
 
-    private void Awake()
+    public static RevealEncounterCardSystem Instance
     {
-        //Singleton
-        if (instance == null) { instance = this; }
-        else { Destroy(this); }
+        get => instance;
+    }
+
+    private RevealEncounterCardSystem()
+    {
+        _minionTransform = GameObject.Find("MinionTransform").transform;
+        _sideSchemeTransform = GameObject.Find("SideSchemeTransform").transform;
+        _attachmentTransform = GameObject.Find("AttachmentTransform").transform;
     }
 
     #region Transforms
@@ -27,7 +31,8 @@ public class RevealEncounterCardSystem : MonoBehaviour
     #endregion
 
     #region Delegates
-    public List<ICancelEffect> EffectCancelers { get; private set; } = new();
+    public delegate Task<bool> CancelEffect(EncounterCard cardToPlay);
+    public List<CancelEffect> EffectCancelers { get; private set; } = new();
     #endregion
 
     private bool canceled = false;
@@ -45,7 +50,7 @@ public class RevealEncounterCardSystem : MonoBehaviour
 
         for (int i = EffectCancelers.Count - 1; i >= 0; i--)
         {
-            canceled = await EffectCancelers[i].CancelEffect(cardToPlay);
+            canceled = await EffectCancelers[i](cardToPlay);
 
             if (canceled)
                 break;
@@ -54,13 +59,13 @@ public class RevealEncounterCardSystem : MonoBehaviour
         if (!canceled)
             await cardToPlay.OnRevealCard();
 
-        if (cardToPlay.Data.cardType is CardType.Treachery || (cardToPlay.Data.cardType == CardType.Obligation && ScenarioManager.inst.EncounterDeck.Contains(cardToPlay.Data)))
+        if (cardToPlay.Data.cardType is CardType.Treachery || (cardToPlay.Data.cardType == CardType.Obligation && ScenarioManager.inst.EncounterDeck.limbo.Contains(cardToPlay.Data)))
             ScenarioManager.inst.EncounterDeck.Discard(cardToPlay);
 
         OnEncounterCardRevealed?.Invoke(cardToPlay);
     }
 
-    private void MoveCard(EncounterCard cardToPlay)
+    public void MoveCard(EncounterCard cardToPlay)
     {
         switch (cardToPlay.Data.cardType)
         {
@@ -69,10 +74,11 @@ public class RevealEncounterCardSystem : MonoBehaviour
                 VillainTurnController.instance.MinionsInPlay.Add(cardToPlay as MinionCard);
                 break;
             case CardType.SideScheme:
-                cardToPlay.transform.SetParent(_sideSchemeTransform);
+                cardToPlay.transform.parent.SetParent(_sideSchemeTransform);
                 ScenarioManager.sideSchemes.Add(cardToPlay as SchemeCard);
                 break;
             case CardType.Attachment:
+            case CardType.Environment:
                 cardToPlay.transform.SetParent(_attachmentTransform);
                 break;
         }

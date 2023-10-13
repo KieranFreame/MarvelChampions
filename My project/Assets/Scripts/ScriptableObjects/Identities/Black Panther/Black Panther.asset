@@ -17,9 +17,9 @@ MonoBehaviour:
   - Avenger
   - Wakanda
   keywords: 
-  heroArt: {fileID: 0}
+  heroArt: {fileID: 21300000, guid: d1e563f8739c8034789ae8104d93a0f8, type: 3}
   baseATK: 2
   baseTHW: 2
   baseDEF: 2
   baseHandSize: 5
-  effect: {fileID: 0}
+  effect: {fileID: 11400000, guid: ef54a2aea11656445ae8d45280b233e9, type: 2}

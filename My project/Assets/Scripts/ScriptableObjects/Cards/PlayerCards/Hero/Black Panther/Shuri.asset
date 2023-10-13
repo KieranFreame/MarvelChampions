@@ -25,7 +25,7 @@ MonoBehaviour:
   isUnique: 1
   cardAspect: 5
   cardResources: 02000000
-  effect: {fileID: 0}
+  effect: {fileID: 11400000, guid: dcb78770e7d6fbe43975cbde548672b2, type: 2}
   alterEgo: 
   BaseATK: 1
   ATKConsq: 1

@@ -5,21 +5,26 @@ using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Webbed Up", menuName = "MarvelChampions/Card Effects/Spider-Man (Peter Parker)/Webbed Up")]
-public class WebbedUp : PlayerCardEffect, ICancelAttack
+public class WebbedUp : PlayerCardEffect
 {
-    List<ICharacter> enemies = new();
+    readonly List<ICharacter> enemies = new();
     ICharacter target;
 
     public override bool CanBePlayed()
     {
-        enemies.Clear();
+        if (base.CanBePlayed())
+        {
+            enemies.Clear();
 
-        enemies.Add(FindObjectOfType<Villain>());
-        enemies.AddRange(VillainTurnController.instance.MinionsInPlay);
+            enemies.Add(FindObjectOfType<Villain>());
+            enemies.AddRange(VillainTurnController.instance.MinionsInPlay);
 
-        enemies.RemoveAll(x => x.Attachments.FirstOrDefault(x => (x as ICard).CardName == Card.CardName) != default);
+            enemies.RemoveAll(x => x.Attachments.FirstOrDefault(x => (x as ICard).CardName == Card.CardName) != default);
 
-        return enemies.Count > 0;
+            return enemies.Count > 0;
+        }
+
+        return false;
     }
 
     public override async Task OnEnterPlay()
@@ -39,18 +44,19 @@ public class WebbedUp : PlayerCardEffect, ICancelAttack
             Card.transform.localPosition = new Vector3(-30, 0, 0);
         }
 
-        target.CharStats.AttackCancel.Add(this);
+        target.CharStats.Attacker.AttackCancel.Add(CancelAttack);
     }
 
-    public AttackAction CancelAttack()
+    public Task<AttackAction> CancelAttack(AttackAction action)
     {
-        target.CharStats.AttackCancel.Remove(this);
+        target.CharStats.Attacker.AttackCancel.Remove(CancelAttack);
         target.CharStats.Attacker.Stunned = true;
         target.Attachments.Remove(Card as IAttachment);
 
         _owner.CardsInPlay.Permanents.Remove(Card);
         _owner.Deck.Discard(Card);
 
-        return null;
+        action = null;
+        return Task.FromResult(action);
     }
 }

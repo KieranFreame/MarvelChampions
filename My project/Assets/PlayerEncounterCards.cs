@@ -6,16 +6,24 @@ using UnityEngine.Events;
 
 public class PlayerEncounterCards
 {
+    private Transform transform;
     public List<CardData> EncounterCards = new();
+
+    public PlayerEncounterCards(Transform parent)
+    {
+        transform = parent;
+    }
 
     public async Task RevealEncounterCards()
     {
         while (EncounterCards.Count > 0)
         {
-            GameObject card = (EncounterCards[0] is EncounterCardData) ?
-                RevealCardSystem.instance.CreateEncounterCard(EncounterCards[0] as EncounterCardData, true) : PrefabFactory.instance.CreatePlayerCard(EncounterCards[0] as PlayerCardData);
+            ICard card = CreateCardFactory.Instance.CreateCard(EncounterCards[0], transform);
 
-            await RevealEncounterCardSystem.instance.InitiateRevealCard(card.GetComponent<EncounterCard>());
+            if (card is PlayerCard)
+                await (card as PlayerCard).OnEnterPlay();
+            else
+                await RevealEncounterCardSystem.Instance.InitiateRevealCard(card as EncounterCard);
 
             EncounterCards.RemoveAt(0);
         }

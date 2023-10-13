@@ -8,12 +8,12 @@ public class TacTeam : PlayerCardEffect
 {
     private Counters counters;
 
-    public override async Task OnEnterPlay()
+    public override Task OnEnterPlay()
     {
         counters = Card.gameObject.AddComponent<Counters>();
         counters.AddCounters(3);
 
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 
     public override bool CanActivate()
@@ -28,7 +28,7 @@ public class TacTeam : PlayerCardEffect
 
         List<ICharacter> enemies = new() { FindObjectOfType<Villain>() };
         enemies.AddRange(FindObjectsOfType<MinionCard>());
-        await DamageSystem.instance.ApplyDamage(new(enemies, 2));
+        await DamageSystem.Instance.ApplyDamage(new(enemies, 2, card: Card));
 
         if (counters.CountersLeft == 0)
         {

@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c71ea63b3cfa08469bb92f3e46dd710, type: 3}
+  m_Name: BrunoCarrelli
+  m_EditorClassIdentifier: 
+  cardID: KHAN-S-002
+  cardName: Bruno Carrelli
+  cardDesc: 'Alter-Ego: Exhaust Bruno; place a card from your hand here.
+
+    Action:
+    Take up to 3 cards from Bruno and add them to your hand.'
+  cardType: 3
+  cardTraits:
+  - Persona
+  cardArt: {fileID: 0}
+  cardCost: 1
+  isUnique: 1
+  cardAspect: 5
+  cardResources: 02000000
+  effect: {fileID: 11400000, guid: f75e0bb7e5908724393ef228bdf1fd05, type: 2}

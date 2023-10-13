@@ -15,12 +15,12 @@ public class EncounterCardActions : MonoBehaviour
 
     private void OnEnable()
     {
-        activate.SetActive(card.Effect.CanActivate());
+        activate.SetActive(card.Effect.CanActivate(TurnManager.instance.CurrPlayer));
     }
 
     public async void Activate()
     {
         gameObject.SetActive(false);
-        await card.Effect.Activate();
+        await card.Effect.Activate(TurnManager.instance.CurrPlayer);
     }
 }

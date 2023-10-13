@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardID: STARK-SS-001
   cardName: Imminent Overload
-  cardDesc: Place an additional threat per player here. Acceleration
+  cardDesc: Hinder 1 per player. Acceleration
   cardType: 8
   cardTraits: []
   cardArt: {fileID: 0}

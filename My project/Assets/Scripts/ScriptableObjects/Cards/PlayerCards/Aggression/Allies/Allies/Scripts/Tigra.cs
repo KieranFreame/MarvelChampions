@@ -8,37 +8,40 @@ public class Tigra : PlayerCardEffect
 {
     MinionCard _target;
 
-    public override async Task OnEnterPlay()
+    public override Task OnEnterPlay()
     {
         (Card as AllyCard).CharStats.AttackInitiated += AttackInitiated;
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 
-    private void AttackInitiated() => TargetSystem.TargetAcquired += CheckTarget;
-
-    private void CheckTarget(dynamic target)
+    private void AttackInitiated()
     {
-        TargetSystem.TargetAcquired -= CheckTarget;
+        if (_target != null)
+            _target.CharStats.Health.Defeated.Remove(Defeated);
+
+        AttackSystem.TargetAcquired += CheckTarget;
+    }
+
+    private void CheckTarget(ICharacter target)
+    {
+        AttackSystem.TargetAcquired -= CheckTarget;
 
         if (target is MinionCard)
         {
-            _target = target;
-            AttackSystem.OnAttackComplete += AttackComplete;
+            _target = target as MinionCard;
+            _target.CharStats.Health.Defeated.Add(Defeated);
         }   
     }
 
-    private void AttackComplete(Action action)
+    private Task Defeated()
     {
-        AttackSystem.OnAttackComplete -= AttackComplete;
-
-        if (_target.CharStats.Health.CurrentHealth == 0) //defeated
-        {
-            (Card as AllyCard).CharStats.Health.RecoverHealth(1);
-        }
+        _target.CharStats.Health.Defeated.Remove(Defeated);
+        (Card as AllyCard).CharStats.Health.RecoverHealth(1);
+        return Task.CompletedTask;
     }
 
     public override void OnExitPlay()
     {
-        (Card as AllyCard).CharStats.AttackInitiated -= AttackInitiated;
+        (Card as AllyCard).CharStats.AttackInitiated += AttackInitiated;
     }
 }

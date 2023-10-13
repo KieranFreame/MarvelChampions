@@ -16,9 +16,9 @@ public class FocusedRage : PlayerCardEffect
 
     public override async Task Activate()
     {
-        _owner.CharStats.Health.TakeDamage(1);
+        _owner.CharStats.Health.CurrentHealth -= 1;
         Card.Exhaust();
-        DrawCardSystem.instance.DrawCards(new(1, _owner));
+        DrawCardSystem.Instance.DrawCards(new(1, _owner));
         await Task.Yield();
     }
 }

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd59bffae62c9843892e230b19351f6, type: 3}
+  m_Name: SwingingStone
+  m_EditorClassIdentifier: 
+  cardID: ABSORBING-T-002
+  cardName: Swinging Stone
+  cardDesc: Absorbing Man activates. If he has the Stone trait, he gains +1 for that
+    activation.
+  cardType: 7
+  cardTraits: []
+  cardArt: {fileID: 0}
+  boostIcons: 1
+  boostDescription: 
+  effect: {fileID: 11400000, guid: cbfe099f63d91674a92744b1ad52d04e, type: 2}

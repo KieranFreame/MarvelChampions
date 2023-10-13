@@ -28,7 +28,7 @@ public class HighwayRobbery : EncounterCardEffect
             x -= 10;
         }
 
-        FindObjectOfType<MainSchemeCard>().GetComponent<Threat>().Acceleration += 1;
+        ScenarioManager.inst.MainScheme.Threat.Acceleration += 1;
 
         await Task.Yield();
     }
@@ -45,7 +45,7 @@ public class HighwayRobbery : EncounterCardEffect
             pCard.transform.SetParent(GameObject.Find("PlayerHandTransform").transform);
         }
 
-        FindObjectOfType<MainSchemeCard>().GetComponent<Threat>().Acceleration -= 1;
+        ScenarioManager.inst.MainScheme.Threat.Acceleration -= 1;
         await Task.Yield();
     }
 }

@@ -1,28 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class Guard
 {
-    private dynamic _owner;
     private MinionCard _card;
-    public Guard(dynamic owner, MinionCard card)
+    public Guard(MinionCard card)
     {
-        _owner = owner;
         _card = card;
 
-        TargetSystem.CheckGuard += Effect;
-        _card.CharStats.Health.Defeated += WhenDefeated;
+        AttackSystem.Instance.Guards.Add(card);
+        _card.CharStats.Health.Defeated.Add(WhenDefeated);
     }
 
-    private void Effect(List<ICharacter> candidates)
+    private Task WhenDefeated()
     {
-        candidates.RemoveAll(x => x == _owner);
-    }
-
-    private void WhenDefeated()
-    {
-        TargetSystem.CheckGuard -= Effect;
-        _card.CharStats.Health.Defeated -= WhenDefeated;
+        AttackSystem.Instance.Guards.Remove(_card);
+        _card.CharStats.Health.Defeated.Remove(WhenDefeated);
+        return Task.CompletedTask;
     }
 }
