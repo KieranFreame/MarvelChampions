@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88ea0e913420b64499ffc02f6cd7188f, type: 3}
+  m_Name: Vision
+  m_EditorClassIdentifier: 
+  cardID: LEADERSHIP-A-003
+  cardName: Vision
+  cardDesc: Spend an energy resource; Choose one of Vision's ATK or THW. It gains
+    +2 until the end of the phase.
+  cardType: 0
+  cardTraits:
+  - Android
+  - Avenger
+  cardArt: {fileID: 0}
+  cardCost: 4
+  maxCopies: 1
+  isUnique: 1
+  cardAspect: 2
+  cardResources: 02000000
+  effect: {fileID: 11400000, guid: 72c2503af79dfbb499b2b948d76d8b07, type: 2}
+  alterEgo: 
+  BaseATK: 2
+  ATKConsq: 1
+  BaseTHW: 1
+  THWConsq: 1
+  BaseHP: 3

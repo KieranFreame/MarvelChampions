@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88ea0e913420b64499ffc02f6cd7188f, type: 3}
+  m_Name: Black Cat
+  m_EditorClassIdentifier: 
+  cardID: PARKER-A-001
+  cardName: Black Cat
+  cardDesc: After you play Black Cat; discard the top 2 cards of your deck. Add each
+    card with a scientific resource discarded this way to your hand.
+  cardType: 0
+  cardTraits:
+  - Hero For Hire
+  cardArt: {fileID: 0}
+  cardCost: 2
+  maxCopies: 1
+  isUnique: 1
+  cardAspect: 5
+  cardResources: 03000000
+  effect: {fileID: 11400000, guid: 56022fd3baa36b74dad65d24e7a6cd12, type: 2}
+  alterEgo: Felicity Hardy
+  BaseATK: 1
+  ATKConsq: 0
+  BaseTHW: 1
+  THWConsq: 1
+  BaseHP: 2
