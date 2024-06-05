@@ -16,7 +16,7 @@ MonoBehaviour:
   alterEgoTags:
   - S.H.I.E.L.D
   - Soldier
-  alterEgoArt: {fileID: 21300000, guid: b2536dac5cb3a1c459a78983c2f47148, type: 3}
+  alterEgoArt: {fileID: 21300000, guid: c14431af7baf05341aafacfd8837eb32, type: 3}
   baseREC: 3
   baseHP: 11
   baseHandSize: 6

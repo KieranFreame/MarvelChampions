@@ -16,13 +16,13 @@ public class SoundManipulation : EncounterCardEffect
                 return;
             }
 
-            owner.CharStats.Health.RecoverHealth(4);
+            owner.CharStats.Health.CurrentHealth += 4;
             await Task.Yield();
         }
         else //hero
         {
             player.CharStats.Health.TakeDamage(new(player, 2, card:card, owner:owner));
-            owner.CharStats.Health.RecoverHealth(2);
+            owner.CharStats.Health.CurrentHealth += 2;
         }
     }
 }

@@ -14,25 +14,18 @@ public class RageOfUltron : EncounterCardEffect
         p = player;
 
         if (player.Identity.ActiveIdentity is AlterEgo)
-        {
             await owner.CharStats.InitiateScheme();
-            SchemeSystem.Instance.SchemeComplete.Add(OnActivationComplete);
-        }
-        else //hero
-        {
+        else
             await owner.CharStats.InitiateAttack();
-            AttackSystem.Instance.OnAttackCompleted.Add(OnActivationComplete);
-        }
+
+        EffectResolutionManager.Instance.ResolvingEffects.Push(this);
     }
 
-    private Task OnActivationComplete(Action arg0)
+    public override Task Resolve()
     {
-        if (arg0 is AttackAction)
-            AttackSystem.Instance.OnAttackCompleted.Remove(OnActivationComplete);
-        else if (arg0 is SchemeAction)
-            SchemeSystem.Instance.SchemeComplete.Remove(OnActivationComplete);
+        int mill = TurnManager.instance.CurrPlayer.Identity.ActiveIdentity is AlterEgo ? SchemeSystem.Instance.Action.Value : AttackSystem.Instance.Action.Value;
 
-        p.Deck.Mill(arg0.Value);
+        p.Deck.Mill(mill);
         return Task.CompletedTask;
     }
 }

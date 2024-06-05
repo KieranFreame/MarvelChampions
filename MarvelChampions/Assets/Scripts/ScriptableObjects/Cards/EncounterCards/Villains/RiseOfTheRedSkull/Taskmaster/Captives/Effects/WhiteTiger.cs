@@ -17,7 +17,7 @@ namespace TaskmasterScenario
                 await PayCostSystem.instance.GetResources(Resource.Scientific, 1, true);
                 CancelButton.ToggleCancelBtn(false, CancelEffect);
 
-                await ThwartSystem.Instance.InitiateThwart(new(3));
+                await ThwartSystem.Instance.InitiateThwart(new(3, Card as ICharacter));
             }
         }
 

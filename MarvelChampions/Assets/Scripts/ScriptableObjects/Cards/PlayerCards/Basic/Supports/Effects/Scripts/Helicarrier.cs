@@ -8,12 +8,12 @@ public class Helicarrier : PlayerCardEffect
 {
     public override bool CanActivate()
     {
-        return !Card.Exhausted;
+        return !_card.Exhausted;
     }
 
     public override async Task Activate()
     {
-        Card.Exhaust();
+        _card.Exhaust();
 
         foreach (PlayerCard c in _owner.Hand.cards)
         {

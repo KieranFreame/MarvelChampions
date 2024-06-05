@@ -8,12 +8,12 @@ public class AvengersMansion : PlayerCardEffect
 {
     public override bool CanActivate()
     {
-        return !Card.Exhausted;
+        return !_card.Exhausted;
     }
 
     public override async Task Activate()
     {
-        Card.Exhaust();
+        _card.Exhaust();
 
         DrawCardSystem.Instance.DrawCards(new(1, _owner));
 

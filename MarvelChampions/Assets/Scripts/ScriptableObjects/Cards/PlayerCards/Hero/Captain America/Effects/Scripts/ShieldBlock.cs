@@ -35,7 +35,7 @@ public class ShieldBlock : PlayerCardEffect
 
         if (activate)
         {
-            await PlayCardSystem.Instance.InitiatePlayCard(new(Card));
+            await PlayCardSystem.Instance.InitiatePlayCard(new(_card));
             action.Value = 0;
         }
 

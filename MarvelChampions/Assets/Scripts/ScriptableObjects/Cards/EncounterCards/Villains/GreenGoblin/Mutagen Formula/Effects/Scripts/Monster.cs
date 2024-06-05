@@ -22,7 +22,7 @@ public class Monster : EncounterCardEffect
     }
 
     #region Boost
-    private Task BoostCompleted(Action action)
+    public override Task Resolve()
     {
         EncounterCardData monster = ScenarioManager.inst.EncounterDeck.discardPile.LastOrDefault(x => x.cardName == "Monster") as EncounterCardData;
 
@@ -37,11 +37,7 @@ public class Monster : EncounterCardEffect
 
     public override Task Boost(Action action)
     {
-        if (action is SchemeAction)
-            SchemeSystem.Instance.SchemeComplete.Add(BoostCompleted);
-        else
-            AttackSystem.Instance.OnAttackCompleted.Add(BoostCompleted);
-
+        EffectResolutionManager.Instance.ResolvingEffects.Push(this);
         return Task.CompletedTask;
     }
     #endregion

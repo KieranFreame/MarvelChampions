@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -31,14 +28,14 @@ public class ZolaExperiments : EncounterCardEffect
                 ScenarioManager.inst.EncounterDeck.discardPile.Remove(data);
                 ScenarioManager.inst.EncounterDeck.limbo.Add(data);
 
-                AttachmentCard tech = CreateCardFactory.Instance.CreateCard(data, Card.transform) as AttachmentCard;
+                AttachmentCard tech = CreateCardFactory.Instance.CreateCard(data, _card.transform) as AttachmentCard;
 
                 tech.transform.SetAsFirstSibling();
                 tech.transform.localPosition = new Vector3(-30, 0, 0);
 
-                tech.Effect.Attach(Card as MinionCard, tech);
+                tech.Effect.Attach(_card as MinionCard, tech);
 
-                minion.Attachments.Add(tech);
+                minion.Attachments.Add(tech.Effect as IAttachment);
             }
         }
     }

@@ -19,10 +19,9 @@ public class PhotonicBlast : PlayerCardEffect
 
     public override async Task OnEnterPlay()
     {
-        var action = new AttackAction(5, owner:_owner, card: Card);
-        await _owner.CharStats.InitiateAttack(action);
+        var action = new AttackAction(5, targets: new() { TargetType.TargetVillain, TargetType.TargetMinion }, owner:_owner, card: Card);
 
-        if (PayCostSystem.instance.Resources.Contains(Resource.Energy))
+        if (await _owner.CharStats.InitiateAttack(action) && PayCostSystem.instance.Resources.Contains(Resource.Energy)) //if the attack goes through
             DrawCardSystem.Instance.DrawCards(new DrawCardsAction(1));
     }
 }

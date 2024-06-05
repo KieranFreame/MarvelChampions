@@ -14,7 +14,7 @@ public class RepairSequence : EncounterCardEffect
 
         if (heal > 0)
         {
-            owner.CharStats.Health.RecoverHealth(heal);
+            owner.CharStats.Health.CurrentHealth += heal;
         }
         else
         {
@@ -29,9 +29,9 @@ public class RepairSequence : EncounterCardEffect
         int heal = VillainTurnController.instance.MinionsInPlay.Where(x => x.CardTraits.Contains("Drone")).Count();
 
         if (action.Owner is Villain)
-            action.Owner.CharStats.Health.RecoverHealth(heal);
+            action.Owner.CharStats.Health.CurrentHealth += heal;
         else
-            (action.Owner as MinionCard).Owner.CharStats.Health.RecoverHealth(heal);
+            (action.Owner as MinionCard).Owner.CharStats.Health.CurrentHealth += heal;
 
         return Task.CompletedTask;
     }

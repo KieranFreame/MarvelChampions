@@ -8,26 +8,11 @@ public class ForJustice : PlayerCardEffect
 {
     public override bool CanBePlayed()
     {
-        if (base.CanBePlayed())
-        {
-            if (_owner.Identity.ActiveIdentity is AlterEgo)
-                return false;
-
-            return ScenarioManager.sideSchemes.Count > 0 || ScenarioManager.inst.MainScheme.Threat.CurrentThreat > 0;
-        }
-
-        return false;
+        return ScenarioManager.inst.ThreatPresent() && _owner.Identity.ActiveIdentity is Hero && base.CanBePlayed();
     }
 
     public override async Task OnEnterPlay()
     {
-        if (PayCostSystem.instance.Resources.Contains(Resource.Scientific))
-        {
-            await _owner.CharStats.InitiateThwart(new(4));
-        }
-        else
-        {
-            await _owner.CharStats.InitiateThwart(new(3));
-        }
+        await _owner.CharStats.InitiateThwart(new(PayCostSystem.instance.Resources.Contains(Resource.Scientific) ? 4 : 3, Owner));
     }
 }

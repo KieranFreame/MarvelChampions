@@ -11,7 +11,7 @@ public class Shrink : PlayerCardEffect
         if (_owner.Identity.IdentityName != "Ms Marvel")
             return false;
 
-        if (Card.Exhausted)
+        if (_card.Exhausted)
             return false;
 
         return true;
@@ -19,7 +19,7 @@ public class Shrink : PlayerCardEffect
 
     public override Task Activate()
     {
-        Card.Exhaust();
+        _card.Exhaust();
 
         PlayCardSystem.Instance.OnCardPlayed += OnCardPlayed;
 

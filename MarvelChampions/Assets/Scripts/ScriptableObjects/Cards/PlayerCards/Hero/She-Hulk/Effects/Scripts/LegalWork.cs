@@ -30,8 +30,8 @@ public class LegalWork : EncounterCardEffect
             if (decision == 1)
             {
                 walters.Exhaust();
-                ScenarioManager.inst.RemoveFromGame(Card.Data);
-                Destroy(Card.gameObject);
+                ScenarioManager.inst.RemoveFromGame(_card.Data);
+                Destroy(_card.gameObject);
                 return;
             }
         }

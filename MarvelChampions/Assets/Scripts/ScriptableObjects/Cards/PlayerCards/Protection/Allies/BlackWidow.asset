@@ -20,7 +20,7 @@ MonoBehaviour:
   cardTraits:
   - S.H.I.E.L.D.
   - Spy
-  cardArt: {fileID: 0}
+  cardArt: {fileID: 21300000, guid: 9d9be864b49d6cd42981023c6d0a9162, type: 3}
   cardCost: 3
   maxCopies: 1
   isUnique: 1

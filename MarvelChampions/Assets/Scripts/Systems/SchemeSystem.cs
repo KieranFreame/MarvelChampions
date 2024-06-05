@@ -30,7 +30,7 @@ public class SchemeSystem
         instance = null;
     }
 
-    public delegate Task OnSchemeComplete(SchemeAction schemeAction);
+    public delegate void OnSchemeComplete(SchemeAction schemeAction);
     public List<OnSchemeComplete> SchemeComplete { get; private set; } = new();
 
     #region Modifiers
@@ -48,7 +48,7 @@ public class SchemeSystem
         Action = action;
         Target = null;
 
-        if (Action.Owner is Villain || Action.Keywords.Contains(Keywords.Villainous))
+        if (Action.Owner is Villain || Action.Keywords.Contains("Villainous"))
         {
             BoostSystem.Instance.DealBoostCards();
             Action.Value += await BoostSystem.Instance.FlipCard(Action);
@@ -73,7 +73,9 @@ public class SchemeSystem
 
         for (int i = SchemeComplete.Count -1; i >= 0; --i)
         {
-            await SchemeComplete[i](Action);
+            SchemeComplete[i](Action);
         }
+
+       await EffectResolutionManager.Instance.ResolveEffects();
     }
 }

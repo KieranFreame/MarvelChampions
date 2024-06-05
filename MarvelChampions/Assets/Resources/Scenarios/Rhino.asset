@@ -16,3 +16,5 @@ MonoBehaviour:
   RequiredModulars: []
   RecommendedModulars:
   - Bomb Scare
+  Briefing: 'Rhino is trying to smash through a S.H.I.E.L.D facility and steal a
+    shipment of vibranium. '

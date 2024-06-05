@@ -10,7 +10,7 @@ public class PlayerCard : MonoBehaviour, ICard, IExhaust
     public Player Owner { get; private set; }
 
     private bool _exhausted = false;
-    private Animator _animator;
+    public Animator _animator;
 
     private int cardCost;
     public int BaseCardCost { get; protected set; }
@@ -66,7 +66,7 @@ public class PlayerCard : MonoBehaviour, ICard, IExhaust
     {
         await Effect.OnEnterPlay();
     }
-    public void Ready()
+    public virtual void Ready()
     {
         if (_exhausted)
         {
@@ -76,7 +76,7 @@ public class PlayerCard : MonoBehaviour, ICard, IExhaust
             _exhausted = false;
         }
     }
-    public void Exhaust()
+    public virtual void Exhaust()
     {
         if (!_exhausted)
         {

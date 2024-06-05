@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0b9278e16336c04c877539a4e71254a, type: 3}
   m_Name: Tony Stark
   m_EditorClassIdentifier: 
+  effectDescription: 'Futurist - Action: Look at the top 3 cards of your deck; add
+    1 to your hand and discard the rest.'

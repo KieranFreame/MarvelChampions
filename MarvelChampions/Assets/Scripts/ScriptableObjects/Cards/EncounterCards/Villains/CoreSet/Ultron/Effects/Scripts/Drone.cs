@@ -27,7 +27,7 @@ public class Drone : EncounterCardEffect
     public override Task WhenDefeated()
     {
         cardOwner.Deck.discardPile.Add(hijackedCard);
-        Destroy(Card.gameObject);
+        Destroy(_card.gameObject);
 
         return Task.CompletedTask;
     }

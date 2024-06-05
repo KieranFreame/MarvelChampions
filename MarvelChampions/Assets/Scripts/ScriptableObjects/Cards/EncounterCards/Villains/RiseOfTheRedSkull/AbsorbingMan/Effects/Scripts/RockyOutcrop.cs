@@ -7,6 +7,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Rocky Outcrop", menuName = "MarvelChampions/Card Effects/RotRS/Absorbing Man/Rocky Outcrop")]
 public class RockyOutcrop : EncounterCardEffect
 {
+    bool isBoost;
+
     public override async Task WhenRevealed(Villain owner, EncounterCard card, Player player)
     {
         ScenarioManager.inst.Surge(player);
@@ -18,48 +20,50 @@ public class RockyOutcrop : EncounterCardEffect
         _owner = owner;
         Card = card;
 
-        _owner.CharStats.AttackInitiated += AttackInitiated;
+        DefendSystem.Instance.OnDefenderSelected += OnDefenderSelected;
 
         return Task.CompletedTask;
     }
 
-    private void AttackInitiated()
+    private void OnDefenderSelected(ICharacter target, AttackAction action)
     {
-        DefendSystem.Instance.OnDefenderSelected += OnDefenderSelected;
-    }
-
-    private void OnDefenderSelected(ICharacter arg0)
-    {
-        DefendSystem.Instance.OnDefenderSelected -= OnDefenderSelected;
-
-        if (arg0 == null)
+        if (target == null)
         {
-            AttackSystem.Instance.OnAttackCompleted.Add(AttackComplete);
+            EffectResolutionManager.Instance.ResolvingEffects.Push(this);
         }
     }
 
-    private Task AttackComplete(AttackAction action)
+    public override async Task Resolve()
     {
-        AttackSystem.Instance.OnAttackCompleted.Remove(AttackComplete);
-        _owner.CharStats.Health.RecoverHealth((NoneShallPass.delay.CountersLeft >= 5) ? 2 : 1);
-        return Task.CompletedTask;
+        if (isBoost)
+        {
+            var card = GameObject.Find("EncounterCards").transform.Find("Rocky Outcrop").GetComponent<EncounterCard>();
+
+            card.InPlay = true;
+            RevealEncounterCardSystem.Instance.MoveCard(card);
+            await OnEnterPlay(ScenarioManager.inst.ActiveVillain, card, null);
+
+            (ScenarioManager.inst.MainScheme.Effect as NoneShallPass).EncounterCardRevealed(card);
+
+            isBoost = false;
+
+            return;
+        }
+
+        _owner.CharStats.Health.CurrentHealth += (NoneShallPass.delay.CountersLeft >= 5) ? 2 : 1;
     }
 
-    public override async Task Boost(Action action)
+    public override Task Boost(Action action)
     {
-        var card = GameObject.Find("EncounterCards").transform.Find("Rocky Outcrop").GetComponent<EncounterCard>();
+        isBoost = true;
+        EffectResolutionManager.Instance.ResolvingEffects.Push(this);
 
-        card.InPlay = true;
-        RevealEncounterCardSystem.Instance.MoveCard(card);
-        await OnEnterPlay(ScenarioManager.inst.ActiveVillain, card, null);
-
-        (ScenarioManager.inst.MainScheme.Effect as NoneShallPass).EncounterCardRevealed(card);
+        return Task.CompletedTask;
     }
 
     public override Task OnExitPlay()
     {
-        _owner.CharStats.AttackInitiated -= AttackInitiated;
-
+        DefendSystem.Instance.OnDefenderSelected -= OnDefenderSelected;
         return Task.CompletedTask;
     }
 }

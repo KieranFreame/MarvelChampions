@@ -8,7 +8,7 @@ public class FocusedRage : PlayerCardEffect
 {
     public override bool CanActivate()
     {
-        if (Card.Exhausted)
+        if (_card.Exhausted)
             return false;
 
         return true;
@@ -17,7 +17,7 @@ public class FocusedRage : PlayerCardEffect
     public override async Task Activate()
     {
         _owner.CharStats.Health.CurrentHealth -= 1;
-        Card.Exhaust();
+        _card.Exhaust();
         DrawCardSystem.Instance.DrawCards(new(1, _owner));
         await Task.Yield();
     }

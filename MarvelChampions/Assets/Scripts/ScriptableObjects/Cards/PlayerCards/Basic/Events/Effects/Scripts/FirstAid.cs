@@ -12,7 +12,7 @@ public class FirstAid : PlayerCardEffect
     {
         if (base.CanBePlayed())
         {
-            candidates.Add(FindObjectOfType<Player>());
+            candidates.Add(TurnManager.instance.CurrPlayer);
             candidates.AddRange((candidates[0] as Player).CardsInPlay.Allies);
 
             candidates.RemoveAll(x => !x.CharStats.Health.Damaged());
@@ -26,6 +26,6 @@ public class FirstAid : PlayerCardEffect
     public override async Task OnEnterPlay()
     {
         ICharacter target = await TargetSystem.instance.SelectTarget(candidates);
-        target.CharStats.Health.RecoverHealth(2);
+        target.CharStats.Health.CurrentHealth += 2;
     }
 }

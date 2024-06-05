@@ -9,7 +9,7 @@ public class CreateCardFactory
 
     public ICard CreateCard(CardData data, Transform parent)
     {
-        GameObject card = Object.Instantiate(PrefabFactory.instance.GetPrefab(data), parent);
+        GameObject card = Object.Instantiate(PrefabFactory.instance.GetPlayablePrefab(data), parent);
 
         card.name = data.cardName;
 

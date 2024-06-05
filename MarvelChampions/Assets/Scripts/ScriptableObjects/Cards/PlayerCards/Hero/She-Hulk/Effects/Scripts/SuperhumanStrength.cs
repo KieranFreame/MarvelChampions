@@ -9,31 +9,32 @@ public class SuperhumanStrength : PlayerCardEffect
     public override Task OnEnterPlay()
     {
         _owner.CharStats.Attacker.CurrentAttack += 2;
-        _owner.CharStats.AttackInitiated += AttackInitiated;
+        AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
 
         return Task.CompletedTask;
     }
 
-    private void AttackInitiated()
+    public void IsTriggerMet(Action action)
     {
-        AttackSystem.Instance.OnAttackCompleted.Add(AttackComplete);
+        if (action.Owner == _owner as ICharacter)
+            EffectResolutionManager.Instance.ResolvingEffects.Push(this);
     }
 
-    private Task AttackComplete(Action action)
+    public override Task Resolve()
     {
-        AttackSystem.Instance.OnAttackCompleted.Remove(AttackComplete);
-        var attack = action as AttackAction;
+        
+        var target = AttackSystem.Instance.Action.Target;
 
-        if (attack.Target.CharStats.Health.CurrentHealth > 0)
+        if (target != null)
         {
-            attack.Target.CharStats.Attacker.Stunned = true;
+           target.CharStats.Attacker.Stunned = true;
         }
 
         _owner.CharStats.Attacker.CurrentAttack -= 2;
-        _owner.CharStats.AttackInitiated -= AttackInitiated;
+        AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
 
-        _owner.CardsInPlay.Permanents.Remove(Card);
-        _owner.Deck.Discard(Card);
+        _owner.CardsInPlay.Permanents.Remove(_card);
+        _owner.Deck.Discard(_card);
 
         return Task.CompletedTask;
     }

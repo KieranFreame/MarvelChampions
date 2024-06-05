@@ -13,27 +13,23 @@ namespace CoreSet
             owner = _owner;
         }
 
-        private void AttackInitiated()
+        private void SelectingDefender(Player target, AttackAction action)
         {
-            DefendSystem.Instance.OnSelectingDefender += SelectingDefender;
-        }
-
-        private void SelectingDefender(Player target)
-        {
-            DefendSystem.Instance.OnSelectingDefender -= SelectingDefender;
-
-            if (target == owner)
-                DrawCardSystem.Instance.DrawCards(new(1, owner));
+            if (action.Owner == ScenarioManager.inst.ActiveVillain as ICharacter && action.Card == null)
+            {
+                if (target == owner)
+                    DrawCardSystem.Instance.DrawCards(new(1, owner));
+            }
         }
 
         public override void OnFlipUp()
         {
-            FindObjectOfType<Villain>().CharStats.AttackInitiated += AttackInitiated;
+            DefendSystem.Instance.OnSelectingDefender += SelectingDefender;
         }
 
         public override void OnFlipDown()
         {
-            FindObjectOfType<Villain>().CharStats.AttackInitiated -= AttackInitiated;
+            DefendSystem.Instance.OnSelectingDefender -= SelectingDefender;
         }
     }
 }

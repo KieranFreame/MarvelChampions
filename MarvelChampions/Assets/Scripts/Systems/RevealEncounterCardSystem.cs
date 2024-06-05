@@ -12,18 +12,16 @@ public class RevealEncounterCardSystem
     {
         get
         {
-            if (instance == null)
-                instance = new RevealEncounterCardSystem();
-
+            instance ??= new RevealEncounterCardSystem();
             return instance;
         }
     }
 
     private RevealEncounterCardSystem()
     {
-        _minionTransform = GameObject.Find("MinionTransform").transform;
-        _sideSchemeTransform = GameObject.Find("SideSchemeTransform").transform;
-        _attachmentTransform = GameObject.Find("AttachmentTransform").transform;
+        MinionTransform = GameObject.Find("MinionTransform").transform;
+        SideSchemeTransform = GameObject.Find("SideSchemeTransform").transform;
+        AttachmentTransform = GameObject.Find("AttachmentTransform").transform;
 
         PauseMenu.OnRestartGame += Restart;
     }
@@ -35,66 +33,78 @@ public class RevealEncounterCardSystem
     }
 
     #region Transforms
-    [SerializeField] private Transform _minionTransform;
-    [SerializeField] private Transform _sideSchemeTransform;
-    [SerializeField] private Transform _attachmentTransform;
+    public Transform MinionTransform { get; set; }
+    public Transform SideSchemeTransform { get; set; }
+    public Transform AttachmentTransform { get; set; }
     #endregion
 
     #region Events
     public static event UnityAction<EncounterCard> OnEncounterCardRevealed;
     #endregion
 
-    #region Delegates
-    public delegate Task<bool> CancelEffect(EncounterCard cardToPlay);
-    public List<CancelEffect> EffectCancelers { get; private set; } = new();
-    #endregion
-
-    private bool canceled = false;
+    public List<PlayerCardEffect> EffectCancelers { get; private set; } = new();
+    public EncounterCard CardToReveal { get; private set; }
 
     #region Methods
-    public async Task InitiateRevealCard(EncounterCard cardToPlay)
+    public async Task InitiateRevealCard(EncounterCard cardToReveal)
     {
-        Debug.Log("Revealing " + cardToPlay.CardName);
+        CardToReveal = cardToReveal;
+        Debug.Log("Revealing " + cardToReveal.CardName);
         await Task.Delay(3000);
 
-        if (cardToPlay.Data.cardType is not CardType.Treachery)
-            MoveCard(cardToPlay);
+        await CheckCancellers();
 
-        canceled = false;
+        if (CardToReveal == null) //effect is cancelled
+            return;
 
-        for (int i = EffectCancelers.Count - 1; i >= 0; i--)
-        {
-            canceled = await EffectCancelers[i](cardToPlay);
+        if (CardToReveal.Data.cardType is not CardType.Treachery)
+            MoveCard(CardToReveal);
 
-            if (canceled)
-                break;
-        }
+        await CardToReveal.OnRevealCard();
 
-        if (!canceled)
-            await cardToPlay.OnRevealCard();
+        if (CardToReveal.Data.cardType is CardType.Treachery || (CardToReveal.Data.cardType == CardType.Obligation && ScenarioManager.inst.EncounterDeck.limbo.Contains(CardToReveal.Data)))
+            ScenarioManager.inst.EncounterDeck.Discard(CardToReveal);
 
-        if (cardToPlay.Data.cardType is CardType.Treachery || (cardToPlay.Data.cardType == CardType.Obligation && ScenarioManager.inst.EncounterDeck.limbo.Contains(cardToPlay.Data)))
-            ScenarioManager.inst.EncounterDeck.Discard(cardToPlay);
-
-        OnEncounterCardRevealed?.Invoke(cardToPlay);
+        OnEncounterCardRevealed?.Invoke(CardToReveal);
     }
 
-    public void MoveCard(EncounterCard cardToPlay)
+    public void MoveCard(EncounterCard cardToReveal)
     {
-        switch (cardToPlay.Data.cardType)
+        switch (cardToReveal.Data.cardType)
         {
             case CardType.Minion:
-                cardToPlay.transform.SetParent(_minionTransform);
-                VillainTurnController.instance.MinionsInPlay.Add(cardToPlay as MinionCard);
+                cardToReveal.transform.parent.SetParent(MinionTransform);
+                VillainTurnController.instance.MinionsInPlay.Add(cardToReveal as MinionCard);
                 break;
             case CardType.SideScheme:
-                cardToPlay.transform.parent.SetParent(_sideSchemeTransform);
-                ScenarioManager.sideSchemes.Add(cardToPlay as SchemeCard);
+                cardToReveal.transform.parent.SetParent(SideSchemeTransform);
+                ScenarioManager.sideSchemes.Add(cardToReveal as SchemeCard);
                 break;
             case CardType.Attachment:
             case CardType.Environment:
-                cardToPlay.transform.SetParent(_attachmentTransform);
+                cardToReveal.transform.SetParent(AttachmentTransform);
                 break;
+        }
+    }
+
+    private async Task CheckCancellers()
+    {
+        for (int i = EffectCancelers.Count - 1; i >= 0; i--)
+        {
+            if (!EffectCancelers[i].CanResolve()) //if false; cannot resolve, move to next
+                continue;
+
+            if (EffectCancelers[i] is IOptional) //differentiate from a card like Adam Warlock's Cosmic Ward, which is a mandatory cancel
+            {
+                if (!await ConfirmActivateUI.MakeChoice(EffectCancelers[i].Card))
+                    continue;
+            }
+
+            await EffectCancelers[i].Resolve();
+            ScenarioManager.inst.EncounterDeck.Discard(CardToReveal);
+            CardToReveal = null;
+
+            break;
         }
     }
     #endregion

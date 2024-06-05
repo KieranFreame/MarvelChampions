@@ -8,6 +8,7 @@ public class PlayerCardUI : CardUI
 {
     private PlayerCard playerCard;
     public TMP_Text cardName;
+    public TMP_Text cardDesc;
     [SerializeField] protected Image cardArt;
     [SerializeField] protected TMP_Text cardCostText;
     [SerializeField] protected Image cardBase;
@@ -37,6 +38,7 @@ public class PlayerCardUI : CardUI
     protected override void LoadData()
     {
         cardName.text = playerCard.CardName;
+        cardDesc.text = playerCard.CardDesc;
 
         if (cardCostText != null)
             cardCostText.text = playerCard.CardCost.ToString();

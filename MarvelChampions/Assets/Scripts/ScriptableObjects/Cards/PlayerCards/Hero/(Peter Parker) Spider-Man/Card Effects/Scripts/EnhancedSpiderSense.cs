@@ -5,38 +5,26 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Enhanced Spider-Sense", menuName = "MarvelChampions/Card Effects/Spider-Man (Peter Parker)/Enhanced Spider-Sense")]
-public class EnhancedSpiderSense : PlayerCardEffect
+public class EnhancedSpiderSense : PlayerCardEffect, IOptional
 {
     public override void OnDrawn()
     {
-        RevealEncounterCardSystem.Instance.EffectCancelers.Add(CancelEffect);
+        RevealEncounterCardSystem.Instance.EffectCancelers.Add(this);
     }
 
-    public override Task OnEnterPlay()
+    public override bool CanResolve()
     {
-        RevealEncounterCardSystem.Instance.EffectCancelers.Remove(CancelEffect);
-        return Task.CompletedTask;
+        return RevealEncounterCardSystem.Instance.CardToReveal.CardType == CardType.Treachery && _owner.ResourcesAvailable(_card) >= _card.CardCost;    
     }
 
-    public async Task<bool> CancelEffect(ICard cardToCancel)
+    public override async Task Resolve()
     {
-        if ((cardToCancel as EncounterCard).Data.cardType is not CardType.Treachery)
-            return false;
-        
-        bool decision = await ConfirmActivateUI.MakeChoice(Card);
-
-        if (decision)
-        {
-            await PlayCardSystem.Instance.InitiatePlayCard(new(Card));
-            return true;
-        }
-
-        return false;
+        await PlayCardSystem.Instance.InitiatePlayCard(new(_card));
     }
 
     public override void OnDiscard()
     {
-        RevealEncounterCardSystem.Instance.EffectCancelers.Remove(CancelEffect);
+        RevealEncounterCardSystem.Instance.EffectCancelers.Remove(this);
     }
 
 }

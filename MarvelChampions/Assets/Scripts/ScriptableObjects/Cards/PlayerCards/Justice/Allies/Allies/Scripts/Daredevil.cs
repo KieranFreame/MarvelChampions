@@ -12,24 +12,26 @@ public class Daredevil : PlayerCardEffect
 
     public override Task OnEnterPlay()
     {
-        (Card as AllyCard).CharStats.ThwartInitiated += ThwartInitiated;
+        ThwartSystem.Instance.OnThwartComplete.Add(IsTriggerMet);
         return Task.CompletedTask;
     }
 
-    private void ThwartInitiated() => ThwartSystem.OnThwartComplete += OnThwartComplete;
-
-    private async void OnThwartComplete()
+    private void IsTriggerMet(ThwartAction action)
     {
-        ThwartSystem.OnThwartComplete -= OnThwartComplete;
+        if (action.Owner == Card as ICharacter)
+            EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+    }
 
-        List<ICharacter> enemies = new() { FindObjectOfType<Villain>() };
-        enemies.AddRange(FindObjectsOfType<MinionCard>());
-        
-        await DamageSystem.Instance.ApplyDamage(new DamageAction(enemies, 1, card:Card));
+    public override async Task Resolve()
+    {
+        List<ICharacter> enemies = new() { ScenarioManager.inst.ActiveVillain };
+        enemies.AddRange(VillainTurnController.instance.MinionsInPlay);
+
+        await DamageSystem.Instance.ApplyDamage(new DamageAction(enemies, 1, card: Card));
     }
 
     public override void OnExitPlay()
     {
-        (Card as AllyCard).CharStats.ThwartInitiated -= ThwartInitiated;
+        ThwartSystem.Instance.OnThwartComplete.Remove(IsTriggerMet);
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -13,7 +14,7 @@ namespace CoreSet
 
         public override async Task OnEnterPlay()
         {
-            arrows = Card.gameObject.AddComponent<Counters>();
+            arrows = _card.gameObject.AddComponent<Counters>();
             arrows.AddCounters(4);
 
             VillainTurnController.instance.MinionsInPlay.CollectionChanged += MinionAdded;
@@ -21,29 +22,25 @@ namespace CoreSet
             await Task.Yield();
         }
 
-        private async void MinionAdded(object sender, NotifyCollectionChangedEventArgs e)
+        private void MinionAdded(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action is NotifyCollectionChangedAction.Add)
             {
-                foreach (var item in e.NewItems)
-                {
-                    await DamageMinion(item as MinionCard);
-                }
+                EffectResolutionManager.Instance.ResolvingEffects.Push(this);
             }
         }
 
-        private async Task DamageMinion(MinionCard card)
+        public override Task Resolve()
         {
-            bool decision = await ConfirmActivateUI.MakeChoice(Card);
+            MinionCard card = VillainTurnController.instance.MinionsInPlay.Last();
 
-            if (decision)
-            {
-                arrows.RemoveCounters(1);
-                card.CharStats.Health.TakeDamage(new(card, 2, card: Card));
+            arrows.RemoveCounters(1);
+            card.CharStats.Health.TakeDamage(new(card, 2, card: Card));
 
-                if (arrows.CountersLeft == 0)
-                    VillainTurnController.instance.MinionsInPlay.CollectionChanged -= MinionAdded;
-            }
+            if (arrows.CountersLeft == 0)
+                VillainTurnController.instance.MinionsInPlay.CollectionChanged -= MinionAdded;
+
+            return Task.CompletedTask;
         }
 
         public override void OnExitPlay()

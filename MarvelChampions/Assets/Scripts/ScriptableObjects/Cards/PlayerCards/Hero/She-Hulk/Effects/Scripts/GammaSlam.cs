@@ -23,6 +23,6 @@ public class GammaSlam : PlayerCardEffect
 
         if (damage > 15) damage = 15;
 
-        await _owner.CharStats.InitiateAttack(new(damage, owner: _owner, card: Card));
+        await _owner.CharStats.InitiateAttack(new(damage, targets: new() { TargetType.TargetVillain, TargetType.TargetMinion }, owner: _owner, card: Card));
     }
 }

@@ -8,7 +8,7 @@ public class PepperPotts : PlayerCardEffect, IGenerate
 {
     public bool CanGenerateResource(ICard cardToPlay)
     {
-        if (Card.Exhausted)
+        if (_card.Exhausted)
             return false;
 
         if (_owner.Deck.discardPile.Count == 0)
@@ -27,7 +27,7 @@ public class PepperPotts : PlayerCardEffect, IGenerate
 
     public List<Resource> GenerateResource()
     {
-        Card.Exhaust();
+        _card.Exhaust();
         return (_owner.Deck.discardPile.Last() as PlayerCardData).cardResources;
     }
 

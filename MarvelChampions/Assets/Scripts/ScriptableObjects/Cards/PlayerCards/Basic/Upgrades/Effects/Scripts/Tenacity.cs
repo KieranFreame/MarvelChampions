@@ -9,20 +9,7 @@ public class Tenacity : PlayerCardEffect
 {
     public override bool CanActivate()
     {
-        if (!_owner.Exhausted)
-            return false;
-
-        if (_owner.Hand.cards.Any(x => x.Resources.Contains(Resource.Physical) || x.Resources.Contains(Resource.Wild)))
-            return true;
-        
-        foreach (PlayerCard c in _owner.CardsInPlay.Permanents)
-        {
-            if (c.Effect is IGenerate)
-                if ((c.Effect as IGenerate).CompareResource(Resource.Physical))
-                    return true;
-        }
-
-        return false;
+        return _owner.Exhausted && _owner.HaveResource(Resource.Physical);    
     }
 
     public override async Task Activate()
@@ -31,7 +18,7 @@ public class Tenacity : PlayerCardEffect
 
         _owner.Ready();
 
-        _owner.CardsInPlay.Permanents.Remove(Card);
-        _owner.Deck.Discard(Card);
+        _owner.CardsInPlay.Permanents.Remove(_card);
+        _owner.Deck.Discard(_card);
     }
 }

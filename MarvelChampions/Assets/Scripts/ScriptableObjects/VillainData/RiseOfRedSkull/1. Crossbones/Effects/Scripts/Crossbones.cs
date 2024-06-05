@@ -22,13 +22,13 @@ public class Crossbones : VillainEffect
 
         if (attachments.Any(x => (x as ICard).CardTraits.Contains("Weapon")))
         {
-            if (!_owner.CharStats.Attacker.Keywords.Contains(Keywords.Piercing))
-                _owner.CharStats.Attacker.Keywords.Add(Keywords.Piercing);
+            if (!_owner.CharStats.Attacker.Keywords.Contains("Piercing"))
+                _owner.CharStats.Attacker.Keywords.Add("Piercing");
         }
         else
         {
-            if (_owner.CharStats.Attacker.Keywords.Contains(Keywords.Piercing))
-                _owner.CharStats.Attacker.Keywords.Remove(Keywords.Piercing);
+            if (_owner.CharStats.Attacker.Keywords.Contains("Piercing"))
+                _owner.CharStats.Attacker.Keywords.Remove("Piercing");
         }
     }
 
@@ -44,9 +44,9 @@ public class Crossbones : VillainEffect
         if (cbMachineGun == null)
             return;
 
-        var card = CreateCardFactory.Instance.CreateCard(cbMachineGun, GameObject.Find("AttachmentTransform").transform) as AttachmentCard;
+        var card = CreateCardFactory.Instance.CreateCard(cbMachineGun, RevealEncounterCardSystem.Instance.AttachmentTransform) as AttachmentCard;
 
-        _owner.Attachments.Add(card);
+        _owner.Attachments.Add(card.Effect as IAttachment);
         await card.OnRevealCard();
     }
 

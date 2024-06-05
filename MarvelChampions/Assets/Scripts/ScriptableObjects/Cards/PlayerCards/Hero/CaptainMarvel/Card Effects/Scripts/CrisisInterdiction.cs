@@ -3,6 +3,8 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
+using System;
+using System.Collections.ObjectModel;
 
 [CreateAssetMenu(fileName = "CrisisInterdiction", menuName = "MarvelChampions/Card Effects/Captain Marvel/Crisis Interdiction")]
 public class CrisisInterdiction : PlayerCardEffect
@@ -11,40 +13,38 @@ public class CrisisInterdiction : PlayerCardEffect
 
     public override bool CanBePlayed()
     {
-        if (base.CanBePlayed())
-        {
-            return (ScenarioManager.sideSchemes.Any(x => x.Threat.CurrentThreat > 0) && ScenarioManager.inst.MainScheme.Threat.CurrentThreat > 0);
-        }
-
-        return false;
+        return base.CanBePlayed() && ScenarioManager.inst.ThreatPresent();
     }
 
     public override async Task OnEnterPlay()
     {
-        ThwartAction action = new(2);
-        await ThwartSystem.Instance.InitiateThwart(action);
-
         if (_owner.Identity.IdentityTraits.Contains("Aerial"))
-        {
-            prevTarget = action.Target;
-            List<SchemeCard> schemes = new();
-            schemes.AddRange(FindObjectsOfType<SchemeCard>());
+            ThwartSystem.Instance.OnThwartComplete.Add(IsTriggerMet);
 
-            //If there are no schemes, or the previous scheme is the only target.
-            if (schemes.Count() == 0 || (schemes.Count() == 1 && schemes[0].Threat == prevTarget.Threat))
-                return;
-
-            ThwartSystem.OnThwartComplete += SecondThwart;
-        }
+        await _owner.CharStats.InitiateThwart(new(2, Owner));
     }
 
-    private async void SecondThwart()
+    private void IsTriggerMet(ThwartAction action)
+    {   
+        ThwartSystem.Instance.OnThwartComplete.Remove(IsTriggerMet);
+
+        List<SchemeCard> schemes = new() { ScenarioManager.inst.MainScheme };
+        schemes.AddRange(ScenarioManager.sideSchemes);
+
+        //If there are no schemes, or the previous scheme is the only target.
+        if (!ScenarioManager.inst.ThreatPresent() || (schemes.Count() == 1 && schemes[0] == action.Target))
+            return;
+
+        prevTarget = action.Target;
+        EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+    }
+
+    public override async Task Resolve()
     {
         TargetSystem.instance.candidates.CollectionChanged += CandidateAdded;
-        
-        await ThwartSystem.Instance.InitiateThwart(new(2));
 
-        ThwartSystem.OnThwartComplete -= SecondThwart;
+        await _owner.CharStats.InitiateThwart(new(2, Owner));
+
         TargetSystem.instance.candidates.CollectionChanged -= CandidateAdded;
     }
 
@@ -54,7 +54,7 @@ public class CrisisInterdiction : PlayerCardEffect
         {
             case NotifyCollectionChangedAction.Add:
                 if (e.NewItems.Contains(prevTarget))
-                    e.NewItems.Remove(prevTarget);
+                   ((ObservableCollection<dynamic>)sender).Remove(prevTarget);
                 break;
         }
     }

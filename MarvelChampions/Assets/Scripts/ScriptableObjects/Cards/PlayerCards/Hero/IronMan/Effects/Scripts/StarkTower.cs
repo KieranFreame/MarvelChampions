@@ -12,7 +12,7 @@ public class StarkTower : PlayerCardEffect
         if (_owner.Identity.ActiveIdentity is not AlterEgo)
             return false;
 
-        if (Card.Exhausted)
+        if (_card.Exhausted)
             return false;
 
         if (!_owner.Deck.discardPile.Any(x => x.cardTraits.Contains("Tech") && x.cardType == CardType.Upgrade))
@@ -23,7 +23,7 @@ public class StarkTower : PlayerCardEffect
 
     public override async Task Activate()
     {
-        Card.Exhaust();
+        _card.Exhaust();
         PlayerCardData card = _owner.Deck.discardPile.Last(x => x.cardTraits.Contains("Tech") && x.cardType == CardType.Upgrade) as PlayerCardData;
 
         _owner.Deck.discardPile.Remove(card);

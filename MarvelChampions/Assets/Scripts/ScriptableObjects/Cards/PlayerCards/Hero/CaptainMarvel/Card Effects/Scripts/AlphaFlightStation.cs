@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -6,13 +7,17 @@ public class AlphaFlightStation : PlayerCardEffect
 {
     public override bool CanActivate()
     {
-        return !Card.Exhausted;
+        return !_card.Exhausted && _owner.Hand.cards.Count >= 1;
     }
 
     public override async Task Activate()
     {
-        Card.Exhaust();
+        _card.Exhaust();
+
+        Debug.Log("Discard a card");
+        PlayerCard discard = await TargetSystem.instance.SelectTarget(_owner.Hand.cards.ToList());
+        _owner.Deck.Discard(discard);
+
         DrawCardSystem.Instance.DrawCards(new(amount: (_owner.Identity.ActiveIdentity is AlterEgo) ? 2 : 1));
-        await Task.Yield();
     }
 }

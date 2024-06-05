@@ -9,4 +9,7 @@ public class ScenarioData : ScriptableObject
 
     public List<string> RequiredModulars;
     public List<string> RecommendedModulars;
+
+    [TextArea (3,5)]
+    public string Briefing;
 }

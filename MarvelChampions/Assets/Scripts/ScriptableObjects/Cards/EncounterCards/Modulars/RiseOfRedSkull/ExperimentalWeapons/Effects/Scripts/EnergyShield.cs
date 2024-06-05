@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Energy Shield", menuName = "MarvelChampions/Card Effects/Modulars/RotRS/Experimental Weapons/Energy Shield")]
-public class EnergyShield : AttachmentCardEffect
+public class EnergyShield : EncounterCardEffect, IAttachment
 {
+    public ICharacter Attached { get; set; }
+
     Retaliate _retaliate;
 
     public override Task WhenRevealed(Villain owner, EncounterCard card, Player player)
@@ -40,15 +42,15 @@ public class EnergyShield : AttachmentCardEffect
         ScenarioManager.inst.EncounterDeck.Discard(Card);
     }
 
-    public override void Attach()
+    public void Attach()
     {
         _retaliate = new(_owner, 1);
-        _owner.Attachments.Add(Card as AttachmentCard);
+        _owner.Attachments.Add(this);
     }
 
-    public override void Detach()
+    public void Detach()
     {
         _retaliate.WhenRemoved();
-        _owner.Attachments.Remove(Card as AttachmentCard);
+        _owner.Attachments.Remove(this);
     }
 }

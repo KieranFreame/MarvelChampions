@@ -7,12 +7,12 @@ public class ThePowerOf : ResourceCardEffect
 {
     public override List<Resource> GetResources()
     {
-        if (PlayCardSystem.Instance.CardToPlay.CardAspect == Card.CardAspect)
+        if (PlayCardSystem.Instance.CardToPlay.CardAspect == _card.CardAspect)
         {
-            return new List<Resource>() { Card.Resources[0], Card.Resources[0] };
+            return new List<Resource>() { _card.Resources[0], _card.Resources[0] };
         }
 
-        return Card.Resources;
+        return _card.Resources;
     }
 
     public override int ResourceCount(PlayerCard card)
@@ -22,7 +22,7 @@ public class ThePowerOf : ResourceCardEffect
             return 1;
         }
 
-        if (card.CardAspect == Card.CardAspect)
+        if (card.CardAspect == _card.CardAspect)
         {
             return 2;
         }

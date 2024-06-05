@@ -16,11 +16,11 @@ public class DesperateDefense : PlayerCardEffect
     private async Task<int> ModifyDefence(int defence)
     {
         if (!CanBePlayed()) return defence;
-        if (_owner.ResourcesAvailable(Card) < Card.CardCost) return defence;
+        if (_owner.ResourcesAvailable(_card) < _card.CardCost) return defence;
 
-        if (await ConfirmActivateUI.MakeChoice(Card))
+        if (await ConfirmActivateUI.MakeChoice(_card))
         {
-            await PlayCardSystem.Instance.InitiatePlayCard(new(Card));
+            await PlayCardSystem.Instance.InitiatePlayCard(new(_card));
             defence += 2;
             _owner.CharStats.Health.OnTakeDamage += OnTakeDamage;
         }

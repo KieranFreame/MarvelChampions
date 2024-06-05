@@ -7,7 +7,7 @@ public class SuperSoldierSerum : PlayerCardEffect, IGenerate
 {
     public bool CanGenerateResource(ICard cardToPlay)
     {
-        return !Card.Exhausted;
+        return !_card.Exhausted;
     }
 
     public bool CompareResource(Resource resource)
@@ -17,7 +17,7 @@ public class SuperSoldierSerum : PlayerCardEffect, IGenerate
 
     public List<Resource> GenerateResource()
     {
-        Card.Exhaust();
+        _card.Exhaust();
         return new List<Resource>() { Resource.Physical };
     }
 }

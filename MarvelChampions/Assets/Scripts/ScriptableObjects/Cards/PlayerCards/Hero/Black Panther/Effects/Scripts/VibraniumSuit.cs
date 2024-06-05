@@ -14,11 +14,11 @@ public class VibraniumSuit : PlayerCardEffect, IBlackPanther
             return;
 
         _owner.CharStats.AttackInitiated += AttackInitiated;
-        await _owner.CharStats.InitiateAttack(new(last ? 2 : 1, owner: _owner, card: Card));
+        await _owner.CharStats.InitiateAttack(new(last ? 2 : 1, targets: new() { TargetType.TargetVillain, TargetType.TargetMinion }, owner: _owner, card: Card));
         
         if (attackSuccessful)
         {
-            _owner.CharStats.Health.RecoverHealth(last ? 2 : 1);
+            _owner.CharStats.Health.CurrentHealth += last ? 2 : 1;
         }
 
         attackSuccessful = false;

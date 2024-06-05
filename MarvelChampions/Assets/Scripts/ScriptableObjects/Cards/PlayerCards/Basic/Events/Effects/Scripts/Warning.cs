@@ -1,31 +1,25 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Warning", menuName = "MarvelChampions/Card Effects/Basic/Warning")]
-public class Warning : PlayerCardEffect
+public class Warning : PlayerCardEffect, IOptional
 {
+    DamageAction action;
+
     public override void OnDrawn()
     {
-        DamageSystem.Instance.Modifiers.Add(ModifyDamage);
+        _owner.CharStats.Health.Modifiers.Add(ReduceDamage);
     }
 
-    public async Task<DamageAction> ModifyDamage(DamageAction action)
+    private async Task<DamageAction> ReduceDamage(DamageAction action)
     {
-        if (!action.DamageTargets.Any(x => x is Player)) return action;
-
-        bool decision = await ConfirmActivateUI.MakeChoice(Card);
-
-        if (decision)
+        if (await ConfirmActivateUI.MakeChoice(_card))
         {
-            await PlayCardSystem.Instance.InitiatePlayCard(new(Card));
-
+            await PlayCardSystem.Instance.InitiatePlayCard(new(_card));
             action.Value--;
-            
-            DamageSystem.Instance.Modifiers.Remove(ModifyDamage);
+            _owner.CharStats.Health.Modifiers.Remove(ReduceDamage);
         }
 
         return action;
@@ -33,6 +27,6 @@ public class Warning : PlayerCardEffect
 
     public override void OnDiscard()
     {
-        DamageSystem.Instance.Modifiers.Remove(ModifyDamage);
+        _owner.CharStats.Health.Modifiers.Remove(ReduceDamage);
     }
 }

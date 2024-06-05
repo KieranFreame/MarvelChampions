@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fcc19b75a4a73b4a9d782a4bfe9d840, type: 3}
   m_Name: SheHulk
   m_EditorClassIdentifier: 
+  effectDescription: '"Do you even lift?" - Interrupt: After you change to this form,
+    deal 2 damage to an enemy.'

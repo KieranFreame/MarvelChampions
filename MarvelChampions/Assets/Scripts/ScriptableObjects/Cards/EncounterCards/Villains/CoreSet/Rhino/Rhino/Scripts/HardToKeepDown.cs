@@ -16,7 +16,7 @@ public class HardToKeepDown : EncounterCardEffect
             return;
         }
 
-        health.RecoverHealth(4);
+        health.CurrentHealth += 4;
         await Task.Yield();
     }
 }

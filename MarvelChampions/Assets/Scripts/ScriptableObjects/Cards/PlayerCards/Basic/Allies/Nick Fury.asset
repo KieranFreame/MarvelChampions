@@ -20,7 +20,7 @@ MonoBehaviour:
   cardType: 0
   cardTraits:
   - S.H.I.E.L.D
-  cardArt: {fileID: 0}
+  cardArt: {fileID: 21300000, guid: 436bb39e29aa5b944a92ebb2e7dedf48, type: 3}
   cardCost: 4
   maxCopies: 1
   isUnique: 1

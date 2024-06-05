@@ -18,7 +18,7 @@ public class Harvest : EncounterCardEffect
                 person.Exhaust();
             }
 
-            owner.CharStats.Health.RecoverHealth(personas.Count);
+            owner.CharStats.Health.CurrentHealth += personas.Count;
         }
         else
         {

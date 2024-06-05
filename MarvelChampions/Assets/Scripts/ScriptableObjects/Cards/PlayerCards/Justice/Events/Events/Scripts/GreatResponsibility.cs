@@ -7,8 +7,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Great Responsibility", menuName = "MarvelChampions/Card Effects/Justice/Great Responsibility")]
 public class GreatResponsibility : PlayerCardEffect
 {
-    SchemeAction _action;
-
     public override void OnDrawn()
     {
         SchemeSystem.Instance.Modifiers.Add(ModifyScheme);
@@ -19,26 +17,17 @@ public class GreatResponsibility : PlayerCardEffect
         return false;
     }
 
-    public override Task OnEnterPlay()
-    {
-        _owner.CharStats.Health.CurrentHealth -= _action.Value;
-        _action.Value = 0;
-        SchemeSystem.Instance.Modifiers.Remove(ModifyScheme);
-
-        return Task.CompletedTask;
-    }
-
     public async Task<SchemeAction> ModifyScheme(SchemeAction action)
     {
         if (_owner.Identity.ActiveIdentity is AlterEgo)
             return action;
 
-        bool decision = await ConfirmActivateUI.MakeChoice(Card);
-
-        if (decision)
+        if (await ConfirmActivateUI.MakeChoice(Card))
         {
-            _action = action;
-            await PlayCardSystem.Instance.InitiatePlayCard(new(Card));
+            await PlayCardSystem.Instance.InitiatePlayCard(new(_card));
+            _owner.CharStats.Health.CurrentHealth -= action.Value;
+            action.Value = 0;
+            SchemeSystem.Instance.Modifiers.Remove(ModifyScheme);
         }
 
         return action;

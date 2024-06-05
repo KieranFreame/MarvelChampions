@@ -4,6 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
+/// <summary>
+/// Main Effect: After Tiger Shark attacks, he gains Tough.
+/// Boost Effect: The villain gains Tough
+/// </summary>
+
 [CreateAssetMenu(fileName = "Tiger Shark", menuName = "MarvelChampions/Card Effects/Masters of Evil/Tiger Shark")]
 public class TigerShark : EncounterCardEffect
 {
@@ -12,31 +17,28 @@ public class TigerShark : EncounterCardEffect
         _owner = owner;
         Card = card;
 
-        (Card as MinionCard).CharStats.AttackInitiated += AttackInitiated;
-            return Task.CompletedTask;
+        AttackSystem.Instance.OnAttackCompleted.Add(AttackCompleted);
+        return Task.CompletedTask;
     }
 
-    private void AttackInitiated() => AttackSystem.Instance.OnAttackCompleted.Add(AttackCompleted); 
-
-    private Task AttackCompleted(AttackAction action)
+    private void AttackCompleted(AttackAction action)
     {
-        AttackSystem.Instance.OnAttackCompleted.Remove(AttackCompleted);
+        if (action.Card != null && action.Card.CardName == "Tiger Shark")
+            if (((MinionCard)Card).CharStats.Health.Tough)
+                return;
 
-        (Card as MinionCard).CharStats.Health.Tough = true;
-
-        return Task.CompletedTask;
+        ((MinionCard)Card).CharStats.Health.Tough = true;
     }
 
     public override Task Boost(Action action)
     {
-        action.Owner.CharStats.Health.Tough = true; 
+       ScenarioManager.inst.ActiveVillain.CharStats.Health.Tough = true; 
         return Task.CompletedTask;
     }
 
     public override Task WhenDefeated()
     {
-        (Card as MinionCard).CharStats.AttackInitiated -= AttackInitiated;
-
+        AttackSystem.Instance.OnAttackCompleted.Remove(AttackCompleted);
         return Task.CompletedTask;
     }
 }

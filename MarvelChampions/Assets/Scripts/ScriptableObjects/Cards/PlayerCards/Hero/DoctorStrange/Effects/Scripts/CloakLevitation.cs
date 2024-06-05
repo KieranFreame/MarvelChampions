@@ -13,7 +13,7 @@ public class CloakLevitation : PlayerCardEffect
         if (_owner.Identity.ActiveIdentity is not Hero)
             return false;
 
-        if (Card.Exhausted)
+        if (_card.Exhausted)
             return false;
 
         if (!_owner.Exhausted)
@@ -35,7 +35,7 @@ public class CloakLevitation : PlayerCardEffect
 
     public override Task Activate()
     {
-        Card.Exhaust();
+        _card.Exhaust();
         _owner.Ready();
         return Task.CompletedTask;
     }

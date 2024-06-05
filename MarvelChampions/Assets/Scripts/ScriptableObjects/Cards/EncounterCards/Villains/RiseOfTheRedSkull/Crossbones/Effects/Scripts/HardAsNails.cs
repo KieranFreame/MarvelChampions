@@ -11,7 +11,7 @@ public class HardAsNails : EncounterCardEffect
         if (!owner.CharStats.Health.Tough)
             owner.CharStats.Health.Tough = true;
         else if (owner.CharStats.Health.Damaged())
-            owner.CharStats.Health.RecoverHealth(3);
+            owner.CharStats.Health.CurrentHealth += 3;
         else
             ScenarioManager.inst.Surge(player);
 
@@ -23,7 +23,7 @@ public class HardAsNails : EncounterCardEffect
         if (!ScenarioManager.inst.ActiveVillain.CharStats.Health.Tough)
             ScenarioManager.inst.ActiveVillain.CharStats.Health.Tough = true;
         else if (ScenarioManager.inst.ActiveVillain.CharStats.Health.Damaged())
-            ScenarioManager.inst.ActiveVillain.CharStats.Health.RecoverHealth(3);
+            ScenarioManager.inst.ActiveVillain.CharStats.Health.CurrentHealth += 3;
 
         return Task.CompletedTask;
     }

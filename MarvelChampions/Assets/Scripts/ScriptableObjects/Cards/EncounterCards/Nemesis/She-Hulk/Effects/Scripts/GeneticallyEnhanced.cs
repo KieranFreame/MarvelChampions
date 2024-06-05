@@ -38,9 +38,9 @@ public class GeneticallyEnhanced : AttachmentCardEffect
     {
         attached.Attachments.Add(Card as IAttachment);
 
-        Card.transform.SetParent((attached as MonoBehaviour).transform, false);
-        Card.transform.SetAsFirstSibling();
-        Card.transform.localPosition = new Vector3(-30, 0, 0);
+        _card.transform.SetParent((attached as MonoBehaviour).transform, false);
+        _card.transform.SetAsFirstSibling();
+        _card.transform.localPosition = new Vector3(-30, 0, 0);
 
         attached.CharStats.Health.IncreaseMaxHealth(3);
     }

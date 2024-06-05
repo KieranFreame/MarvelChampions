@@ -21,8 +21,8 @@ public class RaidTheArmory : EncounterCardEffect
         ScenarioManager.inst.EncounterDeck.limbo.Add(data);
         ScenarioManager.inst.EncounterDeck.discardPile.Remove(data);
 
-        AttachmentCard weapon = CreateCardFactory.Instance.CreateCard(data, GameObject.Find("AttachmentTransform").transform) as AttachmentCard;
-        GameObject.Find("Crossbones").GetComponent<Villain>().Attachments.Add(weapon);
+        AttachmentCard weapon = CreateCardFactory.Instance.CreateCard(data, RevealEncounterCardSystem.Instance.AttachmentTransform) as AttachmentCard;
+        ScenarioManager.inst.ActiveVillain.Attachments.Add((IAttachment)weapon.Effect);
 
         await weapon.OnRevealCard();
     }

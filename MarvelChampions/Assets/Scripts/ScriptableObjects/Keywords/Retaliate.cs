@@ -9,9 +9,6 @@ public class Retaliate
     private Health _health;
     [SerializeField] private int _damage;
 
-    /// <summary>
-    /// Use for Allies & Minions
-    /// </summary>
     public Retaliate(ICharacter owner, int damage)
     {
         _owner = owner;
@@ -28,11 +25,10 @@ public class Retaliate
             await DamageSystem.Instance.ApplyDamage(new(action.Owner, _damage));
     }
 
-    private Task WhenDefeated()
+    private void WhenDefeated()
     {
         _health.Defeated.Remove(WhenDefeated);
         _health.OnTakeDamage -= Effect;
-        return Task.CompletedTask;
     }
 
     public void WhenRemoved()

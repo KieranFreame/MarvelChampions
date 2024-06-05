@@ -10,7 +10,7 @@ public class MedTeam : PlayerCardEffect
 
     public override async Task OnEnterPlay()
     {
-        counters = Card.gameObject.AddComponent<Counters>();
+        counters = _card.gameObject.AddComponent<Counters>();
         counters.AddCounters(3);
 
         await Task.Yield();
@@ -23,22 +23,22 @@ public class MedTeam : PlayerCardEffect
 
         friendlies.RemoveAll(x => !x.CharStats.Health.Damaged());
 
-        return friendlies.Count > 0 && !Card.Exhausted;
+        return friendlies.Count > 0 && !_card.Exhausted;
     }
 
     public override async Task Activate()
     {
-        Card.Exhaust();
+        _card.Exhaust();
         counters.RemoveCounters(1);
 
         var target = await TargetSystem.instance.SelectTarget(friendlies);
 
-        target.CharStats.Health.RecoverHealth(2);
+        target.CharStats.Health.CurrentHealth += 2;
 
         if (counters.CountersLeft == 0)
         {
-            _owner.CardsInPlay.Permanents.Remove(Card);
-            _owner.Deck.Discard(Card);
+            _owner.CardsInPlay.Permanents.Remove(_card);
+            _owner.Deck.Discard(_card);
         }
     }
 }

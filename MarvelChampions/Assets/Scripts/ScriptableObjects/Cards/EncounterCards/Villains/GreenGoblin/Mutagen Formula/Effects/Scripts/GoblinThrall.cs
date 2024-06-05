@@ -19,7 +19,7 @@ public class GoblinThrall : EncounterCardEffect
         var card = GameObject.Find("EncounterCards").transform.Find("Goblin Thrall").GetComponent<EncounterCard>();
 
         card.InPlay = true;
-        card.transform.SetParent(GameObject.Find("MinionTransform").transform);
+        card.transform.SetParent(RevealEncounterCardSystem.Instance.MinionTransform);
         VillainTurnController.instance.MinionsInPlay.Add(card as MinionCard);
         await card.Effect.OnEnterPlay(ScenarioManager.inst.ActiveVillain, card, TurnManager.instance.CurrPlayer);
     }

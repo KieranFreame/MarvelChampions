@@ -33,7 +33,7 @@ public class Recovery
 
     public void Recover()
     {
-        _health.RecoverHealth(REC);
+        _health.CurrentHealth += REC;
         Owner.Exhaust();
         //OnRecover?.Invoke();
     }

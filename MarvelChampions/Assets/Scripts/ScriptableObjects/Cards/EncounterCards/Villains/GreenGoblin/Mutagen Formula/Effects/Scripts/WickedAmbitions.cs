@@ -23,7 +23,7 @@ public class WickedAmbitions : EncounterCardEffect
                 }
                 else
                 {
-                    MinionCard goblin = CreateCardFactory.Instance.CreateCard(data, GameObject.Find("MinionTransform").transform) as MinionCard;
+                    MinionCard goblin = CreateCardFactory.Instance.CreateCard(data, RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
                     VillainTurnController.instance.MinionsInPlay.Add(goblin);
                     await goblin.Effect.OnEnterPlay(_owner, goblin, player);
                 }

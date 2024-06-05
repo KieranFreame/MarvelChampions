@@ -19,7 +19,7 @@ public class TheMastersOfEvil : EncounterCardEffect
         ScenarioManager.inst.EncounterDeck.discardPile.Remove(data);
         ScenarioManager.inst.EncounterDeck.limbo.Add(data);
 
-        MinionCard minion = CreateCardFactory.Instance.CreateCard(data, GameObject.Find("MinionTransform").transform) as MinionCard;
+        MinionCard minion = CreateCardFactory.Instance.CreateCard(data, RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
         VillainTurnController.instance.MinionsInPlay.Add(minion);
 
         (card as SchemeCard).Threat.CurrentThreat *= TurnManager.Players.Count;

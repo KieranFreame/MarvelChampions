@@ -7,12 +7,24 @@ using UnityEngine;
 namespace CoreSet
 {
     [CreateAssetMenu(fileName = "Black Widow", menuName = "MarvelChampions/Card Effects/Protection/Allies/Black Widow")]
-    public class BlackWidow : PlayerCardEffect
+    public class BlackWidow : PlayerCardEffect, IOptional
     {
         public override Task OnEnterPlay()
         {
-            RevealEncounterCardSystem.Instance.EffectCancelers.Add(CancelEffect);
+            RevealEncounterCardSystem.Instance.EffectCancelers.Add(this);
             return Task.CompletedTask;
+        }
+
+        public override bool CanResolve()
+        {
+            return !_card.Exhausted && _owner.HaveResource(Resource.Scientific);
+        }
+
+        public override async Task Resolve()
+        {
+            await PayCostSystem.instance.GetResources(Resource.Scientific, 1);
+            _card.Exhaust();
+            ScenarioManager.inst.Surge(_owner);
         }
 
         public async Task<bool> CancelEffect(ICard cardToCancel)
@@ -27,7 +39,7 @@ namespace CoreSet
             if (decision)
             {
                 await PayCostSystem.instance.GetResources(Resource.Scientific, 1);
-                Card.Exhaust();
+                _card.Exhaust();
                 ScenarioManager.inst.Surge(_owner);
 
                 ScenarioManager.inst.EncounterDeck.Discard(card);
@@ -40,7 +52,7 @@ namespace CoreSet
 
         public override void OnExitPlay()
         {
-            RevealEncounterCardSystem.Instance.EffectCancelers.Remove(CancelEffect);
+            RevealEncounterCardSystem.Instance.EffectCancelers.Remove(this);
         }
     }
 }

@@ -42,7 +42,7 @@ public class Zola : VillainEffect
             minion = await TargetSystem.instance.SelectTarget(minions);
 
             VillainTurnController.instance.MinionsInPlay.Add(minion);
-            minion.transform.SetParent(GameObject.Find("MinionTransform").transform);
+            minion.transform.SetParent(RevealEncounterCardSystem.Instance.MinionTransform);
 
             await minion.Effect.WhenRevealed(_owner, minion, p);
         }

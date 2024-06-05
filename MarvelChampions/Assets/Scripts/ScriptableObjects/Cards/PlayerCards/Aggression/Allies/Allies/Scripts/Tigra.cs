@@ -1,47 +1,33 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Tigra", menuName = "MarvelChampions/Card Effects/Aggression/Tigra")]
 public class Tigra : PlayerCardEffect
 {
-    MinionCard _target;
-
     public override Task OnEnterPlay()
     {
-        (Card as AllyCard).CharStats.AttackInitiated += AttackInitiated;
-        return Task.CompletedTask;
-    }
-
-    private void AttackInitiated()
-    {
-        if (_target != null)
-            _target.CharStats.Health.Defeated.Remove(Defeated);
-
         AttackSystem.TargetAcquired += CheckTarget;
+        return Task.CompletedTask;
     }
 
     private void CheckTarget(ICharacter target)
     {
-        AttackSystem.TargetAcquired -= CheckTarget;
-
         if (target is MinionCard)
         {
-            _target = target as MinionCard;
-            _target.CharStats.Health.Defeated.Add(Defeated);
+            AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
         }   
     }
 
-    private Task Defeated()
+    private void IsTriggerMet(AttackAction action)
     {
-        _target.CharStats.Health.Defeated.Remove(Defeated);
-        (Card as AllyCard).CharStats.Health.RecoverHealth(1);
-        return Task.CompletedTask;
+        if (action.Target == null && action.Owner == Card as ICharacter)
+        {
+            (Card as AllyCard).CharStats.Health.CurrentHealth += 1;
+        }
     }
 
     public override void OnExitPlay()
     {
-        (Card as AllyCard).CharStats.AttackInitiated += AttackInitiated;
+        AttackSystem.TargetAcquired -= CheckTarget;
     }
 }

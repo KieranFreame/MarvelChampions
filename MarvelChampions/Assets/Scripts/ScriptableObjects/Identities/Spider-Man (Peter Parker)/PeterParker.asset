@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d483a3778a1cc6418d107d11daae86b, type: 3}
   m_Name: PeterParker
   m_EditorClassIdentifier: 
+  effectDescription: 'Scientist: Generate a Scientific Resource'

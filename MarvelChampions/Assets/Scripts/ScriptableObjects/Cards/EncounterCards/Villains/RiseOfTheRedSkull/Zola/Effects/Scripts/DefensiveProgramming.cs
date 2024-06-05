@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Defensive Programming", menuName = "MarvelChampions/Card Effects/RotRS/Zola/Defensive Programming")]
-public class DefensiveProgramming : AttachmentCardEffect
+public class DefensiveProgramming : EncounterCardEffect, IAttachment
 {
+    public ICharacter Attached { get; set; }
+
     public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
         Card = card;
@@ -18,11 +21,11 @@ public class DefensiveProgramming : AttachmentCardEffect
             if (m.CharStats.Health.CurrentHealth > highHp)
             {
                 highHp = m.CharStats.Health.CurrentHealth;
-                attached = m;
+                Attached = m;
             }
         }
 
-        if (attached == null)
+        if (Attached == null)
         {
             ScenarioManager.inst.Surge(player);
             ScenarioManager.inst.EncounterDeck.Discard(Card);
@@ -34,19 +37,21 @@ public class DefensiveProgramming : AttachmentCardEffect
         return Task.CompletedTask;
     }
 
-    public override void Attach()
+    public void Attach()
     {
-        attached.Attachments.Add(Card as AttachmentCard);
-        AttackSystem.Instance.Guards.Add(attached as MinionCard);
-        attached.CharStats.Health.IncreaseMaxHealth(2);
+        Attached.Attachments.Add(this);
+        AttackSystem.Instance.Guards.Add(Attached as MinionCard);
+        Attached.CharStats.Health.IncreaseMaxHealth(2);
 
-        base.Attach();
+        _card.transform.SetParent((Attached as MonoBehaviour).transform);
+        _card.transform.SetAsFirstSibling();
+        _card.transform.localPosition = new Vector3(-30 * Attached.Attachments.Count, 0, 0);
     }
 
-    public override void Detach()
+    public void Detach()
     {
-        attached.Attachments.Remove(Card as AttachmentCard);
-        AttackSystem.Instance.Guards.Remove(attached as MinionCard);
-        attached.CharStats.Health.IncreaseMaxHealth(-2);
+        Attached.Attachments.Remove(this);
+        AttackSystem.Instance.Guards.Remove(Attached as MinionCard);
+        Attached.CharStats.Health.IncreaseMaxHealth(-2);
     }
 }

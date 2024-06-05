@@ -21,7 +21,7 @@ public class HailHydra : EncounterCardEffect
             MinionCard hydraMin = await TargetSystem.instance.SelectTarget(hydra);
 
             VillainTurnController.instance.MinionsInPlay.Add(hydraMin);
-            hydraMin.transform.SetParent(GameObject.Find("MinionTransform").transform);
+            hydraMin.transform.SetParent(RevealEncounterCardSystem.Instance.MinionTransform);
             CardViewerUI.inst.DisablePanel();
             await hydraMin.Effect.OnEnterPlay(owner, hydraMin, player);            
         }

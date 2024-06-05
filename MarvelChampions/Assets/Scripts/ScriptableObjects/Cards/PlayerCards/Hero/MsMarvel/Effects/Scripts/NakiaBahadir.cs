@@ -12,14 +12,14 @@ public class NakiaBahadir : PlayerCardEffect
         if (_owner.Identity.IdentityName != "Kamala Khan")
             return false;
 
-        if (Card.Exhausted) return false;
+        if (_card.Exhausted) return false;
 
         return true;
     }
 
     public override Task Activate()
     {
-        Card.Exhaust();
+        _card.Exhaust();
 
         foreach (PlayerCard card in _owner.Hand.cards)
         {

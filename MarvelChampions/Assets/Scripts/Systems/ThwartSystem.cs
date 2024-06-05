@@ -30,7 +30,8 @@ public class ThwartSystem// : MonoBehaviour
     }
 
     #region Events
-    public static event UnityAction OnThwartComplete;
+    public delegate void ThwartComplete(ThwartAction action);
+    public List<ThwartComplete> OnThwartComplete = new();
     #endregion
 
     #region Modifiers
@@ -70,6 +71,11 @@ public class ThwartSystem// : MonoBehaviour
 
         action.Target.Threat.RemoveThreat(action.Value);
 
-        OnThwartComplete?.Invoke();
+        for (int i = OnThwartComplete.Count - 1; i >= 0; i--)
+        {
+            OnThwartComplete[i](action);
+        }
+
+        await EffectResolutionManager.Instance.ResolveEffects();
     }
 }

@@ -14,7 +14,7 @@ public class Quinjet : PlayerCardEffect
 
     public override Task OnEnterPlay()
     {
-        time = Card.gameObject.AddComponent<Counters>();
+        time = _card.gameObject.AddComponent<Counters>();
 
         TurnManager.OnStartPlayerPhase += AddCounter;
         return Task.CompletedTask;
@@ -54,7 +54,7 @@ public class Quinjet : PlayerCardEffect
         await card.OnEnterPlay();
 
         TurnManager.OnStartPlayerPhase -= AddCounter;
-        _owner.Deck.Discard(Card);
+        _owner.Deck.Discard(_card);
     }
 
     public override void OnExitPlay()

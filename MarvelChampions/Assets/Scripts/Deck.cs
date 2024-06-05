@@ -1,7 +1,4 @@
-//using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
@@ -13,20 +10,21 @@ public class Deck
     public List<CardData> limbo;
     public List<CardData> discardPile;
 
-    private DeckUI deckUI;
+    private readonly DeckUI deckUI;
 
     public event UnityAction<CardData> DeckChanged;
+    public event UnityAction DiscardChanged;
     public event UnityAction OnDeckReset;
 
-    public Deck(string path)
+    public Deck(List<CardData> cards)
     {
         deck = new();
         limbo = new List<CardData>();
         discardPile = new List<CardData>();
 
-        deckUI = GameObject.FindObjectOfType<DeckUI>();
+        deckUI = Object.FindObjectOfType<DeckUI>();
 
-        AddToDeck(TextReader.PopulateDeck(path));
+        AddToDeck(cards);
     }
     public void ResetDeck()
     {
@@ -83,16 +81,13 @@ public class Deck
         discardPile.Add(d);
         limbo.Remove(d);
 
-        if (discard is PlayerCard)
-            deckUI.SetDiscardPile(discard);
-        else
-        {
-            if ((discard as MonoBehaviour).gameObject != null) //hasn't already been destroyed
-                if (discard is SchemeCard || discard is MinionCard)
-                    Object.Destroy((discard as MonoBehaviour).transform.parent.gameObject);
-                else
-                    Object.Destroy((discard as MonoBehaviour).gameObject);
-        }
+        if ((discard as MonoBehaviour).gameObject != null)
+            if (discard is SchemeCard || discard is MinionCard)
+                Object.Destroy((discard as MonoBehaviour).transform.parent.gameObject);
+            else
+                Object.Destroy((discard as MonoBehaviour).gameObject);
+
+        DiscardChanged?.Invoke();
     }
     public void Discard(List<ICard> discards)
     {
@@ -111,8 +106,12 @@ public class Deck
                 break;
             }
 
-            discardPile.Add(deck[0]);
+            ICard card = CreateCardFactory.Instance.CreateCard(deck[0], null);
+
+            limbo.Add(deck[0]);
             deck.RemoveAt(0);
+
+            Discard(card);
         }
 
         DeckChanged?.Invoke(null);

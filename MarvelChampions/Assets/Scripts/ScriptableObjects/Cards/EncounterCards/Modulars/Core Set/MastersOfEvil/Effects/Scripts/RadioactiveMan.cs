@@ -13,20 +13,20 @@ namespace CoreSet
             _owner = owner;
             Card = card;
 
-            (Card as MinionCard).CharStats.AttackInitiated += AttackInitiated;
+            AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
 
             return Task.CompletedTask;
         }
 
-        private void AttackInitiated() { AttackSystem.Instance.OnAttackCompleted.Add(AttackCompleted); }
-
-        private Task AttackCompleted(Action action)
+        private void IsTriggerMet(AttackAction action)
         {
-            AttackSystem.Instance.OnAttackCompleted.Remove(AttackCompleted);
+            if (action.Card.CardName == "Radioactive Man")
+                EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+        }
 
-            var attack = action as AttackAction;
-
-            Player p = (attack.Target is not Player) ? (attack.Target as AllyCard).Owner : attack.Target as Player;
+        public override Task Resolve()
+        {
+            Player p = TurnManager.instance.CurrPlayer;
 
             Debug.Log("Discarding 1 Card from your hand");
             var pCard = p.Hand.cards[Random.Range(0, p.Hand.cards.Count)];
@@ -41,18 +41,7 @@ namespace CoreSet
 
         public override Task Boost(Action action)
         {
-            Player p;
-
-            if (action is AttackAction)
-            {
-                var attack = action as AttackAction;
-                p = (attack.Target is not Player) ? (attack.Target as AllyCard).Owner : attack.Target as Player;
-            }
-            else //scheme
-            {
-                p = TurnManager.instance.CurrPlayer;
-            }
-            
+            Player p = TurnManager.instance.CurrPlayer;
 
             Debug.Log("Discarding 1 Card from your hand");
             var pCard = p.Hand.cards[Random.Range(0, p.Hand.cards.Count)];
@@ -67,7 +56,7 @@ namespace CoreSet
 
         public override Task WhenDefeated()
         {
-            (Card as MinionCard).CharStats.AttackInitiated -= AttackInitiated;
+            AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
 
             return Task.CompletedTask;
         }

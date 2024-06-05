@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbbe466bd63f5cd49b68d1f436c13cef, type: 3}
   m_Name: BlackPanther
   m_EditorClassIdentifier: 
+  effectDescription: Retaliate 1 (When you are attacked, deal 1 damage to the attacking
+    enemy)

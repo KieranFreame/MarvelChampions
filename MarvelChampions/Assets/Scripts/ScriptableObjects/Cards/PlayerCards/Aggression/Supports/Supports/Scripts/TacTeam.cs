@@ -10,7 +10,7 @@ public class TacTeam : PlayerCardEffect
 
     public override Task OnEnterPlay()
     {
-        counters = Card.gameObject.AddComponent<Counters>();
+        counters = _card.gameObject.AddComponent<Counters>();
         counters.AddCounters(3);
 
         return Task.CompletedTask;
@@ -18,21 +18,21 @@ public class TacTeam : PlayerCardEffect
 
     public override bool CanActivate()
     {
-        return !Card.Exhausted;
+        return !_card.Exhausted && ScenarioManager.inst.ActiveVillain != null; //Sinister Six scenario
     }
 
     public override async Task Activate()
     {
-        Card.Exhaust();
+        _card.Exhaust();
         counters.RemoveCounters(1);
 
-        List<ICharacter> enemies = new() { FindObjectOfType<Villain>() };
-        enemies.AddRange(FindObjectsOfType<MinionCard>());
+        List<ICharacter> enemies = new() { ScenarioManager.inst.ActiveVillain };
+        enemies.AddRange(VillainTurnController.instance.MinionsInPlay);
         await DamageSystem.Instance.ApplyDamage(new(enemies, 2, card: Card));
 
         if (counters.CountersLeft == 0)
         {
-            _owner.CardsInPlay.Permanents.Remove(Card);
+            _owner.CardsInPlay.Permanents.Remove(_card);
             _owner.Deck.Discard(Card);
         }
     }

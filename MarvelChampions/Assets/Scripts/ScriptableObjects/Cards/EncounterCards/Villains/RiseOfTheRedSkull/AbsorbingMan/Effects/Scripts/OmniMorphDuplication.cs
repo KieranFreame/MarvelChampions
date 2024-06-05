@@ -14,7 +14,7 @@ public class OmniMorphDuplication : EncounterCardEffect
         if (owner.VillainTraits.Contains("Metal"))
         {
             owner.CharStats.Health.Tough = true;
-            owner.CharStats.Health.RecoverHealth(1);
+            owner.CharStats.Health.CurrentHealth += 1;
         }
 
         if (owner.VillainTraits.Contains("Stone"))

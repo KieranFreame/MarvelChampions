@@ -10,27 +10,21 @@ public class GreenGoblin : VillainEffect
     public override void LoadEffect(Villain owner)
     {
         _owner = owner;
-        _owner.CharStats.AttackInitiated += AttackInitiated;
-    }
-
-    private void AttackInitiated()
-    {
         DefendSystem.Instance.OnDefenderSelected += DefenderSelected;
     }
 
-    private void DefenderSelected(ICharacter target)
-    {
-        if (target is not Player) return;
 
-        target.CharStats.Health.OnTakeDamage += OnDamageDealt;
+    private void DefenderSelected(ICharacter target, AttackAction action)
+    {
+        if (target is not Player || action.Owner != _owner as ICharacter) return;
+
+        AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
     }
 
-    private void OnDamageDealt(DamageAction action)
+    private void IsTriggerMet(AttackAction action)
     {
         if (action.Value > 0)
-        {
             ScenarioManager.inst.MainScheme.Threat.GainThreat((_owner.Stages.Stage == 3) ? 2 : 1);
-        }
     }
 
     public override Task StageTwoEffect()

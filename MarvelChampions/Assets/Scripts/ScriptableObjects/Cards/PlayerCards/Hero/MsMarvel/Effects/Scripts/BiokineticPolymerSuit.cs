@@ -7,7 +7,7 @@ public class BiokineticPolymerSuit : PlayerCardEffect, IGenerate
 {
     public bool CanGenerateResource(ICard cardToPlay)
     {
-        if (Card.Exhausted)
+        if (_card.Exhausted)
             return false;
 
         if (cardToPlay.CardType != CardType.Event) 
@@ -23,7 +23,7 @@ public class BiokineticPolymerSuit : PlayerCardEffect, IGenerate
 
     public List<Resource> GenerateResource()
     {
-        Card.Exhaust();
+        _card.Exhaust();
         return new List<Resource>() { Resource.Wild };
     }
 }

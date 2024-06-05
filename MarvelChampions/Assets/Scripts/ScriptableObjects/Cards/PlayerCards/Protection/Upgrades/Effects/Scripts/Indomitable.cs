@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Indomitable", menuName = "MarvelChampions/Card Effects/Protection/Upgrades/Indomitable")]
-public class Indomitable : PlayerCardEffect
+public class Indomitable : PlayerCardEffect, IOptional
 {
     public override async Task OnEnterPlay()
     {
@@ -12,26 +12,22 @@ public class Indomitable : PlayerCardEffect
         await Task.Yield();
     }
 
-    private void DefenderSelected(ICharacter target)
+    private void DefenderSelected(ICharacter target, AttackAction action)
     {
-        if (target == null) return;
+        if (target != _owner as ICharacter) return;
 
-        if (target == _owner as ICharacter)
-            AttackSystem.Instance.OnAttackCompleted.Add(OnAttackComplete);
+        EffectResolutionManager.Instance.ResolvingEffects.Push(this);
     }
 
-    private async Task OnAttackComplete(Action action)
+    public override Task Resolve()
     {
-        bool decision = await ConfirmActivateUI.MakeChoice(Card);
+        _owner.Ready();
 
-        if (decision)
-        {
-            _owner.Ready();
+        _owner.CardsInPlay.Permanents.Remove(_card);
+        _owner.Deck.Discard(_card);
+        DefendSystem.Instance.OnDefenderSelected -= DefenderSelected;
 
-            _owner.CardsInPlay.Permanents.Remove(Card);
-            _owner.Deck.Discard(Card);
-            DefendSystem.Instance.OnDefenderSelected -= DefenderSelected;
-        }
+        return Task.CompletedTask;
     }
 
     public override void OnExitPlay()

@@ -1,7 +1,7 @@
-using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Linq;
 
 public class ScenarioManager : MonoBehaviour
@@ -15,20 +15,35 @@ public class ScenarioManager : MonoBehaviour
         else
             Destroy(this);
 
-        SOTPResolved.Clear();
+        SOTPResolved = false;
+
+        DontDestroyOnLoad(this);
     }
 
-    //temp
     public VillainData villain;
-    public ScenarioData scenarioData { get; set; }
+
+    public List<CardData> obligations { get; set; } = new();
+
     public List<CardData> RemovedFromGame { get; private set; } = new();
 
     public Difficulty Difficulty;
-    public List<Player> SOTPResolved { get; set; } = new();
+    public bool SOTPResolved { get; set; } = false;
 
     public static ObservableCollection<SchemeCard> sideSchemes = new();
 
-    public List<string> EncounterSets = new();
+    [SerializeField] private HashSet<string> encounterSets;
+    public HashSet<string> EncounterSets {
+        get
+        { 
+            if (encounterSets == null)
+            {
+                encounterSets = new();
+            } 
+
+            return encounterSets;
+        }
+        set => encounterSets = value; 
+    }
 
     public Deck EncounterDeck;
 
@@ -36,24 +51,21 @@ public class ScenarioManager : MonoBehaviour
     public MainSchemeCard MainScheme { get; private set; }
     public Villain ActiveVillain { get; set; }
 
-    private void Start()
+    public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        //ActiveVillain = GameObject.Find("VillainIdentityProfile").GetComponent<Villain>();
-        //ActiveVillain.LoadData(villain);
-        //GenerateDeck(villain.deckPath);
+        if (scene.name == "GameBoardScene")
+        {
+            ActiveVillain = FindObjectOfType<Villain>();
+            ActiveVillain.LoadData(villain);
+
+            GenerateDeck();
+        }
     }
 
-    public async void GenerateDeck(string deckPath)
+    public async void GenerateDeck()
     {
-        EncounterDeck = new(deckPath + ".txt");
-
         List<CardData> mainschemeCards = new(EncounterDeck.deck.Where(x => x.cardType is CardType.MainScheme));
-
-        for (int i = EncounterDeck.deck.Count-1; i >= 0; i--)
-        {
-            if (EncounterDeck.deck[i].cardType == CardType.MainScheme)
-                EncounterDeck.deck.RemoveAt(i);
-        }
+        EncounterDeck.deck.RemoveAll(x => x.cardType is CardType.MainScheme);
 
         for (int i = 1; i <= mainschemeCards.Count; i++)
         {
@@ -67,21 +79,17 @@ public class ScenarioManager : MonoBehaviour
 
         MainScheme.Threat.WhenCompleted += NextMainScheme;
 
-        foreach (string s in EncounterSets)
+        foreach (string s in encounterSets)
         {
-            EncounterDeck.AddToDeck(TextReader.PopulateDeck(s + ".txt"));
+            EncounterDeck.AddToDeck(TextReader.PopulateDeck("Modulars/" + string.Concat(s.Where(c => !char.IsWhiteSpace(c))) + ".txt"));
         }
 
-        switch (Difficulty)
-        {
-            case Difficulty.Standard:
-                EncounterDeck.AddToDeck(TextReader.PopulateDeck("Standard.txt"));
-                break;
-            case Difficulty.Expert:
-                EncounterDeck.AddToDeck(TextReader.PopulateDeck("Standard.txt"));
-                EncounterDeck.AddToDeck(TextReader.PopulateDeck("Expert.txt"));
-                break;
-        }
+        EncounterDeck.AddToDeck(obligations);
+
+        /*EncounterDeck.AddToDeck(TextReader.PopulateDeck("Standard.txt"));
+
+        if (Difficulty == Difficulty.Expert) 
+            EncounterDeck.AddToDeck(TextReader.PopulateDeck("Expert.txt"));*/
     }
 
     public void RemoveFromGame(CardData card)
@@ -111,7 +119,10 @@ public class ScenarioManager : MonoBehaviour
     private async void NextMainScheme()
     {
         MainScheme.Threat.WhenCompleted -= NextMainScheme;
-        await MainScheme.Effect.WhenCompleted();
+
+        if (MainScheme.Effect != null)
+            await MainScheme.Effect.WhenCompleted();
+
         MainSchemeDeck.RemoveAt(0);
 
         if (MainSchemeDeck.Count == 0)

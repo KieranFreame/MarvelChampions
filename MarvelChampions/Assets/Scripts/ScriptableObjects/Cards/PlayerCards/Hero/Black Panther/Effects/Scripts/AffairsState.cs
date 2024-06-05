@@ -38,8 +38,8 @@ public class AffairsState : EncounterCardEffect
             if (upgrades.Count == 0)
             {
                 tchalla.Exhaust();
-                ScenarioManager.inst.RemoveFromGame(Card.Data);
-                Destroy(Card.gameObject);
+                ScenarioManager.inst.RemoveFromGame(_card.Data);
+                Destroy(_card.gameObject);
                 return;
             }
 
@@ -48,8 +48,8 @@ public class AffairsState : EncounterCardEffect
             if (decision == 1)
             {
                 tchalla.Exhaust();
-                ScenarioManager.inst.RemoveFromGame(Card.Data);
-                Destroy(Card.gameObject);
+                ScenarioManager.inst.RemoveFromGame(_card.Data);
+                Destroy(_card.gameObject);
                 return;
             }
         }

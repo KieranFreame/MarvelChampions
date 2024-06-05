@@ -13,7 +13,7 @@ public class FamilyEmergency : EncounterCardEffect
     public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
         _owner = owner;
-        Card = card;
+        _card = card;
         danvers = TurnManager.Players.FirstOrDefault(x => x.Identity.Hero.Name == "Captain Marvel");
 
         if (danvers.Identity.ActiveIdentity is not AlterEgo)
@@ -33,8 +33,8 @@ public class FamilyEmergency : EncounterCardEffect
             if (decision == 1)
             {
                 danvers.Exhaust();
-                ScenarioManager.inst.RemoveFromGame(Card.Data);
-                Destroy(Card.gameObject);
+                ScenarioManager.inst.RemoveFromGame(_card.Data);
+                Destroy(_card.gameObject);
                 return;
             }
         }

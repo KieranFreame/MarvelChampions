@@ -7,6 +7,10 @@ public abstract class IdentityEffect : ScriptableObject
 {
     protected Player owner;
     protected bool hasActivated = false;
+
+    [TextArea(3,5)]
+    public string effectDescription;
+
     public abstract void LoadEffect(Player _owner);
     public virtual async Task Setup() { await Task.Yield(); }
     public virtual void OnFlipUp() { }

@@ -18,7 +18,7 @@ MonoBehaviour:
   cardType: 0
   cardTraits:
   - Defender
-  cardArt: {fileID: 0}
+  cardArt: {fileID: 21300000, guid: ea3e9813963b0c441b2e22edae2267df, type: 3}
   cardCost: 4
   maxCopies: 1
   isUnique: 1

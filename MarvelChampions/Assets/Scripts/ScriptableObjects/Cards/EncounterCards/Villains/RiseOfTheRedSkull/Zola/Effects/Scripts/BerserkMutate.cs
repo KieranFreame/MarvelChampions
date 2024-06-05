@@ -25,21 +25,13 @@ public class BerserkMutate : EncounterCardEffect
         ScenarioManager.inst.ActiveVillain.CharStats.Attacker.CurrentAttack += counters;
         ScenarioManager.inst.ActiveVillain.CharStats.Schemer.CurrentScheme += counters;
 
-        if (action is AttackAction)
-            AttackSystem.Instance.OnAttackCompleted.Add(ActivationComplete);
-        else
-            SchemeSystem.Instance.SchemeComplete.Add(ActivationComplete);
+        EffectResolutionManager.Instance.ResolvingEffects.Push(this);
 
         return Task.CompletedTask;
     }
 
-    private Task ActivationComplete(Action action)
+    public override Task Resolve()
     {
-        if (action is AttackAction)
-            AttackSystem.Instance.OnAttackCompleted.Remove(ActivationComplete);
-        else
-            SchemeSystem.Instance.SchemeComplete.Remove(ActivationComplete);
-
         ScenarioManager.inst.ActiveVillain.CharStats.Attacker.CurrentAttack -= counters;
         ScenarioManager.inst.ActiveVillain.CharStats.Schemer.CurrentScheme -= counters;
 

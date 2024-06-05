@@ -33,9 +33,7 @@ public class AstralProjection : PlayerCardEffect
         EncounterCardData data = ScenarioManager.inst.EncounterDeck.deck[0] as EncounterCardData;
         Debug.Log($"Revealing {data.cardName}. Adding {data.boostIcons} to this thwart.");
 
-        int thwart = 3 + data.boostIcons;
-
-        await ThwartSystem.Instance.InitiateThwart(new(thwart));
+        await ThwartSystem.Instance.InitiateThwart(new(3 + data.boostIcons, Owner));
 
         return;
     }

@@ -1,34 +1,43 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
-using static UnityEngine.UI.GridLayoutGroup;
 
 [CreateAssetMenu(fileName = "Charge", menuName = "MarvelChampions/Card Effects/Rhino/Charge")]
-public class Charge : EncounterCardEffect
+public class Charge : EncounterCardEffect, IAttachment
 {
+    public ICharacter Attached { get; set; }
+
     public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
-        _owner = owner;
+        Attached = _owner = owner;
         Card = card;
 
-        _owner.CharStats.Attacker.CurrentAttack += 3;
-        _owner.CharStats.Attacker.Keywords.Add(Keywords.Overkill);
+        Attach();
 
-        _owner.CharStats.AttackInitiated += AttackInitiated;
+        AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
+
         await Task.Yield();
     }
 
-    private void AttackInitiated() => AttackSystem.Instance.OnAttackCompleted.Add(AttackComplete);
-
-    private Task AttackComplete(Action action)
+    public void Attach()
     {
-        AttackSystem.Instance.OnAttackCompleted.Remove(AttackComplete);
-        _owner.CharStats.AttackInitiated -= AttackInitiated;
-        _owner.CharStats.Attacker.CurrentAttack -= 3;
-        _owner.CharStats.Attacker.Keywords.Remove(Keywords.Overkill);
-        ScenarioManager.inst.EncounterDeck.Discard(Card);
+        Attached.CharStats.Attacker.CurrentAttack += 3;
+        Attached.CharStats.Attacker.Keywords.Add("Overkill");
+    }
 
-        return Task.CompletedTask;
+    private void IsTriggerMet(AttackAction action)
+    {
+        if (action.Owner == _owner as ICharacter)
+        {
+            Detach();
+
+            AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
+            ScenarioManager.inst.EncounterDeck.Discard(Card);
+        }
+    }
+
+    public void Detach()
+    {
+        Attached.CharStats.Attacker.CurrentAttack -= 3;
+        Attached.CharStats.Attacker.Keywords.Remove("Overkill");
     }
 }

@@ -15,7 +15,7 @@ public class AamirKhan : PlayerCardEffect
         if (_owner.Deck.discardPile.Count == 0)
             return false;
 
-        if (Card.Exhausted) 
+        if (_card.Exhausted) 
             return false; 
         
         return true;
@@ -23,7 +23,7 @@ public class AamirKhan : PlayerCardEffect
 
     public override async Task Activate()
     {
-        Card.Exhaust();
+        _card.Exhaust();
 
         List<PlayerCard> discardPile = CardViewerUI.inst.EnablePanel(_owner.Deck.discardPile).Cast<PlayerCard>().ToList();
         PlayerCard choice = await TargetSystem.instance.SelectTarget(discardPile);

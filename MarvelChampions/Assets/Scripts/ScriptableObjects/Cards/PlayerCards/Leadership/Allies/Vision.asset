@@ -20,7 +20,7 @@ MonoBehaviour:
   cardTraits:
   - Android
   - Avenger
-  cardArt: {fileID: 0}
+  cardArt: {fileID: 21300000, guid: c919360f91e79c347bcfa7fe5151e10d, type: 3}
   cardCost: 4
   maxCopies: 1
   isUnique: 1

@@ -14,15 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardID: PARKER-U-003
   cardName: Webbed Up
-  cardDesc: 'Hero Only. Attach to an enemy. Max 1 per enemy.
-
-    When attached enemy
-    would attack, discard Webbed Up instead. Then, stun that enemy.'
+  cardDesc: Can only be played in Hero form. When attached enemy would attack, discard
+    Webbed Up instead. Then, stun that enemy.
   cardType: 4
   cardTraits:
   - Condition
   cardArt: {fileID: 0}
   cardCost: 4
+  maxCopies: 3
   isUnique: 0
   cardAspect: 5
   cardResources: 02000000

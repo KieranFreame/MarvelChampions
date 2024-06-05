@@ -8,9 +8,9 @@ public class AttachmentCardEffect : EncounterCardEffect
 
     public virtual void Attach()
     {
-        Card.transform.SetParent((attached as MonoBehaviour).transform);
-        Card.transform.SetAsFirstSibling();
-        Card.transform.localPosition = new Vector3(-30 * attached.Attachments.Count, 0, 0);
+        _card.transform.SetParent((attached as MonoBehaviour).transform);
+        _card.transform.SetAsFirstSibling();
+        _card.transform.localPosition = new Vector3(-30 * attached.Attachments.Count, 0, 0);
     }
 
     public virtual void Attach(ICharacter _attached, AttachmentCard card)

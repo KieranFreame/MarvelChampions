@@ -22,11 +22,11 @@ public class WiggleRoom : PlayerCardEffect
 
     private async Task<DamageAction> ReduceDamage(DamageAction action)
     {
-        bool decision = await ConfirmActivateUI.MakeChoice(Card);
+        bool decision = await ConfirmActivateUI.MakeChoice(_card);
 
         if (decision)
         {
-            await PlayCardSystem.Instance.InitiatePlayCard(new(Card));
+            await PlayCardSystem.Instance.InitiatePlayCard(new(_card));
             action.Value -= 3;
             DrawCardSystem.Instance.DrawCards(new(1, _owner));
         }

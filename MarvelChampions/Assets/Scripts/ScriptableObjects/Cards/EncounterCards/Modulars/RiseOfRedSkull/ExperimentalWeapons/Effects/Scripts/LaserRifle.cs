@@ -5,11 +5,13 @@ using UnityEngine;
 
 
 [CreateAssetMenu(fileName = "Laser Rifle", menuName = "MarvelChampions/Card Effects/Modulars/RotRS/Experimental Weapons/Laser Rifle")]
-public class LaserRifle : AttachmentCardEffect
+public class LaserRifle : EncounterCardEffect, IAttachment
 {
+    public ICharacter Attached { get; set; }
+
     public override Task WhenRevealed(Villain owner, EncounterCard card, Player player)
     {
-        _owner = owner;
+        Attached = _owner = owner;
         Card = card;
 
         Attach();
@@ -38,19 +40,19 @@ public class LaserRifle : AttachmentCardEffect
         ScenarioManager.inst.EncounterDeck.Discard(Card);
     }
 
-    public override void Attach()
+    public void Attach()
     {
-        _owner.CharStats.Attacker.CurrentAttack++;
-        _owner.CharStats.Attacker.Keywords.Add(Keywords.Ranged);
+        Attached.CharStats.Attacker.CurrentAttack++;
+        Attached.CharStats.Attacker.Keywords.Add("Ranged");
 
-        _owner.Attachments.Add(Card as AttachmentCard);
+        Attached.Attachments.Add(this);
     }
 
-    public override void Detach()
+    public void Detach()
     {
-        _owner.CharStats.Attacker.CurrentAttack--;
-        _owner.CharStats.Attacker.Keywords.Remove(Keywords.Ranged);
+        Attached.CharStats.Attacker.CurrentAttack--;
+        Attached.CharStats.Attacker.Keywords.Remove("Ranged");
 
-        _owner.Attachments.Remove(Card as AttachmentCard);
+        Attached.Attachments.Remove(this);
     }
 }

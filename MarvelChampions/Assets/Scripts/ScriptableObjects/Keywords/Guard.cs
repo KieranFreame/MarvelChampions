@@ -14,10 +14,9 @@ public class Guard
         _card.CharStats.Health.Defeated.Add(WhenDefeated);
     }
 
-    private Task WhenDefeated()
+    private void WhenDefeated()
     {
         AttackSystem.Instance.Guards.Remove(_card);
         _card.CharStats.Health.Defeated.Remove(WhenDefeated);
-        return Task.CompletedTask;
     }
 }

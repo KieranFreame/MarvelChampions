@@ -5,10 +5,10 @@ using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Webbed Up", menuName = "MarvelChampions/Card Effects/Spider-Man (Peter Parker)/Webbed Up")]
-public class WebbedUp : PlayerCardEffect
+public class WebbedUp : PlayerCardEffect, IAttachment
 {
     readonly List<ICharacter> enemies = new();
-    ICharacter target;
+    public ICharacter Attached { get; set; }
 
     public override bool CanBePlayed()
     {
@@ -29,31 +29,31 @@ public class WebbedUp : PlayerCardEffect
 
     public override async Task OnEnterPlay()
     {
-        target = await TargetSystem.instance.SelectTarget(enemies);
+        Attached = await TargetSystem.instance.SelectTarget(enemies);
 
-        target.Attachments.Add(Card as IAttachment);
+        Attached.Attachments.Add(this);
 
-        if (target is Villain)
+        if (Attached is Villain)
         {
-            Card.transform.SetParent(GameObject.Find("AttachmentTransform").transform);
+            _card.transform.SetParent(RevealEncounterCardSystem.Instance.AttachmentTransform);
         }
         else
         {
-            Card.transform.SetParent((target as MonoBehaviour).transform, false);
-            Card.transform.SetAsFirstSibling();
-            Card.transform.localPosition = new Vector3(-30, 0, 0);
+            _card.transform.SetParent((Attached as MonoBehaviour).transform, false);
+            _card.transform.SetAsFirstSibling();
+            _card.transform.localPosition = new Vector3(-30, 0, 0);
         }
 
-        target.CharStats.Attacker.AttackCancel.Add(CancelAttack);
+        Attached.CharStats.Attacker.AttackCancel.Add(CancelAttack);
     }
 
     public Task<AttackAction> CancelAttack(AttackAction action)
     {
-        target.CharStats.Attacker.AttackCancel.Remove(CancelAttack);
-        target.CharStats.Attacker.Stunned = true;
-        target.Attachments.Remove(Card as IAttachment);
+        Attached.CharStats.Attacker.AttackCancel.Remove(CancelAttack);
+        Attached.CharStats.Attacker.Stunned = true;
+        Attached.Attachments.Remove(this);
 
-        _owner.CardsInPlay.Permanents.Remove(Card);
+        _owner.CardsInPlay.Permanents.Remove(_card);
         _owner.Deck.Discard(Card);
 
         action = null;

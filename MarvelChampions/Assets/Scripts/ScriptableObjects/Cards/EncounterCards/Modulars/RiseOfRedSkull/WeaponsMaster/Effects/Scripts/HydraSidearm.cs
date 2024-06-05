@@ -40,12 +40,12 @@ public class HydraSidearm : AttachmentCardEffect
     public override void Attach()
     {
         _owner.CharStats.Attacker.CurrentAttack++;
-        _owner.CharStats.Attacker.Keywords.Add(Keywords.Ranged);
+        _owner.CharStats.Attacker.Keywords.Add("Ranged");
     }
 
     public override void Detach()
     {
         _owner.CharStats.Attacker.CurrentAttack--;
-        _owner.CharStats.Attacker.Keywords.Remove(Keywords.Ranged);
+        _owner.CharStats.Attacker.Keywords.Remove("Ranged");
     }
 }

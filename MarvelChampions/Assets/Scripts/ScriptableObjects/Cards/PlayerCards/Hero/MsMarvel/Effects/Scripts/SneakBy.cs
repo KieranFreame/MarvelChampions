@@ -18,6 +18,6 @@ public class SneakBy : PlayerCardEffect
 
     public override async Task OnEnterPlay()
     {
-        await _owner.CharStats.InitiateThwart(new(3));
+        await _owner.CharStats.InitiateThwart(new(3, Owner));
     }
 }

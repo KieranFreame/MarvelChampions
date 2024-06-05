@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardID: JUSTICE-R-001
   cardName: The Power of Justice
-  cardDesc: Max 2 per Deck. Double the number  of resources if paying for a Justice
+  cardDesc: Max 2 per Deck. Double the number of resources if paying for a Justice
     card
   cardType: 2
   cardTraits: []

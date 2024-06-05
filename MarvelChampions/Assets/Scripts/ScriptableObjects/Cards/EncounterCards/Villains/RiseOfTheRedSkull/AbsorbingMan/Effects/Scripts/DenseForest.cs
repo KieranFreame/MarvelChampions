@@ -7,6 +7,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Dense Forest", menuName = "MarvelChampions/Card Effects/RotRS/Absorbing Man/Dense Forest")]
 public class DenseForest : EncounterCardEffect
 {
+    bool isBoost;
+
     public override async Task WhenRevealed(Villain owner, EncounterCard card, Player player)
     {
         ScenarioManager.inst.Surge(player);
@@ -18,29 +20,35 @@ public class DenseForest : EncounterCardEffect
         _owner = owner;
         Card = card;
 
-        _owner.CharStats.AttackInitiated += AttackInitiated;
+        DefendSystem.Instance.OnDefenderSelected += OnDefenderSelected;
 
         return Task.CompletedTask;
     }
 
-    private void AttackInitiated()
+    private void OnDefenderSelected(ICharacter arg0, AttackAction action)
     {
-        DefendSystem.Instance.OnDefenderSelected += OnDefenderSelected;
-    }
-
-    private void OnDefenderSelected(ICharacter arg0)
-    {
-        DefendSystem.Instance.OnDefenderSelected -= OnDefenderSelected;
-
         if (arg0 == null)
         {
-            AttackSystem.Instance.OnAttackCompleted.Add(AttackComplete);
+            EffectResolutionManager.Instance.ResolvingEffects.Push(this);
         }
     }
 
-    private async Task AttackComplete(AttackAction action)
+    public override async Task Resolve()
     {
-        AttackSystem.Instance.OnAttackCompleted.Remove(AttackComplete);
+        if (isBoost)
+        {
+            var card = GameObject.Find("EncounterCards").transform.Find("Dense Forest").GetComponent<EncounterCard>();
+
+            card.InPlay = true;
+            RevealEncounterCardSystem.Instance.MoveCard(card);
+            await OnEnterPlay(ScenarioManager.inst.ActiveVillain, card, null);
+
+            (ScenarioManager.inst.MainScheme.Effect as NoneShallPass).EncounterCardRevealed(card);
+
+            isBoost = false;
+
+            return;
+        }
 
         List<ICharacter> targets = new() { TurnManager.instance.CurrPlayer };
         targets.AddRange((targets[0] as Player).CardsInPlay.Allies);
@@ -48,20 +56,17 @@ public class DenseForest : EncounterCardEffect
         await IndirectDamageHandler.inst.HandleIndirectDamage(targets, (NoneShallPass.delay.CountersLeft >= 5) ? 2 : 1);
     }
 
-    public override async Task Boost(Action action)
+    public override Task Boost(Action action)
     {
-        var card = GameObject.Find("EncounterCards").transform.Find("Dense Forest").GetComponent<EncounterCard>();
+        isBoost = true;
+        EffectResolutionManager.Instance.ResolvingEffects.Push(this);
 
-        card.InPlay = true;
-        RevealEncounterCardSystem.Instance.MoveCard(card);
-        await OnEnterPlay(ScenarioManager.inst.ActiveVillain, card, null);
-
-        (ScenarioManager.inst.MainScheme.Effect as NoneShallPass).EncounterCardRevealed(card);
+        return Task.CompletedTask;
     }
 
     public override Task OnExitPlay()
     {
-        _owner.CharStats.AttackInitiated -= AttackInitiated;
+        DefendSystem.Instance.OnDefenderSelected -= OnDefenderSelected;
 
         return Task.CompletedTask;
     }

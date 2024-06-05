@@ -14,13 +14,13 @@ public class ShadowsOfThePast : EncounterCardEffect
         identity = player.Identity;
         string databaseId = string.Concat(identity.Hero.Name.Where(c => !char.IsWhiteSpace(c))) + "Nemesis.txt";
 
-        if (ScenarioManager.inst.SOTPResolved.Contains(player))
+        if (ScenarioManager.inst.SOTPResolved)
         {
             ScenarioManager.inst.Surge(player);
             return;
         }
 
-        List<EncounterCardData> nemesisSet = TextReader.PopulateDeck(databaseId).Cast<EncounterCardData>().ToList();
+        List<EncounterCardData> nemesisSet = TextReader.PopulateDeck("Nemesis/" + databaseId).Cast<EncounterCardData>().ToList();
 
         foreach (EncounterCardData data in nemesisSet)
         {
@@ -32,7 +32,7 @@ public class ShadowsOfThePast : EncounterCardEffect
                     continue;
                 }
 
-                MinionCard c = CreateCardFactory.Instance.CreateCard(data, GameObject.Find("MinionTransform").transform) as MinionCard;
+                MinionCard c = CreateCardFactory.Instance.CreateCard(data, RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
                 VillainTurnController.instance.MinionsInPlay.Add(c);
                 c.InPlay = true;
                 await c.OnRevealCard();
@@ -61,6 +61,6 @@ public class ShadowsOfThePast : EncounterCardEffect
             ScenarioManager.inst.EncounterDeck.AddToDeck(data); 
         }
 
-        ScenarioManager.inst.SOTPResolved.Add(player);
+        ScenarioManager.inst.SOTPResolved = true;
     }
 }

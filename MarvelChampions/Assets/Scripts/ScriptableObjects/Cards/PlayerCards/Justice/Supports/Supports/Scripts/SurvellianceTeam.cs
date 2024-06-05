@@ -10,7 +10,7 @@ public class SurvellianceTeam : PlayerCardEffect
 
     public override async Task OnEnterPlay()
     {
-        counters = Card.gameObject.AddComponent<Counters>();
+        counters = _card.gameObject.AddComponent<Counters>();
         counters.AddCounters(3);
 
         await Task.Yield();
@@ -18,20 +18,20 @@ public class SurvellianceTeam : PlayerCardEffect
 
     public override bool CanActivate()
     {
-        return !Card.Exhausted;
+        return !_card.Exhausted && ScenarioManager.inst.ThreatPresent();
     }
 
     public override async Task Activate()
     {
-        Card.Exhaust();
+        _card.Exhaust();
         counters.RemoveCounters(1);
 
-        await ThwartSystem.Instance.InitiateThwart(new(1));
+        await ThwartSystem.Instance.InitiateThwart(new(1, null));
 
         if (counters.CountersLeft == 0)
         {
-            _owner.CardsInPlay.Permanents.Remove(Card);
-            _owner.Deck.Discard(Card);
+            _owner.CardsInPlay.Permanents.Remove(_card);
+            _owner.Deck.Discard(_card);
         }
     }
 }

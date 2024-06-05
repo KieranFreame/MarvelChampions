@@ -32,8 +32,8 @@ public class IdentityActions : MonoBehaviour
     {
         if (UIManager.MakingSelection) return;
 
-        atk.gameObject.SetActive(player.Identity.ActiveIdentity is Hero && !player.Identity.Exhausted);
-        thw.gameObject.SetActive(player.Identity.ActiveIdentity is Hero && !player.Identity.Exhausted);
+        atk.gameObject.SetActive(player.Identity.ActiveIdentity is Hero && player.CanAttack);
+        thw.gameObject.SetActive(player.Identity.ActiveIdentity is Hero && player.CanThwart);
         rec.gameObject.SetActive(player.Identity.ActiveIdentity is AlterEgo && player.CharStats.Health.Damaged() && !player.Identity.Exhausted);
         eff.gameObject.SetActive(player.Identity.ActiveEffect.CanActivate());
         flip.gameObject.SetActive(!player.Identity.HasFlipped);

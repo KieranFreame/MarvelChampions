@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd5bde3147c0ae145842b76b7d0e8185, type: 3}
+  m_Name: Identity Database
+  m_EditorClassIdentifier: 
+  database:
+  - heroData: {fileID: 11400000, guid: ad6ad7fa678ceb34097e6826d65ce2a0, type: 2}
+    alterEgoData: {fileID: 11400000, guid: 61235e37e3a12c74290302884f06d346, type: 2}
+  - heroData: {fileID: 11400000, guid: 74bc98dba44639445bc6b1346da49fa6, type: 2}
+    alterEgoData: {fileID: 11400000, guid: dd29eed56f0ce2645a674d757f68c281, type: 2}
+  - heroData: {fileID: 11400000, guid: fe467e4207e31b940b27f4d3228d7f9c, type: 2}
+    alterEgoData: {fileID: 11400000, guid: ebf57e71b8a47ee40a76c4595afe0b25, type: 2}
+  - heroData: {fileID: 11400000, guid: 0b867297c4224434098aa3407284db77, type: 2}
+    alterEgoData: {fileID: 11400000, guid: fa7e61ca40461584f982235bec5fd693, type: 2}
+  - heroData: {fileID: 11400000, guid: c7e26640f22fa9f42abbcb01dc345b27, type: 2}
+    alterEgoData: {fileID: 11400000, guid: afa286854af16244cbdaf8c865e3c2e5, type: 2}

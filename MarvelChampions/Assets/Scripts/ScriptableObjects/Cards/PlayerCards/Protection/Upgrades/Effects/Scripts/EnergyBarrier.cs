@@ -11,7 +11,7 @@ public class EnergyBarrier : PlayerCardEffect
 
     public override Task OnEnterPlay()
     {
-        energy = Card.gameObject.AddComponent<Counters>();
+        energy = _card.gameObject.AddComponent<Counters>();
         energy.AddCounters(3);
 
         _owner.CharStats.Health.Modifiers.Add(ModifyDamage);
@@ -21,7 +21,7 @@ public class EnergyBarrier : PlayerCardEffect
 
     private async Task<DamageAction> ModifyDamage(DamageAction action)
     {
-        bool choice = await ConfirmActivateUI.MakeChoice(Card);
+        bool choice = await ConfirmActivateUI.MakeChoice(_card);
 
         if (choice)
         {
@@ -30,13 +30,13 @@ public class EnergyBarrier : PlayerCardEffect
 
             List<ICharacter> enemies = new() { ScenarioManager.inst.ActiveVillain };
             enemies.AddRange(VillainTurnController.instance.MinionsInPlay);
-            await DamageSystem.Instance.ApplyDamage(new(enemies, 1, card: Card));
+            await DamageSystem.Instance.ApplyDamage(new(enemies, 1, card: _card));
 
             if (energy.CountersLeft == 0)
             {
                 _owner.CharStats.Health.Modifiers.Remove(ModifyDamage);
-                _owner.CardsInPlay.Permanents.Remove(Card);
-                _owner.Deck.Discard(Card);
+                _owner.CardsInPlay.Permanents.Remove(_card);
+                _owner.Deck.Discard(_card);
             }
         }
 

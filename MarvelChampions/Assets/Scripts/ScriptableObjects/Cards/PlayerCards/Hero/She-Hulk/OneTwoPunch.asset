@@ -14,12 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardID: WALTERS-E-004
   cardName: One-Two Punch
-  cardDesc: After you make a basic attack, ready your hero.
+  cardDesc: After you make a basic attack, ready She-Hulk.
   cardType: 1
   cardTraits:
   - Skill
   cardArt: {fileID: 0}
   cardCost: 1
+  maxCopies: 3
   isUnique: 0
   cardAspect: 5
   cardResources: 02000000

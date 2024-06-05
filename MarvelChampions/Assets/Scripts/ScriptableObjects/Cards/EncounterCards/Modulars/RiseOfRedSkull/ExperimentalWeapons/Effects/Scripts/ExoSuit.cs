@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Exo-Suit", menuName = "MarvelChampions/Card Effects/Modulars/RotRS/Experimental Weapons/Exo-Suit")]
-public class ExoSuit : AttachmentCardEffect
+public class ExoSuit : EncounterCardEffect, IAttachment
 {
+    public ICharacter Attached { get; set; }
+
     public override Task WhenRevealed(Villain owner, EncounterCard card, Player player)
     {
         _owner = owner;
@@ -39,19 +41,19 @@ public class ExoSuit : AttachmentCardEffect
         ScenarioManager.inst.EncounterDeck.Discard(Card);
     }
 
-    public override void Attach()
+    public void Attach()
     {
         _owner.CharStats.Attacker.CurrentAttack++;
         _owner.CharStats.Schemer.CurrentScheme++;
 
-        _owner.Attachments.Add(Card as AttachmentCard);
+        _owner.Attachments.Add(this);
     }
 
-    public override void Detach()
+    public void Detach()
     {
         _owner.CharStats.Attacker.CurrentAttack--;
         _owner.CharStats.Schemer.CurrentScheme--;
 
-        _owner.Attachments.Remove(Card as AttachmentCard);
+        _owner.Attachments.Remove(this);
     }
 }

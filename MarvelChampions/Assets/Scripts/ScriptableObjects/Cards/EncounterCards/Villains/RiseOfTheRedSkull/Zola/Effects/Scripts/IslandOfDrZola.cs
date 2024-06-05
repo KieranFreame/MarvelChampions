@@ -25,7 +25,7 @@ public class IslandOfDrZola : EncounterCardEffect
         //Search Hydra Prison
         var sideScheme = ScenarioManager.inst.EncounterDeck.Search("Hydra Prison");
 
-        SchemeCard HydraPrison = CreateCardFactory.Instance.CreateCard(sideScheme, GameObject.Find("SideSchemeTransform").transform) as SchemeCard;
+        SchemeCard HydraPrison = CreateCardFactory.Instance.CreateCard(sideScheme, RevealEncounterCardSystem.Instance.SideSchemeTransform) as SchemeCard;
         ScenarioManager.sideSchemes.Add(HydraPrison);
         await HydraPrison.Effect.WhenRevealed(_owner, HydraPrison, null);
 
@@ -33,7 +33,7 @@ public class IslandOfDrZola : EncounterCardEffect
         {
             var minion = ScenarioManager.inst.EncounterDeck.Search("Ultimate Bio-Servant");
 
-            MinionCard BioServant = CreateCardFactory.Instance.CreateCard(minion, GameObject.Find("MinionTransform").transform) as MinionCard;
+            MinionCard BioServant = CreateCardFactory.Instance.CreateCard(minion, RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
             VillainTurnController.instance.MinionsInPlay.Add(BioServant);
             await BioServant.Effect.OnEnterPlay(_owner, BioServant, p);
         }
@@ -60,10 +60,10 @@ public class IslandOfDrZola : EncounterCardEffect
             ScenarioManager.inst.EncounterDeck.discardPile.Remove(minion);
             ScenarioManager.inst.EncounterDeck.limbo.Add(minion);
 
-            MinionCard card = CreateCardFactory.Instance.CreateCard(minion, GameObject.Find("MinionTransform").transform) as MinionCard;
+            MinionCard card = CreateCardFactory.Instance.CreateCard(minion, RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
 
             VillainTurnController.instance.MinionsInPlay.Add(card);
-            card.transform.SetParent(GameObject.Find("MinionTransform").transform);
+            card.transform.SetParent(RevealEncounterCardSystem.Instance.MinionTransform);
 
             await card.Effect.OnEnterPlay(_owner, card, TurnManager.instance.FirstPlayer);
 

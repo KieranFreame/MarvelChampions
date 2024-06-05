@@ -10,7 +10,7 @@ public class EnhancedAwareness : PlayerCardEffect, IGenerate
 
     public override Task OnEnterPlay()
     {
-        mental = Card.gameObject.AddComponent<Counters>();
+        mental = _card.gameObject.AddComponent<Counters>();
         mental.AddCounters(3);
 
         return Task.CompletedTask;
@@ -18,7 +18,7 @@ public class EnhancedAwareness : PlayerCardEffect, IGenerate
 
     public bool CanGenerateResource(ICard cardToPlay)
     {
-        return !Card.Exhausted;
+        return !_card.Exhausted;
     }
 
     public bool CompareResource(Resource resource)
@@ -28,13 +28,13 @@ public class EnhancedAwareness : PlayerCardEffect, IGenerate
 
     public List<Resource> GenerateResource()
     {
-        Card.Exhaust();
+        _card.Exhaust();
         mental.RemoveCounters(1);
 
         if (mental.CountersLeft == 0)
         {
-            _owner.CardsInPlay.Permanents.Remove(Card);
-            _owner.Deck.Discard(Card);
+            _owner.CardsInPlay.Permanents.Remove(_card);
+            _owner.Deck.Discard(_card);
         }
 
         return new List<Resource>() { Resource.Scientific };

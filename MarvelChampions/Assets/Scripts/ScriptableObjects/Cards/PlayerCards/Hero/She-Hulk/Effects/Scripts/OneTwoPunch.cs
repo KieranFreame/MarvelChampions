@@ -5,45 +5,42 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "One-Two Punch", menuName = "MarvelChampions/Card Effects/She-Hulk/One-Two Punch")]
-public class OneTwoPunch : PlayerCardEffect
+public class OneTwoPunch : PlayerCardEffect, IOptional
 {
     public override void OnDrawn()
     {
-        FindObjectOfType<IdentityActions>(true).OnBasicAttack += OnBasicAttack;
+        AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
     }
 
-    public override async Task OnEnterPlay()
+    public override bool CanBePlayed()
     {
-        FindObjectOfType<IdentityActions>(true).OnBasicAttack -= OnBasicAttack;
+        return false;
+    }
+
+    private void IsTriggerMet(AttackAction action)
+    {
+        if (action.Keywords.Contains("Basic"))
+            if ((action.Owner as Player).Identity.IdentityName == "She-Hulk")
+                EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+    }
+
+    public override bool CanActivate()
+    {
+        return _owner.ResourcesAvailable(_card) < _card.CardCost;
+    }
+
+    public override async Task Resolve()
+    {
+        await PlayCardSystem.Instance.InitiatePlayCard(new(_card));
+
+        AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
         _owner.Ready();
 
-        await Task.Yield();
-    }
-
-    private void OnBasicAttack()
-    {
-        if (_owner.CharStats.Attacker.Stunned)
-            return;
-
-        AttackSystem.Instance.OnAttackCompleted.Add(OnAttackComplete);
-    }
-
-    private async Task OnAttackComplete(Action action)
-    {
-        AttackSystem.Instance.OnAttackCompleted.Remove(OnAttackComplete);
-
-        if (_owner.ResourcesAvailable(Card) < Card.CardCost || !_owner.Exhausted) return;
-
-        bool decision = await ConfirmActivateUI.MakeChoice(Card);
-
-        if (decision)
-        {
-            await PlayCardSystem.Instance.InitiatePlayCard(new(Card));
-        }
+        _owner.Deck.Discard(_card);
     }
 
     public override void OnDiscard()
     {
-        FindObjectOfType<IdentityActions>(true).OnBasicAttack -= OnBasicAttack;
+        AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
     }
 }

@@ -15,7 +15,7 @@ public class UnleashingMutagen : EncounterCardEffect
         foreach (var p in TurnManager.Players)
         {
             MinionCardData data = ScenarioManager.inst.EncounterDeck.Search("Goblin Thrall", false) as MinionCardData;
-            MinionCard thrall = CreateCardFactory.Instance.CreateCard(data, GameObject.Find("MinionTransform").transform) as MinionCard;
+            MinionCard thrall = CreateCardFactory.Instance.CreateCard(data, RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
             VillainTurnController.instance.MinionsInPlay.Add(thrall);
             await thrall.Effect.OnEnterPlay(_owner, thrall, p);
         }
@@ -37,7 +37,7 @@ public class UnleashingMutagen : EncounterCardEffect
 
             if (data != default)
             {
-                MinionCard goblin = CreateCardFactory.Instance.CreateCard(data, GameObject.Find("MinionTransform").transform) as MinionCard;
+                MinionCard goblin = CreateCardFactory.Instance.CreateCard(data, RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
                 VillainTurnController.instance.MinionsInPlay.Add(goblin);
                 await goblin.Effect.OnEnterPlay(_owner, goblin, TurnManager.instance.CurrPlayer);
             }

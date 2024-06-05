@@ -22,7 +22,7 @@ public class Thwarter : IConfusable
         } 
     }
 
-    public int BaseThwart { get; private set; }
+    public int BaseThwart { get; set; }
 
     private bool _confused = false;
     public bool Confused
@@ -36,7 +36,7 @@ public class Thwarter : IConfusable
     }
     #endregion
 
-    public dynamic Owner { get; private set; }
+    public ICharacter Owner { get; private set; }
 
     #region Events
     public event UnityAction<bool> OnToggleConfuse;
@@ -49,7 +49,7 @@ public class Thwarter : IConfusable
         Owner = owner;
         CurrentThwart = BaseThwart = data.BaseTHW;
     }
-    public Thwarter(Identity owner, HeroData data)
+    public Thwarter(Player owner, HeroData data)
     {
         Owner = owner;
         CurrentThwart = BaseThwart = data.baseTHW;
@@ -72,6 +72,6 @@ public class Thwarter : IConfusable
             return null;
         }
 
-        return action ?? new ThwartAction(_thwart:CurrentThwart);
+        return action ?? new ThwartAction(_thwart:CurrentThwart, owner: Owner);
     }
 }

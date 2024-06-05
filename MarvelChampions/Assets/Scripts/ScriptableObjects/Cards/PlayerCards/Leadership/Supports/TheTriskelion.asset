@@ -21,6 +21,7 @@ MonoBehaviour:
   - S.H.I.E.L.D.
   cardArt: {fileID: 0}
   cardCost: 1
+  maxCopies: 1
   isUnique: 1
   cardAspect: 2
   cardResources: 03000000

@@ -40,7 +40,7 @@ public class MastersOfMayhem : EncounterCardEffect
 
             ScenarioManager.inst.EncounterDeck.limbo.Add(master);
 
-            MinionCard masterofevil = CreateCardFactory.Instance.CreateCard(master, GameObject.Find("MinionTransform").transform) as MinionCard;
+            MinionCard masterofevil = CreateCardFactory.Instance.CreateCard(master, RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
             VillainTurnController.instance.MinionsInPlay.Add(masterofevil);
             await masterofevil.Effect.OnEnterPlay(owner, masterofevil, player);
         }

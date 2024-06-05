@@ -17,7 +17,7 @@ public class LegionsOfHydra : EncounterCardEffect
             
             if (data != null)
             {
-                madame = CreateCardFactory.Instance.CreateCard(data, GameObject.Find("MinionTransform").transform) as MinionCard;
+                madame = CreateCardFactory.Instance.CreateCard(data, RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
                 VillainTurnController.instance.MinionsInPlay.Add(madame);
                 await madame.Effect.OnEnterPlay(owner, madame, player);
             }

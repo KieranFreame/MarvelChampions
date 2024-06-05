@@ -12,7 +12,7 @@ public class SanctumSanctorum : PlayerCardEffect
         if (_owner.Identity.IdentityName != "Stephen Strange")
             return false;
 
-        if (Card.Exhausted)
+        if (_card.Exhausted)
             return false;
 
         if (!_owner.Deck.discardPile.Any(x => x.cardTraits.Contains("Spell")))
@@ -23,7 +23,7 @@ public class SanctumSanctorum : PlayerCardEffect
 
     public override async Task Activate()
     {
-        Card.Exhaust();
+        _card.Exhaust();
 
         List<PlayerCardData> cards = _owner.Deck.discardPile.Where(x => x.cardTraits.Contains("Spell")) as List<PlayerCardData>;
 

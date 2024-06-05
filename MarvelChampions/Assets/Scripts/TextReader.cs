@@ -10,10 +10,8 @@ public class TextReader
         string path = "Assets/CardLists/" + filename;
 
         List<CardData> deckToReturn = new();
-        List<string> lines = new(); 
-        lines.AddRange(File.ReadAllLines(path));
 
-        foreach (string line in lines)
+        foreach (string line in File.ReadAllLines(path))
         {
             if (Database.GetCardDataById(line) == null)
                 Debug.Log(line + " is not in the database");

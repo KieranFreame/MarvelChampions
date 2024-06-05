@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a88d8946130c3e545bdc100b2968d4f6, type: 3}
   m_Name: Spider-Man (Peter Parker)
   m_EditorClassIdentifier: 
+  effectDescription: 'Spider-Sense: When the villain attacks you, draw 1 card.'

@@ -24,7 +24,7 @@ public class Backflip : PlayerCardEffect
 
         if (decision)
         {
-            await PlayCardSystem.Instance.InitiatePlayCard(new(Card));
+            await PlayCardSystem.Instance.InitiatePlayCard(new(_card));
             action.Value = 0;
         }
 

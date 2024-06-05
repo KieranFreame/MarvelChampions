@@ -13,7 +13,7 @@ public class Unflappable : PlayerCardEffect
     {
         if (base.CanBePlayed())
         {
-            if (_owner.CardsInPlay.Permanents.Any(x => x.CardName == Card.CardName))
+            if (_owner.CardsInPlay.Permanents.Any(x => x.CardName == _card.CardName))
                 return false;
 
             return true;
@@ -28,23 +28,27 @@ public class Unflappable : PlayerCardEffect
         return Task.CompletedTask;
     }
 
-    private void DefenderSelected(ICharacter target)
+    private void DefenderSelected(ICharacter target, AttackAction action)
     {
-        if (Card.Exhausted) return;
+        if (_card.Exhausted || target != _owner as ICharacter) return;
 
-        if (target == _owner as ICharacter)
-            _owner.CharStats.Health.OnTakeDamage += OnTakeDamage;
+        _owner.CharStats.Health.OnTakeDamage += IsTriggerMet;
     }
 
-    private void OnTakeDamage(DamageAction arg0)
+    public override Task Resolve()
     {
-        _owner.CharStats.Health.OnTakeDamage -= OnTakeDamage;
+        _card.Exhaust();
+        DrawCardSystem.Instance.DrawCards(new(1, _owner));
 
-        if (arg0.Value <= 0)
-        {
-            Card.Exhaust();
-            DrawCardSystem.Instance.DrawCards(new(1, _owner));
-        }
+        return Task.CompletedTask;
+    }
+
+    private void IsTriggerMet(DamageAction damage)
+    {
+        _owner.CharStats.Health.OnTakeDamage -= IsTriggerMet;
+
+        if (damage.Value == 0)
+            EffectResolutionManager.Instance.ResolvingEffects.Push(this);
     }
 
     public override void OnExitPlay()

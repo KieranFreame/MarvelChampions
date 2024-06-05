@@ -5,6 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
+/// <summary>
+/// "Cannot take damage while Legions of Hydra is in play. After Madame Hydra activates, place 2 threat on Legions of Hydra"
+/// </summary>
+
 [CreateAssetMenu(fileName = "Madame Hydra", menuName = "MarvelChampions/Card Effects/Legions of Hydra/Madame Hydra")]
 public class MadameHydra : EncounterCardEffect
 {
@@ -15,34 +19,35 @@ public class MadameHydra : EncounterCardEffect
 
         (Card as MinionCard).CharStats.Health.Modifiers.Add(ModifyDamage);
 
-        (Card as MinionCard).CharStats.AttackInitiated += AttackInitiated;
-        (Card as MinionCard).CharStats.SchemeInitiated += SchemeInitiated;
+        AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
+        SchemeSystem.Instance.SchemeComplete.Add(IsTriggerMet);
 
         return Task.CompletedTask;
     }
 
-    private void SchemeInitiated() => SchemeSystem.Instance.SchemeComplete.Add(ActivationCompleted);
-    private void AttackInitiated() => AttackSystem.Instance.OnAttackCompleted.Add(ActivationCompleted);
-
-    private Task ActivationCompleted(Action action)
+    #region AddThreatToLegions
+    public void IsTriggerMet(Action action)
     {
-        if (action is AttackAction)
+        if (action.Owner is MinionCard)
         {
-            AttackSystem.Instance.OnAttackCompleted.Remove(ActivationCompleted);
+            if ((action.Owner as MinionCard) == (MinionCard)Card)
+                EffectResolutionManager.Instance.ResolvingEffects.Push(this);
         }
-        else
-        {
-            SchemeSystem.Instance.SchemeComplete.Remove(ActivationCompleted);
-        }
+    }
 
+    public override Task Resolve()
+    {
         SchemeCard card = ScenarioManager.sideSchemes.FirstOrDefault(x => x.CardName == "Legions Of Hydra");
 
         if (card != default)
             card.Threat.GainThreat(2);
-
+        
         return Task.CompletedTask;
     }
+    #endregion
 
+
+    #region NoDamageWhenLegionsActive
     private Task<DamageAction> ModifyDamage(DamageAction action)
     {
         if (ScenarioManager.sideSchemes.Any(x => x.CardName == "Legions Of Hydra"))
@@ -52,13 +57,14 @@ public class MadameHydra : EncounterCardEffect
 
         return Task.FromResult(action);
     }
+    #endregion
 
     public override Task WhenDefeated()
     {
         (Card as MinionCard).CharStats.Health.Modifiers.Remove(ModifyDamage);
 
-        (Card as MinionCard).CharStats.AttackInitiated += AttackInitiated;
-        (Card as MinionCard).CharStats.SchemeInitiated -= SchemeInitiated;
+        AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
+        SchemeSystem.Instance.SchemeComplete.Remove(IsTriggerMet);
 
         return Task.CompletedTask;
     }

@@ -26,12 +26,12 @@ public class MomentumShift : PlayerCardEffect
     public override async Task OnEnterPlay()
     {
         _owner.CharStats.AttackInitiated += AttackInitiated;
-        await _owner.CharStats.InitiateAttack(new(2));
+        await _owner.CharStats.InitiateAttack(new(2, targets: new() { TargetType.TargetVillain, TargetType.TargetMinion }, owner: _owner));
         _owner.CharStats.AttackInitiated -= AttackInitiated;
     }
 
     private void AttackInitiated()
     {
-        _owner.CharStats.Health.RecoverHealth(2);
+        _owner.CharStats.Health.CurrentHealth += 2;
     }
 }

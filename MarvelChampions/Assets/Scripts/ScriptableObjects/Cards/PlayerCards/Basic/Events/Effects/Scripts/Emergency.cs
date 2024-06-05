@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -15,11 +11,9 @@ public class Emergency : PlayerCardEffect
 
     public async Task<SchemeAction> ModifyScheme(SchemeAction action)
     {
-        bool decision = await ConfirmActivateUI.MakeChoice(Card);
-
-        if (decision)
+        if (await ConfirmActivateUI.MakeChoice(_card))
         {
-            await PlayCardSystem.Instance.InitiatePlayCard(new(Card));
+            await PlayCardSystem.Instance.InitiatePlayCard(new(_card));
 
             if (_owner.CharStats.Thwarter.Confused)
                 _owner.CharStats.Thwarter.Confused = false;

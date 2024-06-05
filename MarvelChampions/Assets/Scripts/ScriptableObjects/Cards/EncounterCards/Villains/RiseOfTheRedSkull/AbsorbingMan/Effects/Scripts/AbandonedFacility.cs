@@ -7,6 +7,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Abandoned Facility", menuName = "MarvelChampions/Card Effects/RotRS/Absorbing Man/Abandoned Facility")]
 public class AbandonedFacility : EncounterCardEffect
 {
+    bool isBoost;
+
     public override async Task WhenRevealed(Villain owner, EncounterCard card, Player player)
     {
         ScenarioManager.inst.Surge(player);
@@ -16,49 +18,51 @@ public class AbandonedFacility : EncounterCardEffect
     public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
         _owner = owner;
-        Card = card;
+        _card = card;
 
-        _owner.CharStats.AttackInitiated += AttackInitiated;
+        DefendSystem.Instance.OnDefenderSelected += OnDefenderSelected;
 
         return Task.CompletedTask;
     }
 
-    private void AttackInitiated()
+    private void OnDefenderSelected(ICharacter target, AttackAction action)
     {
-        DefendSystem.Instance.OnDefenderSelected += OnDefenderSelected;
-    }
-
-    private void OnDefenderSelected(ICharacter arg0)
-    {
-        DefendSystem.Instance.OnDefenderSelected -= OnDefenderSelected;
-
-        if (arg0 == null)
+        if (target == null)
         {
-            AttackSystem.Instance.OnAttackCompleted.Add(AttackComplete);
+            EffectResolutionManager.Instance.ResolvingEffects.Push(this);
         }
     }
 
-    private async Task AttackComplete(AttackAction action)
+    public override async Task Resolve()
     {
-        AttackSystem.Instance.OnAttackCompleted.Remove(AttackComplete);
+        if (isBoost)
+        {
+            var card = GameObject.Find("EncounterCards").transform.Find("Abandoned Facility").GetComponent<EncounterCard>();
+
+            card.InPlay = true;
+            RevealEncounterCardSystem.Instance.MoveCard(card);
+            await OnEnterPlay(ScenarioManager.inst.ActiveVillain, card, null);
+
+            (ScenarioManager.inst.MainScheme.Effect as NoneShallPass).EncounterCardRevealed(card);
+
+            isBoost = false;
+            return;
+        }
+
         await PayCostSystem.instance.GetResources(Resource.Any, (NoneShallPass.delay.CountersLeft >= 5) ? 2 : 1);
     }
 
-    public override async Task Boost(Action action)
+    public override Task Boost(Action action)
     {
-        var card = GameObject.Find("EncounterCards").transform.Find("Abandoned Facility").GetComponent<EncounterCard>();
+        isBoost = true;
+        EffectResolutionManager.Instance.ResolvingEffects.Push(this);
 
-        card.InPlay = true;
-        RevealEncounterCardSystem.Instance.MoveCard(card);
-        await OnEnterPlay(ScenarioManager.inst.ActiveVillain, card, null);
-
-        (ScenarioManager.inst.MainScheme.Effect as NoneShallPass).EncounterCardRevealed(card);
+        return Task.CompletedTask;
     }
 
     public override Task OnExitPlay()
     {
-        _owner.CharStats.AttackInitiated -= AttackInitiated;
-
+        DefendSystem.Instance.OnDefenderSelected -= OnDefenderSelected;
         return Task.CompletedTask;
     }
 }

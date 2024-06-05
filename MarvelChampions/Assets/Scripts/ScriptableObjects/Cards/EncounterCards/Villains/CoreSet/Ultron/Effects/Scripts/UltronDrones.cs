@@ -18,7 +18,7 @@ public class UltronDrones : EncounterCardEffect
     {
         MinionCardData droneData = Database.GetCardDataById("ULTRON-M-000") as MinionCardData;
 
-        MinionCard drone = CreateCardFactory.Instance.CreateCard(droneData, GameObject.Find("MinionTransform").transform) as MinionCard;
+        MinionCard drone = CreateCardFactory.Instance.CreateCard(droneData, RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
         VillainTurnController.instance.MinionsInPlay.Add(drone);
         await drone.Effect.OnEnterPlay(_owner, drone, player);
 

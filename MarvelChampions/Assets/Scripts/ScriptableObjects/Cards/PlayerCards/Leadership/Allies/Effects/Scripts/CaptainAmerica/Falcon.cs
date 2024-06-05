@@ -17,6 +17,6 @@ public class Falcon : PlayerCardEffect
 
         Debug.Log("Revealed " + threat + " Treacheries from top of the encounter deck");
 
-        await ThwartSystem.Instance.InitiateThwart(new(threat));
+        await ThwartSystem.Instance.InitiateThwart(new(threat, Card as ICharacter));
     }
 }

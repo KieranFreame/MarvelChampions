@@ -14,12 +14,11 @@ public class CaptainAmericasHelmet : PlayerCardEffect
         return Task.CompletedTask;
     }
 
-    private Task Defeated()
+    private void Defeated()
     {
         _owner.CharStats.Health.CurrentHealth = 1;
         _owner.CharStats.Health.Defeated.Remove(Defeated);
         _owner.Deck.Discard(Card);
-        return Task.CompletedTask;
     }
 
     public override void OnExitPlay()

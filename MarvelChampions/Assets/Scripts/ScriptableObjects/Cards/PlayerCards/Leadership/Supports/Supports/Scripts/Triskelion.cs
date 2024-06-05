@@ -8,13 +8,13 @@ public class Triskelion : PlayerCardEffect
 {
     public override Task OnEnterPlay()
     {
-        _owner.CardsInPlay.AllyLimit++;
+        _owner.CardsInPlay.AllyLimit += 1;
         return Task.CompletedTask;
     }
 
     public override async void OnExitPlay()
     {
-        _owner.CardsInPlay.AllyLimit--;
+        _owner.CardsInPlay.AllyLimit -= 1;
 
         if (_owner.CardsInPlay.ReachedAllyLimit())
         {

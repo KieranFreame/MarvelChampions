@@ -11,7 +11,7 @@ public class TheGoldenCity : PlayerCardEffect
         if (_owner.Identity.ActiveIdentity is not AlterEgo)
             return false;
 
-        if (Card.Exhausted)
+        if (_card.Exhausted)
             return false;
 
         return true;
@@ -19,7 +19,7 @@ public class TheGoldenCity : PlayerCardEffect
 
     public override async Task Activate()
     {
-        Card.Exhaust();
+        _card.Exhaust();
         DrawCardSystem.Instance.DrawCards(new(2, _owner));
         await Task.Yield();
     }

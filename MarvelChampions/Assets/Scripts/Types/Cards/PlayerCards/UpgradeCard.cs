@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UpgradeCard : PlayerCard, IAttachment
+public class UpgradeCard : PlayerCard
 {
     
 }

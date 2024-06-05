@@ -1,15 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 [CreateAssetMenu(fileName = "Sweeping Swoop", menuName = "MarvelChampions/Card Effects/Nemesis/Spider-Man (Peter Parker)/Sweeping Swoop")]
 public class SweepingSwoop : EncounterCardEffect
 {
-    int charHp;
-
     public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
         player.CharStats.Attacker.Stunned = true;
@@ -28,21 +23,16 @@ public class SweepingSwoop : EncounterCardEffect
             return;
 
         var attack = action as AttackAction;
-
-        charHp = attack.Target.CharStats.Health.CurrentHealth;
-        AttackSystem.Instance.OnAttackCompleted.Add(AttackComplete);
+        attack.Target.CharStats.Health.OnTakeDamage += OnTargetDamaged;
 
         await Task.Yield();
     }
 
-    private Task AttackComplete(Action action)
+    private void OnTargetDamaged(DamageAction arg0)
     {
-        AttackSystem.Instance.OnAttackCompleted.Remove(AttackComplete);
-        var attack = action as AttackAction;
+        if (arg0.Value > 0)
+            arg0.DamageTargets[0].CharStats.Attacker.Stunned = true;
 
-        if (attack.Target.CharStats.Health.CurrentHealth < charHp)
-            attack.Target.CharStats.Attacker.Stunned = true;
-
-        return Task.CompletedTask;
+        arg0.DamageTargets[0].CharStats.Health.OnTakeDamage -= OnTargetDamaged;
     }
 }

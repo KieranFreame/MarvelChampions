@@ -11,7 +11,7 @@ public class StevesApartment : PlayerCardEffect
         if (_owner.Identity.IdentityName != "Steve Rogers")
             return false;
 
-        if (Card.Exhausted)
+        if (_card.Exhausted)
             return false;
 
         return true;
@@ -19,10 +19,10 @@ public class StevesApartment : PlayerCardEffect
 
     public override Task Activate()
     {
-        Card.Exhaust();
+        _card.Exhaust();
 
         DrawCardSystem.Instance.DrawCards(new(1, _owner));
-        _owner.CharStats.Health.RecoverHealth(1);
+        _owner.CharStats.Health.CurrentHealth += 1;
 
         return Task.CompletedTask;
     }

@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3270a41d4612704e8678cac9187436f, type: 3}
   m_Name: TChalla
   m_EditorClassIdentifier: 
+  effectDescription: 'Foresight - Setup: Add 1 "Black Panther" Upgrade from your
+    Deck to your hand.'

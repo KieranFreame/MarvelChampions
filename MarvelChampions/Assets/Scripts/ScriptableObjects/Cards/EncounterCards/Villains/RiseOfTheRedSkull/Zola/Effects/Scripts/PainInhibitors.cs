@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Pain Inhibitors", menuName = "MarvelChampions/Card Effects/RotRS/Zola/Pain Inhibitors")]
-public class PainInhibitors : AttachmentCardEffect
+public class PainInhibitors : EncounterCardEffect, IAttachment
 {
+    public ICharacter Attached { get; set; }
     Retaliate _retaliate;
 
     public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
@@ -20,11 +22,11 @@ public class PainInhibitors : AttachmentCardEffect
             if (m.CharStats.Health.CurrentHealth > highHp)
             {
                 highHp = m.CharStats.Health.CurrentHealth;
-                attached = m;
+                Attached = m;
             }
         }
 
-        if (attached == null)
+        if (Attached == null)
         {
             ScenarioManager.inst.Surge(player);
             ScenarioManager.inst.EncounterDeck.Discard(Card);
@@ -35,19 +37,21 @@ public class PainInhibitors : AttachmentCardEffect
         return Task.CompletedTask;
     }
 
-    public override void Attach()
+    public void Attach()
     {
-        attached.Attachments.Add(Card as AttachmentCard);
-        _retaliate = new(attached, 1);
-        attached.CharStats.Health.IncreaseMaxHealth(2);
+        Attached.Attachments.Add(this);
+        _retaliate = new(Attached, 1);
+        Attached.CharStats.Health.IncreaseMaxHealth(2);
 
-        base.Attach();
+        _card.transform.SetParent((Attached as MonoBehaviour).transform);
+        _card.transform.SetAsFirstSibling();
+        _card.transform.localPosition = new Vector3(-30 * Attached.Attachments.Count, 0, 0);
     }
 
-    public override void Detach()
+    public void Detach()
     {
-        attached.Attachments.Remove(Card as AttachmentCard);
+        Attached.Attachments.Remove(this);
         _retaliate.WhenRemoved();
-        attached.CharStats.Health.IncreaseMaxHealth(-2);
+        Attached.CharStats.Health.IncreaseMaxHealth(-2);
     }
 }

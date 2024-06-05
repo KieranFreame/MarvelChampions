@@ -14,10 +14,10 @@ public class Lockjaw : PlayerCardEffect
 
         if (Card.CurrZone == Zone.Hand)
         {
-            if (_owner.ResourcesAvailable(Card) < 4)
+            if (_owner.ResourcesAvailable(_card) < 4)
                 return false;
         }
-        else if (Card.CurrZone == Zone.Discard)
+        else if (_card.CurrZone == Zone.Discard)
         {
             if (_owner.ResourcesAvailable() < 4)
                 return false;

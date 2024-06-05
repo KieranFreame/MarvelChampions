@@ -23,7 +23,7 @@ public class AuntMay : PlayerCardEffect
 
     public override bool CanActivate()
     {
-        if (_owner.Identity.ActiveIdentity is not AlterEgo || Card.Exhausted)
+        if (_owner.Identity.ActiveIdentity is not AlterEgo || _card.Exhausted)
             return false;
 
         return _owner.CharStats.Health.Damaged();
@@ -31,8 +31,8 @@ public class AuntMay : PlayerCardEffect
 
     public override async Task Activate()
     {
-        Card.Exhaust();
-        _owner.CharStats.Health.RecoverHealth(4);
+        _card.Exhaust();
+        _owner.CharStats.Health.CurrentHealth += 4;
 
         await Task.Yield();
     }

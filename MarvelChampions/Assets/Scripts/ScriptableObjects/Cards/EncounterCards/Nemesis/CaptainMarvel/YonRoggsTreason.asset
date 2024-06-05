@@ -16,7 +16,7 @@ MonoBehaviour:
   cardName: Yon-Rogg's Treason
   cardDesc: Discard each energy resource from your hand. If no cards were discarded
     this way, Surge.
-  cardType: 0
+  cardType: 7
   cardTraits: []
   cardArt: {fileID: 0}
   boostIcons: 1

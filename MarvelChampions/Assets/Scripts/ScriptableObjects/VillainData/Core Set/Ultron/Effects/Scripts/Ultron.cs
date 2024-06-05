@@ -20,12 +20,11 @@ public class Ultron : VillainEffect
 
             _owner.CharStats.Attacker.CurrentAttack += 1 * VillainTurnController.instance.MinionsInPlay.Where(x => x.CardTraits.Contains("Drone")).Count();
         }
-
-        AttackSystem.Instance.OnAttackCompleted.Add(OnAttackComplete);
     }
-    private async Task OnAttackComplete(Action action)
+
+    private async void OnAttackComplete(Action action)
     {
-        AttackSystem.Instance.OnAttackCompleted.Remove(OnAttackComplete);
+        if (action.Owner != _owner as ICharacter) return;
 
         if (_owner.Stages.Stage == 1)
         {
@@ -50,6 +49,7 @@ public class Ultron : VillainEffect
     }
     public override Task StageOneEffect()
     {
+        AttackSystem.Instance.OnAttackCompleted.Add(OnAttackComplete);
         _owner.CharStats.AttackInitiated += AttackInitiated;
         return Task.CompletedTask;
     }

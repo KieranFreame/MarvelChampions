@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ResourceCardEffect : PlayerCardEffect
 {
-    public virtual List<Resource> GetResources() { return Card.Resources; }
-    public virtual int ResourceCount(PlayerCard card) { return Card.Resources.Count; }
+    public virtual List<Resource> GetResources() { return _card.Resources; }
+    public virtual int ResourceCount(PlayerCard card) { return _card.Resources.Count; }
     public virtual async Task WhenSpent() { await Task.Yield(); }
 }

@@ -24,7 +24,7 @@ public class CharacterStats
     {
         Owner = owner;
         Attacker = new Attacker(owner, hData);
-        Thwarter = new Thwarter(owner.Identity, hData);
+        Thwarter = new Thwarter(owner, hData);
         Defender = new Defender(owner.Identity, hData);
         Health = new Health(owner, aData);
         Recovery = new Recovery(owner.Identity, Health, aData);

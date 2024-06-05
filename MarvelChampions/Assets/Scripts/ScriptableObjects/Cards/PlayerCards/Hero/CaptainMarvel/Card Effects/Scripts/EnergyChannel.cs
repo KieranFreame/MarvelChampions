@@ -12,7 +12,7 @@ public class EnergyChannel : PlayerCardEffect
 
     public override Task OnEnterPlay()
     {
-        counters = Card.gameObject.AddComponent<Counters>();
+        counters = _card.gameObject.AddComponent<Counters>();
         return Task.CompletedTask;
     }
 
@@ -56,10 +56,10 @@ public class EnergyChannel : PlayerCardEffect
 
     private async Task DealDamage()
     {
-        var action = new AttackAction(attack: (counters.CountersLeft <= 10 ? counters.CountersLeft * 2 : 10), owner : _owner);
+        var action = new AttackAction(attack: (counters.CountersLeft <= 10 ? counters.CountersLeft * 2 : 10), targets: new() { TargetType.TargetVillain, TargetType.TargetMinion }, owner : _owner);
         await AttackSystem.Instance.InitiateAttack(action);
 
-        _owner.CardsInPlay.Permanents.Remove(Card);
-        _owner.Deck.Discard(Card);
+        _owner.CardsInPlay.Permanents.Remove(_card);
+        _owner.Deck.Discard(_card);
     }
 }

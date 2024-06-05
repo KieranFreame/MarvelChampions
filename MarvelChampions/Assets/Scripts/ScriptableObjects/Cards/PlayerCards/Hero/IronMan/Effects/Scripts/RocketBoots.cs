@@ -9,19 +9,13 @@ public class RocketBoots : PlayerCardEffect
 {
     public override bool CanActivate()
     {
-        if (Card.Exhausted)
-            return false;
-
-        if (!_owner.HaveResource(Resource.Scientific))
-            return false;
-
-        return true;
+        return !_card.Exhausted && (_owner.HaveResource(Resource.Scientific) || _owner.HaveResource(Resource.Wild)) && _owner.Identity.ActiveIdentity is Hero;
     }
 
     public override async Task Activate()
     {
         await PayCostSystem.instance.GetResources(Resource.Scientific, 1);
-        Card.Exhaust();
+        _card.Exhaust();
 
         _owner.Identity.IdentityTraits.Add("Aerial");
         TurnManager.OnEndPlayerPhase += EndOfPhase;

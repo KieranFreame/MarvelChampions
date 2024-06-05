@@ -13,19 +13,19 @@ public class Hellcat : PlayerCardEffect
 
     public override async Task Activate()
     {
-        Card.Ready();
+        _card.Ready();
 
-        (Card as AllyCard).CharStats.Health.RecoverHealth(3);
+        (_card as AllyCard).CharStats.Health.CurrentHealth += 3;
 
-        foreach (IAttachment card in (Card as AllyCard).Attachments)
+        foreach (IAttachment card in (_card as AllyCard).Attachments)
             _owner.Deck.Discard(card as ICard);
 
-        Card.PrevZone = Card.CurrZone;
-        Card.CurrZone = Zone.Hand;
+        _card.PrevZone = Card.CurrZone;
+        _card.CurrZone = Zone.Hand;
 
-        Card.transform.SetParent(GameObject.Find("PlayerHandTransform").transform , false);
-        _owner.Hand.AddToHand(Card);
-        Card.InPlay = false;
+        _card.transform.SetParent(GameObject.Find("PlayerHandTransform").transform , false);
+        _owner.Hand.AddToHand(_card);
+        _card.InPlay = false;
 
         await Task.Yield();
     }

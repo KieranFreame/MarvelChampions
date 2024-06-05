@@ -11,6 +11,8 @@ public class BlackPanther : IdentityEffect
     {
         owner = _owner;
         _retaliate = new(owner, 1);
+
+        _retaliate.OnFlip(false);
     }
 
     public override void OnFlipUp()

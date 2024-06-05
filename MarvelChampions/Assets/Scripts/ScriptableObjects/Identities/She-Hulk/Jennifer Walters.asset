@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acd3be31632faa441a09f9b56c96ed32, type: 3}
   m_Name: Jennifer Walters
   m_EditorClassIdentifier: 
+  effectDescription: '"I Object!" - Interrupt: When any threat would be placed on
+    a scheme, prevent 1 of that threat (Limit once per Round)'

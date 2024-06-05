@@ -81,6 +81,9 @@ public class Identity : IExhaust
         alterEgoUI.gameObject.SetActive(false);
         heroUI.gameObject.SetActive(true);
 
+        Owner.CanAttack = !Exhausted;
+        Owner.CanThwart = !Exhausted;
+
         ActiveEffect.OnFlipUp();
 
         FlippedToHero?.Invoke(Owner);
@@ -93,6 +96,9 @@ public class Identity : IExhaust
 
         alterEgoUI.gameObject.SetActive(true);
         heroUI.gameObject.SetActive(false);
+
+        Owner.CanAttack = false;
+        Owner.CanThwart = false;
         
         ActiveEffect.OnFlipUp();
 
@@ -106,6 +112,7 @@ public class Identity : IExhaust
     }
     public void EndPlayerPhase()
     {
+        Debug.Log("Identity: End of Player Phase");
         HasFlipped = false;
         Ready();
     }
@@ -115,6 +122,9 @@ public class Identity : IExhaust
         {
             animator.Play("IdentityReady");
             Exhausted = false;
+
+            Owner.CanAttack = true;
+            Owner.CanThwart = true;
         }
     }
     public void Exhaust()
@@ -123,6 +133,9 @@ public class Identity : IExhaust
         {
             animator.Play("IdentityExhaust");
             Exhausted = true;
+
+            Owner.CanAttack = false;
+            Owner.CanThwart = false;
         }
     }
 }

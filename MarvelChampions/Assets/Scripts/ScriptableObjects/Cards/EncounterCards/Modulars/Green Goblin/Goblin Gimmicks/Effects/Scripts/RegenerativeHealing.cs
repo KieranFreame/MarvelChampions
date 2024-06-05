@@ -10,8 +10,7 @@ public class RegenerativeHealing : EncounterCardEffect
     {
         if (owner.CharStats.Health.Damaged())
         {
-            int healing = owner.Stages.Stage * 2;
-            owner.CharStats.Health.RecoverHealth(healing);
+            owner.CharStats.Health.CurrentHealth += owner.Stages.Stage * 2;
 
             return Task.CompletedTask;
         }
@@ -22,7 +21,7 @@ public class RegenerativeHealing : EncounterCardEffect
 
     public override Task Boost(Action action)
     {
-        ScenarioManager.inst.ActiveVillain.CharStats.Health.RecoverHealth(2);
+        ScenarioManager.inst.ActiveVillain.CharStats.Health.CurrentHealth += 2;
         return Task.CompletedTask;
     }
 }

@@ -34,8 +34,8 @@ public class EvictionNotice : EncounterCardEffect
             if (decision == 1)
             {
                 parker.Exhaust();
-                ScenarioManager.inst.RemoveFromGame(Card.Data);
-                Destroy(Card.gameObject);
+                ScenarioManager.inst.RemoveFromGame(_card.Data);
+                Destroy(_card.gameObject);
                 return;
             }
         }

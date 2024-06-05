@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -10,34 +6,25 @@ public class ProtectiveWard : PlayerCardEffect
 {
     public override void OnDrawn()
     {
-        RevealEncounterCardSystem.Instance.EffectCancelers.Add(CancelEffect);
+        RevealEncounterCardSystem.Instance.EffectCancelers.Add(this);
     }
 
-    public override Task OnEnterPlay()
+    public override bool CanResolve()
     {
-        RevealEncounterCardSystem.Instance.EffectCancelers.Remove(CancelEffect);
-        return Task.CompletedTask;
+        if (RevealEncounterCardSystem.Instance.CardToReveal.CardType != CardType.Treachery) return false;
+        if (_owner.Identity.ActiveIdentity is not Hero) return false;
+        if (_owner.ResourcesAvailable(_card) < _card.CardCost) return false;
+
+        return true;
     }
 
-    private async Task<bool> CancelEffect(EncounterCard cardToPlay)
+    public override async Task Resolve()
     {
-        if (cardToPlay.CardType != CardType.Treachery) return false;
-        if (_owner.Identity.IdentityName != "Doctor Strange") return false;
-        if (_owner.ResourcesAvailable(Card) < Card.CardCost) return false;
-
-        bool activate = await ConfirmActivateUI.MakeChoice(Card);
-        
-        if (activate)
-        {
-            await PlayCardSystem.Instance.InitiatePlayCard(new(Card));
-            return true;
-        }
-
-        return false;
+        await PlayCardSystem.Instance.InitiatePlayCard(new(_card));
     }
 
     public override void OnDiscard()
     {
-        RevealEncounterCardSystem.Instance.EffectCancelers.Remove(CancelEffect);
+        RevealEncounterCardSystem.Instance.EffectCancelers.Remove(this);
     }
 }

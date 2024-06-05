@@ -14,9 +14,7 @@ public class DefendSystem
     {
         get
         {
-            if (instance == null)
-                instance = new();
-
+            instance ??= new();
             return instance;
         }
     }
@@ -33,8 +31,8 @@ public class DefendSystem
     }
 
     #region Events
-    public event UnityAction<Player> OnSelectingDefender;
-    public event UnityAction<ICharacter> OnDefenderSelected;
+    public event UnityAction<Player, AttackAction> OnSelectingDefender;
+    public event UnityAction<ICharacter, AttackAction> OnDefenderSelected;
     public event UnityAction<ICharacter> OnTargetSelected;
     #endregion
 
@@ -46,7 +44,7 @@ public class DefendSystem
 
     #region Methods
 
-    public async Task<ICharacter> GetDefender(Player targetOwner)
+    public async Task<ICharacter> GetDefender(Player targetOwner, AttackAction action)
     {
         candidates.Clear();
 
@@ -55,12 +53,12 @@ public class DefendSystem
         candidates.AddRange(targetOwner.CardsInPlay.Allies);
 
         candidates.RemoveAll(x => x == null);
-        candidates.RemoveAll(x => !(x as AllyCard).Effect.CanDefend());
+        candidates.RemoveAll(x => !(x as AllyCard).CanDefend);
 
         if (targetOwner.Identity.ActiveIdentity is Hero && !targetOwner.Exhausted)
             candidates.Add(targetOwner);
 
-        OnSelectingDefender?.Invoke(targetOwner);
+        OnSelectingDefender?.Invoke(targetOwner, action);
         Target = targetOwner;
 
         if (candidates.Count > 0)
@@ -71,7 +69,7 @@ public class DefendSystem
 
             CancelButton.ToggleCancelBtn(false, DefenderSelectionCanceled);
 
-            OnDefenderSelected?.Invoke(Target);
+            OnDefenderSelected?.Invoke(Target, action);
 
             Defended = Target == null;
         }

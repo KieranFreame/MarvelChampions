@@ -2,11 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AttachmentCard : EncounterCard, IAttachment
+public class AttachmentCard : EncounterCard
 {
-    private ICharacter _attached;
-    public ICharacter Attached { get => _attached; set => _attached = value; }
-
+    public ICharacter Attached { get; set; }
+    
     private int _atkModifier = 0;
     private int _thwSchModifier = 0;
 

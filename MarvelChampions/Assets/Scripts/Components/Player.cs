@@ -7,9 +7,6 @@ using UnityEngine;
 public class Player : MonoBehaviour, ICharacter, IExhaust
 {
     #region Fields
-    public string path;
-    public HeroData heroData;
-    public AlterEgoData alterEgoData;
     public Identity Identity { get; private set; }
     public CharacterStats CharStats { get; set; }
     public Deck Deck;
@@ -19,17 +16,21 @@ public class Player : MonoBehaviour, ICharacter, IExhaust
     public PlayerCards CardsInPlay { get; private set; } = new();
     public PlayerEncounterCards EncounterCards { get; private set; }
     public bool Exhausted { get => Identity.Exhausted; set => Identity.Exhausted = value; }
-    public bool CanAttack { get; set; } = true;
-    public bool CanThwart { get; set; } = true;
+    public bool CanAttack { get; set; } = false;
+    public bool CanThwart { get; set; } = false;
 
     #endregion
     private void Awake()
     {
-        Deck = new(path);
-
         EncounterCards = new(GameObject.Find("EncounterCards").transform);
-        Identity = new Identity(this, a: alterEgoData, h: heroData);
-        CharStats = new(this, heroData, alterEgoData);
+    }
+
+    public void LoadData(HeroData hData, AlterEgoData aData, List<CardData> deck)
+    {
+        Deck = new(deck);
+
+        Identity = new Identity(this, hData, aData);
+        CharStats = new(this, hData, aData);
 
         Identity.Hero.Effect.LoadEffect(this);
         Identity.AlterEgo.Effect.LoadEffect(this);
@@ -37,15 +38,14 @@ public class Player : MonoBehaviour, ICharacter, IExhaust
         transform.parent.Find("AlterEgoInfo").GetComponent<AlterEgoUI>().LoadUI(this);
         transform.parent.Find("HeroInfo").GetComponent<HeroUI>().LoadUI(this);
     }
+
     private void OnEnable()
     {
         TurnManager.OnEndPlayerPhase += DrawToHandSize;
-        TurnManager.OnEndPlayerPhase += Identity.EndPlayerPhase;
     }
     private void OnDisable()
     {
         TurnManager.OnEndPlayerPhase -= DrawToHandSize;
-        TurnManager.OnEndPlayerPhase -= Identity.EndPlayerPhase;
     }
     private async void Start()
     {
@@ -70,7 +70,6 @@ public class Player : MonoBehaviour, ICharacter, IExhaust
         await Identity.ActiveEffect.Setup();
     }
     public void WhenDefeated() { }
-
     private void DrawToHandSize()
     {
         while (Hand.cards.Count < Identity.ActiveIdentity.HandSize)
@@ -110,17 +109,15 @@ public class Player : MonoBehaviour, ICharacter, IExhaust
 
         foreach (PlayerCard c in Hand.cards)
         {
-            if (c.Resources.Contains(resource))
+            if (c.Resources.Contains(resource) || c.Resources.Contains(Resource.Wild))
             {
                 count++;
             }
         }
 
-        if (Identity.ActiveEffect is IGenerate)
+        if (Identity.ActiveEffect is IGenerate generate)
         {
-            IGenerate eff = (IGenerate)Identity.ActiveEffect;
-
-            if (eff.CompareResource(resource))
+            if (generate.CompareResource(resource))
             {
                 count++;
             }

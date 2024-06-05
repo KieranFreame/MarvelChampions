@@ -11,7 +11,7 @@ public class RiskyBusinessEnvironment : EncounterCardEffect
     public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
         Card = card;
-        counters = Card.gameObject.AddComponent<Counters>();
+        counters = _card.gameObject.AddComponent<Counters>();
         counters.AddCounters(2 * TurnManager.Players.Count);
 
         RiskyBusiness.Instance.environment = this;

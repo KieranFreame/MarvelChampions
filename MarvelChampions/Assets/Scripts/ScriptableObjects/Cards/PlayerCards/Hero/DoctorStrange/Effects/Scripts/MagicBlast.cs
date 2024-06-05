@@ -32,7 +32,7 @@ public class MagicBlast : PlayerCardEffect
         }
 
         AttackSystem.TargetAcquired += TargetAcquired;
-        await _owner.CharStats.InitiateAttack(new(5, owner:_owner, card:Card));
+        await _owner.CharStats.InitiateAttack(new(5, targets: new() { TargetType.TargetVillain, TargetType.TargetMinion }, owner:_owner, card:Card));
 
         _owner.Deck.Mill(1);
         var card = _owner.Deck.discardPile.Last() as PlayerCardData;

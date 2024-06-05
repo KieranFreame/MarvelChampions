@@ -4,6 +4,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
+/// <summary>
+/// Alter-Ego: Goblin schemes. If at least 3 threat was placed this way, Surge.
+/// Hero: Goblin attacks. If at least 3 damage was dealt this way, Surge.
+/// </summary>
+
 [CreateAssetMenu(fileName = "Overconfidence", menuName = "MarvelChampions/Card Effects/Mutagen Formula/Overconfidence")]
 public class Overconfidence : EncounterCardEffect
 {
@@ -11,49 +16,19 @@ public class Overconfidence : EncounterCardEffect
     {
         if (player.Identity.ActiveIdentity is Hero)
         {
-            owner.CharStats.AttackInitiated += AttackInitiated;
+            AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
             await owner.CharStats.InitiateAttack();
-            owner.CharStats.AttackInitiated -= AttackInitiated;
         }
         else
         {
-            owner.CharStats.SchemeInitiated += SchemeInitiated;
+            SchemeSystem.Instance.SchemeComplete.Add(IsTriggerMet);
             await owner.CharStats.InitiateScheme();
-            owner.CharStats.SchemeInitiated -= SchemeInitiated;
         }
     }
 
-    private void SchemeInitiated()
+    private void IsTriggerMet(Action action)
     {
-        SchemeSystem.Instance.SchemeComplete.Add(SchemeComplete);
-    }
-
-    private Task SchemeComplete(SchemeAction schemeAction)
-    {
-        SchemeSystem.Instance.SchemeComplete.Remove(SchemeComplete);
-
-        if (schemeAction.Value >= 3)
-            ScenarioManager.inst.Surge(TurnManager.instance.CurrPlayer);
-
-        return Task.CompletedTask;
-    }
-
-    private void AttackInitiated()
-    {
-        DefendSystem.Instance.OnTargetSelected += DefenderSelected;
-    }
-
-    private void DefenderSelected(ICharacter arg0)
-    {
-        DefendSystem.Instance.OnTargetSelected -= DefenderSelected;
-        arg0.CharStats.Health.OnTakeDamage += ActivationComplete;
-    }
-
-    private void ActivationComplete(DamageAction arg0)
-    {
-        arg0.DamageTargets[0].CharStats.Health.OnTakeDamage -= ActivationComplete;
-
-        if (arg0.Value >= 3)
+        if (action.Value >= 3)
             ScenarioManager.inst.Surge(TurnManager.instance.CurrPlayer);
     }
 }

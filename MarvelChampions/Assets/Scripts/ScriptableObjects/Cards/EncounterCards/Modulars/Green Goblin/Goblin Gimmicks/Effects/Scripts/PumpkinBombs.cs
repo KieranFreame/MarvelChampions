@@ -5,6 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
+/// <summary>
+/// Main Effect: After the villain attacks you, discard this and take 2 indirect damage. Spend 2 physical resources to remove this
+/// </summary>
+
 [CreateAssetMenu(fileName = "Pumpkin Bombs", menuName = "MarvelChampions/Card Effects/Modulars/Goblin Gimmicks/Pumpkin Bombs")]
 public class PumpkinBombs : AttachmentCardEffect
 {
@@ -18,25 +22,32 @@ public class PumpkinBombs : AttachmentCardEffect
         return Task.CompletedTask;
     }
 
-    private void AttackInitiated() => AttackSystem.Instance.OnAttackCompleted.Add(AttackCompleted);
-
-    private async Task AttackCompleted(AttackAction action)
+    #region IndirectDamage
+    private void IsTriggerMet(AttackAction action)
     {
-        AttackSystem.Instance.OnAttackCompleted.Remove(AttackCompleted);
-        Detach();
+        if (action.Owner != (ICharacter)_owner)
+            return;
 
+        EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+    }
+
+    public override async Task Resolve()
+    {
         List<ICharacter> targets = new()
         {
-            (action.Target is Player) ? action.Target : (action.Target as AllyCard).Owner
+            TurnManager.instance.CurrPlayer
         };
 
-        targets.AddRange((targets[0] as Player).CardsInPlay.Allies.Where(x => x != action.Target as UnityEngine.Object));
+        targets.AddRange(TurnManager.instance.CurrPlayer.CardsInPlay.Allies);
 
         await IndirectDamageHandler.inst.HandleIndirectDamage(targets, 2);
 
+        Detach();
         ScenarioManager.inst.EncounterDeck.Discard(Card);
     }
+    #endregion
 
+    #region RemoveCard
     public override bool CanActivate(Player player)
     {
         return player.HaveResource(Resource.Physical, 2);
@@ -49,16 +60,18 @@ public class PumpkinBombs : AttachmentCardEffect
         Detach();
         ScenarioManager.inst.EncounterDeck.Discard(Card);
     }
+    #endregion
 
     public override void Attach()
     {
         attached.Attachments.Add(Card as IAttachment);
-        attached.CharStats.AttackInitiated += AttackInitiated;
+        AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
     }
 
+    
     public override void Detach()
     {
         attached.Attachments.Remove(Card as IAttachment);
-        attached.CharStats.AttackInitiated -= AttackInitiated;
+        AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
     }
 }

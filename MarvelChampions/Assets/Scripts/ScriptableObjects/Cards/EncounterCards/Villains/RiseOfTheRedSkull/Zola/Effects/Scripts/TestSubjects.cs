@@ -29,10 +29,9 @@ public class TestSubjects : EncounterCardEffect
         ScenarioManager.inst.EncounterDeck.discardPile.Remove(minion);
         ScenarioManager.inst.EncounterDeck.limbo.Add(minion);
 
-        MinionCard card = CreateCardFactory.Instance.CreateCard(minion, GameObject.Find("MinionTransform").transform) as MinionCard;
+        MinionCard card = CreateCardFactory.Instance.CreateCard(minion, RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
 
         VillainTurnController.instance.MinionsInPlay.Add(card);
-        card.transform.SetParent(GameObject.Find("MinionTransform").transform);
 
         await card.Effect.WhenRevealed(_owner, card, TurnManager.instance.FirstPlayer);
     }

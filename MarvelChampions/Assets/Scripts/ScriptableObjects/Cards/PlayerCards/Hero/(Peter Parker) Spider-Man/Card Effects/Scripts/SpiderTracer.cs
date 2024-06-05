@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Spider-Tracer", menuName = "MarvelChampions/Card Effects/Spider-Man (Peter Parker)/Spider-Tracer")]
-public class SpiderTracer : PlayerCardEffect
+public class SpiderTracer : PlayerCardEffect, IAttachment
 {
+    public ICharacter Attached { get; set; }
+
     readonly List<MinionCard> minions = new();
-    MinionCard target;
 
     public override bool CanBePlayed()
     {
@@ -20,7 +21,7 @@ public class SpiderTracer : PlayerCardEffect
                 return false;
 
             minions.AddRange(VillainTurnController.instance.MinionsInPlay);
-            minions.RemoveAll(x => x.Attachments.FirstOrDefault(x => (x as ICard).CardName == Card.CardName) != default);
+            minions.RemoveAll(x => x.Attachments.FirstOrDefault(x => (x as ICard).CardName == _card.CardName) != default);
 
             if (minions.Count > 0) return true;
         }
@@ -30,29 +31,30 @@ public class SpiderTracer : PlayerCardEffect
 
     public override async Task OnEnterPlay()
     {
-        target = await TargetSystem.instance.SelectTarget(minions);
-
-        target.Attachments.Add(Card as IAttachment);
-
-        Card.transform.SetParent(target.transform, false);
-        Card.transform.SetAsFirstSibling();
-        Card.transform.localPosition = new Vector3(-50, 0, 0);
-
-        target.CharStats.Health.Defeated.Add(WhenDefeated);
+        Attached = await TargetSystem.instance.SelectTarget(minions);
+        Attach();
     }
 
-    public override async Task WhenDefeated()
+    public override async Task Resolve()
     {
-        target.CharStats.Health.Defeated.Remove(WhenDefeated);
+        await ThwartSystem.Instance.InitiateThwart(new(3, Owner));
 
-        Card.transform.SetParent(null);
-
-        if (ScenarioManager.sideSchemes.Count == 0 && ScenarioManager.inst.MainScheme.Threat.CurrentThreat == 0)
-            return;
-
-        await ThwartSystem.Instance.InitiateThwart(new(3));
-
-        _owner.CardsInPlay.Permanents.Remove(Card);
+        _owner.CardsInPlay.Permanents.Remove(_card);
         _owner.Deck.Discard(Card);
+    }
+
+    public void Attach()
+    {
+        Attached.Attachments.Add(this);
+
+        _card.transform.SetParent(((MonoBehaviour)Attached).transform, false);
+        _card.transform.SetAsFirstSibling();
+        _card.transform.localPosition = new Vector3(-50, 0, 0);
+    }
+
+    public void WhenRemoved()
+    {
+        if (ScenarioManager.inst.ThreatPresent())
+            EffectResolutionManager.Instance.ResolvingEffects.Push(this);
     }
 }

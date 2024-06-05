@@ -19,7 +19,7 @@ MonoBehaviour:
   cardType: 0
   cardTraits:
   - Avenger
-  cardArt: {fileID: 0}
+  cardArt: {fileID: 21300000, guid: dc8ae145ba7711a47a214b87e8fa9510, type: 3}
   cardCost: 3
   maxCopies: 1
   isUnique: 1

@@ -18,7 +18,7 @@ MonoBehaviour:
   cardType: 5
   cardTraits:
   - Criminal
-  cardArt: {fileID: 0}
+  cardArt: {fileID: 21300000, guid: a2c2de87a8cf84945aca40ce8ba1971c, type: 3}
   boostIcons: 2
   boostDescription: 
   effect: {fileID: 11400000, guid: 39cd93163c9ec4940b166e5637327104, type: 2}

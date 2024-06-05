@@ -25,7 +25,7 @@ public class BallAndChain : AttachmentCardEffect
     {
         await PayCostSystem.instance.GetResources(Resource.Physical, 1);
 
-        EncounterCardData data = Card.Data;
+        EncounterCardData data = _card.Data;
 
         Detach();
         ScenarioManager.inst.EncounterDeck.Discard(Card);

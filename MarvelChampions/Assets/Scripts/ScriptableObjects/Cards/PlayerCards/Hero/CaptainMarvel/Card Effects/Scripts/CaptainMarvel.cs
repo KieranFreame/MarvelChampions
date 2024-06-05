@@ -40,7 +40,7 @@ namespace CoreSet
         {
             await PayCostSystem.instance.GetResources(Resource.Energy, 1);
 
-            owner.CharStats.Health.RecoverHealth(1);
+            owner.CharStats.Health.CurrentHealth += 1;
             DrawCardSystem.Instance.DrawCards(new(1));
 
             hasActivated = true;

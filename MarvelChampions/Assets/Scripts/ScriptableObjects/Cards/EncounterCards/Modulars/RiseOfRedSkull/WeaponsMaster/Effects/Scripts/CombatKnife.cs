@@ -40,12 +40,12 @@ public class CombatKnife : AttachmentCardEffect
     public override void Attach()
     {
         _owner.CharStats.Attacker.CurrentAttack++;
-        _owner.CharStats.Attacker.Keywords.Add(Keywords.Piercing);
+        _owner.CharStats.Attacker.Keywords.Add("Piercing");
     }
 
     public override void Detach()
     {
         _owner.CharStats.Attacker.CurrentAttack--;
-        _owner.CharStats.Attacker.Keywords.Remove(Keywords.Piercing);
+        _owner.CharStats.Attacker.Keywords.Remove("Piercing");
     }
 }

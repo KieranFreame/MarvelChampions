@@ -5,16 +5,18 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Crossbones' Machine Gun", menuName = "MarvelChampions/Card Effects/RotRS/Crossbones/Crossbones' Machine Gun")]
-public class CrossbonesMachineGun : AttachmentCardEffect
+public class CrossbonesMachineGun : EncounterCardEffect, IAttachment
 {
+    public ICharacter Attached { get; set; }
+
     Counters _ammo;
 
     public override Task WhenRevealed(Villain owner, EncounterCard card, Player player)
     {
         Card = card;
-        _owner = owner;
+        Attached = _owner = owner;
 
-        _ammo = Card.gameObject.AddComponent<Counters>();
+        _ammo = _card.gameObject.AddComponent<Counters>();
         _ammo.AddCounters(2 * TurnManager.Players.Count);
 
         _owner.CharStats.Attacker.AttackCancel.Add(WhenAttacks);

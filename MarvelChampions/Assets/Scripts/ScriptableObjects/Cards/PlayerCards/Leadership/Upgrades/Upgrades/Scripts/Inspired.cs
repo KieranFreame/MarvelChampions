@@ -5,18 +5,18 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Inspired", menuName = "MarvelChampions/Card Effects/Leadership/Inspired")]
-public class Inspired : PlayerCardEffect
+public class Inspired : PlayerCardEffect, IAttachment
 {
-    readonly List<AllyCard> allies = new();
-    AllyCard ally;
+    public ICharacter Attached { get; set; }
+
+    List<AllyCard> allies = new();
 
     public override bool CanBePlayed()
     {
         if (base.CanBePlayed())
         {
-            allies.Clear();
-            allies.AddRange(_owner.CardsInPlay.Allies);
-            allies.RemoveAll(x => x.Attachments.FirstOrDefault(x => (x as ICard).CardName == Card.CardName) != default);
+            allies = _owner.CardsInPlay.Allies.ToList();
+            allies.RemoveAll(x => x.Attachments.Any(x => (x as IEffect).Card.CardName == "Inspired"));
 
             return allies.Count > 0;
         }
@@ -26,39 +26,34 @@ public class Inspired : PlayerCardEffect
 
     public override async Task OnEnterPlay()
     {
-        ally = await TargetSystem.instance.SelectTarget(allies);
+        Attached = await TargetSystem.instance.SelectTarget(allies);
+        Attached.Attachments.Add(this);
 
-        ally.Attachments.Add(Card as IAttachment);
-
-        Card.transform.SetParent(ally.transform, false);
-        Card.transform.SetAsFirstSibling();
-        Card.transform.localPosition = new Vector3(-30, 0, 0);
-
-        ally.CharStats.Attacker.CurrentAttack++;
-        ally.CharStats.Thwarter.CurrentThwart++;
-        ally.CharStats.Health.Defeated.Add(OnDefeat);
+        Attach();
     }
 
-    private Task OnDefeat()
+    public void Attach()
     {
-        ally.Attachments.Remove(Card as IAttachment);
+        _card.transform.SetParent(((MonoBehaviour)Attached).transform, false);
+        _card.transform.SetAsFirstSibling();
+        _card.transform.localPosition = new Vector3(-30, 0, 0);
 
-        ally.CharStats.Attacker.CurrentAttack--;
-        ally.CharStats.Thwarter.CurrentThwart--;
+        Attached.CharStats.Attacker.CurrentAttack++;
+        Attached.CharStats.Thwarter.CurrentThwart++;
+    }
 
-        _owner.CardsInPlay.Permanents.Remove(Card);
+    public void WhenRemoved()
+    {
+        Detach();
+
+        Attached.Attachments.Remove(this);
+        _owner.CardsInPlay.Permanents.Remove(_card);
         _owner.Deck.Discard(Card);
-
-        return Task.CompletedTask;
     }
 
-    public override void OnExitPlay()
+    public void Detach()
     {
-        if (ally == null) return;
-
-        ally.Attachments.Remove(Card as IAttachment);
-
-        ally.CharStats.Attacker.CurrentAttack--;
-        ally.CharStats.Thwarter.CurrentThwart--;
+        Attached.CharStats.Attacker.BaseATK--;
+        Attached.CharStats.Thwarter.BaseThwart--;
     }
 }

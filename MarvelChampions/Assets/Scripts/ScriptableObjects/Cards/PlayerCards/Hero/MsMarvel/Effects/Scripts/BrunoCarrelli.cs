@@ -14,13 +14,13 @@ public class BrunoCarrelli : PlayerCardEffect
 
     public override Task OnEnterPlay()
     {
-        cardsStored = Card.gameObject.AddComponent<Counters>();
+        cardsStored = _card.gameObject.AddComponent<Counters>();
         return base.OnEnterPlay();
     }
 
     public override bool CanActivate()
     {
-        if (Card.Exhausted)
+        if (_card.Exhausted)
             return false;
 
         if (_owner.Identity.IdentityName == "Kamala Khan") //alterego
@@ -63,7 +63,7 @@ public class BrunoCarrelli : PlayerCardEffect
 
     private async Task AlterEgoAction()
     {
-        Card.Exhaust();
+        _card.Exhaust();
 
         PlayerCard card = await TargetSystem.instance.SelectTarget(_owner.Hand.cards.ToList());
 
@@ -79,7 +79,7 @@ public class BrunoCarrelli : PlayerCardEffect
 
     private async Task Action()
     {
-        Card.Exhaust();
+        _card.Exhaust();
 
         List<PlayerCard> storage = CardViewerUI.inst.EnablePanel(storedCards.Cast<CardData>().ToList()).Cast<PlayerCard>().ToList();
 

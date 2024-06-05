@@ -70,8 +70,8 @@ public class HydraPrison : EncounterCardEffect
             }
         }
 
-        ScenarioManager.inst.RemoveFromGame(Card.Data);
-        Destroy(Card);
+        ScenarioManager.inst.RemoveFromGame(_card.Data);
+        Destroy(_card.gameObject);
 
         return Task.CompletedTask;
     }

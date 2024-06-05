@@ -11,7 +11,7 @@ public class IronFist : PlayerCardEffect
 
     public override Task OnEnterPlay()
     {
-        mystic = Card.gameObject.AddComponent<Counters>();
+        mystic = _card.gameObject.AddComponent<Counters>();
         mystic.AddCounters(2);
 
         (Card as AllyCard).CharStats.AttackInitiated += AttackInitiated;

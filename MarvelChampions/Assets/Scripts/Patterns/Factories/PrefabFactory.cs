@@ -6,7 +6,7 @@ public class PrefabFactory
 {
     public static PrefabFactory instance = new();
 
-    public GameObject GetPrefab(CardData card)
+    public GameObject GetPlayablePrefab(CardData card)
     {
         return card.cardType switch
         {
@@ -22,6 +22,26 @@ public class PrefabFactory
             CardType.Obligation => Resources.Load<GameObject>("Prefabs/ObligationTemplate"),
             CardType.MainScheme => Resources.Load<GameObject>("Prefabs/MainSchemeTemplate"),
             CardType.Environment => Resources.Load<GameObject>("Prefabs/TreacheryTemplate"),
+            _ => null,
+        };
+    }
+
+    public GameObject GetDisplayPrefab(CardData card)
+    {
+        return card.cardType switch
+        {
+            CardType.Ally => Resources.Load<GameObject>("Prefabs/AllyTemplate_Display"),
+            CardType.Upgrade => Resources.Load<GameObject>("Prefabs/UpgradeTemplate_Display"),
+            CardType.Support => Resources.Load<GameObject>("Prefabs/SupportTemplate_Display"),
+            CardType.Event => Resources.Load<GameObject>("Prefabs/EventTemplate_Display"),
+            CardType.Resource => Resources.Load<GameObject>("Prefabs/ResourceTemplate_Display"),
+            /*CardType.Minion => Resources.Load<GameObject>("Prefabs/MinionTemplate"),
+            CardType.SideScheme => Resources.Load<GameObject>("Prefabs/SideSchemeTemplate"),
+            CardType.Treachery => Resources.Load<GameObject>("Prefabs/TreacheryTemplate"),
+            CardType.Attachment => Resources.Load<GameObject>("Prefabs/AttachmentTemplate"),
+            CardType.Obligation => Resources.Load<GameObject>("Prefabs/ObligationTemplate"),
+            CardType.MainScheme => Resources.Load<GameObject>("Prefabs/MainSchemeTemplate"),
+            CardType.Environment => Resources.Load<GameObject>("Prefabs/TreacheryTemplate"),*/
             _ => null,
         };
     }

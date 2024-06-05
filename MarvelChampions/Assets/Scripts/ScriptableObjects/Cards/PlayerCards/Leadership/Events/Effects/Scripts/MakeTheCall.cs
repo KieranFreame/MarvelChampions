@@ -11,13 +11,13 @@ public class MakeTheCall : PlayerCardEffect
 
     public override bool CanBePlayed()
     {
-        if( base.CanBePlayed())
+        if(base.CanBePlayed())
         {
             allies.Clear();
 
             allies.AddRange(_owner.Deck.discardPile.Where(x => x is AllyCardData));
 
-            allies.RemoveAll(x => (x as PlayerCardData).cardCost > _owner.ResourcesAvailable(Card));
+            allies.RemoveAll(x => (x as PlayerCardData).cardCost > _owner.ResourcesAvailable(_card));
 
             return allies.Count > 0;
         }
@@ -40,6 +40,6 @@ public class MakeTheCall : PlayerCardEffect
 
         await PlayCardSystem.Instance.InitiatePlayCard(new(ally));
 
-        _owner.Deck.Discard(Card);
+        _owner.Deck.Discard(_card);
     }
 }

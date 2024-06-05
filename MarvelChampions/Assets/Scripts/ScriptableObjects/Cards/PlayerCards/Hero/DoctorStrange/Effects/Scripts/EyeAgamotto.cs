@@ -9,7 +9,7 @@ public class EyeAgamotto : PlayerCardEffect, IGenerate
     {
         if (_owner.Identity.ActiveIdentity is not Hero)
             return false;
-        if (Card.Exhausted)
+        if (_card.Exhausted)
             return false;
 
         return true;
@@ -22,7 +22,7 @@ public class EyeAgamotto : PlayerCardEffect, IGenerate
 
     public List<Resource> GenerateResource()
     {
-        Card.Exhaust();
+        _card.Exhaust();
         return new() { Resource.Wild };
     }
 }

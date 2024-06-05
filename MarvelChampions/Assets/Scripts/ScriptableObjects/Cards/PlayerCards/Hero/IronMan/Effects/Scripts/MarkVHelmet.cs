@@ -15,7 +15,7 @@ public class MarkVHelmet : PlayerCardEffect
         if (!FindObjectsOfType<SchemeCard>().Any(x => x.Threat.CurrentThreat > 0))
             return false;
 
-        if (Card.Exhausted)
+        if (_card.Exhausted)
             return false;
 
         return true;
@@ -23,7 +23,7 @@ public class MarkVHelmet : PlayerCardEffect
 
     public override async Task Activate()
     {
-        Card.Exhaust();
+        _card.Exhaust();
 
         if (_owner.Identity.IdentityTraits.Contains("Aerial"))
         {
@@ -41,7 +41,7 @@ public class MarkVHelmet : PlayerCardEffect
         }
         else
         {
-            await _owner.CharStats.InitiateThwart(new(1));
+            await _owner.CharStats.InitiateThwart(new(1, Owner));
         }
     }
 }

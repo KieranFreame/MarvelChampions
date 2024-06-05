@@ -27,8 +27,8 @@ public class CapturedByHydra : EncounterCardEffect
         TurnManager.instance.CurrPlayer.Deck.limbo.Add(captive);
         TurnManager.instance.CurrPlayer.Hand.AddToHand(CreateCardFactory.Instance.CreateCard(captive, GameObject.Find("PlayerHandTransform").transform) as PlayerCard);
 
-        ScenarioManager.inst.RemoveFromGame(Card.Data);
-        Destroy(Card);
+        ScenarioManager.inst.RemoveFromGame(_card.Data);
+        Destroy(_card.gameObject);
 
         return Task.CompletedTask;
     }

@@ -6,29 +6,39 @@ using UnityEngine.Events;
 
 public class Health
 {
-    #region Properties
+    
         public int BaseHP { get; private set; }
-        private int _currHealth;
-        public int CurrentHealth
+    private int _currHealth;
+    public int CurrentHealth
+    {
+        get { return _currHealth; }
+        set
         {
-            get { return _currHealth; }
-            set
+            _currHealth = value;
+
+            if (_currHealth > BaseHP)
+                _currHealth = BaseHP;
+
+            if (_currHealth <= 0)
             {
-                _currHealth = value;
-                HealthChanged?.Invoke();
+                _currHealth = 0;
+                TriggerDefeated();
             }
+
+            HealthChanged?.Invoke();
         }
-        [SerializeField] private bool _tough = false;
-        public bool Tough
+    }
+    [SerializeField] private bool _tough = false;
+    public bool Tough
+    { 
+        get { return _tough; }
+        set
         {
-            get { return _tough; }
-            set
-            {
-                _tough = value;
-                OnToggleTough?.Invoke(_tough);
-            }
+            _tough = value;
+            OnToggleTough?.Invoke(_tough);
         }
-    #endregion
+    }
+
     public ICharacter Owner { get; private set; }
     #region Events
     public event UnityAction<bool> OnToggleTough;
@@ -39,7 +49,7 @@ public class Health
     public delegate Task<DamageAction> ModifyDamage(DamageAction action);
     public List<ModifyDamage> Modifiers { get; private set; } = new();
 
-    public delegate Task WhenDefeated();
+    public delegate void WhenDefeated();
     public List<WhenDefeated> Defeated { get; private set; } = new();
 
     public Health(Player owner, AlterEgoData data)
@@ -89,11 +99,8 @@ public class Health
         if (CurrentHealth <= 0)
         {
             CurrentHealth = 0;
-            
-            for (int i = Defeated.Count -1; i >= 0; i--)
-            {
-                await Defeated[i]();
-            }
+
+            //EffectResolutionManager.Instance.ResolvingList.Add(TriggerDefeated);
 
             if (CurrentHealth == 0)
             {
@@ -105,18 +112,20 @@ public class Health
         OnTakeDamage?.Invoke(action);
     }
 
-    public void RecoverHealth(int healing)
+    public void TriggerDefeated()
     {
-        CurrentHealth += healing;
+        for (int i = Defeated.Count - 1; i >= 0; i--)
+        {
+            Defeated[i]();
+        }
 
-        if (CurrentHealth > BaseHP)
-            CurrentHealth = BaseHP;
+        //EffectResolutionManager.Instance.ResolvingList.Remove(TriggerDefeated);
     }
 
     public void IncreaseMaxHealth(int amount)
     {
         BaseHP += amount;
-        RecoverHealth(amount);
+        CurrentHealth += amount;
     }
 
     private void AdvanceStage() => CurrentHealth = BaseHP = (Owner as Villain).BaseHP;

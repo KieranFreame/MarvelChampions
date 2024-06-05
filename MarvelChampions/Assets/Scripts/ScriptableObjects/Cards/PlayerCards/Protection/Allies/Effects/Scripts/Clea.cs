@@ -16,7 +16,7 @@ public class Clea : PlayerCardEffect
             CardData d = _owner.Deck.limbo.FirstOrDefault(x => x.cardName == "Clea");
             _owner.Deck.limbo.Remove(d);
             _owner.Deck.AddToDeck(d);
-            Destroy(Card.gameObject);
+            Destroy(_card.gameObject);
         }
     }
 }

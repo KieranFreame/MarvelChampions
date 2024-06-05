@@ -121,7 +121,7 @@ public class AvengersTower : PlayerCardEffect
     #region Action
     public override bool CanActivate()
     {
-        if (Card.Exhausted)
+        if (_card.Exhausted)
             return false;
 
         return true;

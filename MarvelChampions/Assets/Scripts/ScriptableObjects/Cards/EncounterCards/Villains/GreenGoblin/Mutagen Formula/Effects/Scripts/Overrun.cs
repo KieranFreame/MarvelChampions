@@ -22,7 +22,7 @@ public class Overrun : EncounterCardEffect
         {
             if (data[i].cardTraits.Contains("Goblin"))
             {
-                MinionCard goblin = CreateCardFactory.Instance.CreateCard(data[i], GameObject.Find("MinionTransform").transform) as MinionCard;
+                MinionCard goblin = CreateCardFactory.Instance.CreateCard(data[i], RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
                 await goblin.Effect.OnEnterPlay(_owner, goblin, TurnManager.instance.CurrPlayer);
                 ScenarioManager.inst.EncounterDeck.limbo.Add(data[i]);
             }

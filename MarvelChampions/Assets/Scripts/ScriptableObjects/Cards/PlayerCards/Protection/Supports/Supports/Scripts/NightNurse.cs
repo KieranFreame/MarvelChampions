@@ -14,7 +14,7 @@ public class NightNurse : PlayerCardEffect
         if (base.CanBePlayed())
         {
             //Unique
-            if (_owner.CardsInPlay.Permanents.Any(x => x.CardName == Card.CardName))
+            if (_owner.CardsInPlay.Permanents.Any(x => x.CardName == _card.CardName))
                 return false;
 
             return true;
@@ -25,7 +25,7 @@ public class NightNurse : PlayerCardEffect
 
     public override Task OnEnterPlay()
     {
-        medical = Card.gameObject.AddComponent<Counters>();
+        medical = _card.gameObject.AddComponent<Counters>();
         medical.AddCounters(3);
 
         return Task.CompletedTask;
@@ -33,7 +33,7 @@ public class NightNurse : PlayerCardEffect
 
     public override bool CanActivate()
     {
-        if (Card.Exhausted)
+        if (_card.Exhausted)
             return false;
 
         if (!_owner.CharStats.Afflicted() && !_owner.CharStats.Health.Damaged())
@@ -44,7 +44,7 @@ public class NightNurse : PlayerCardEffect
 
     public override async Task Activate()
     {
-        Card.Exhaust();
+        _card.Exhaust();
         List<Status> targetStatus = PopulateStatusList(_owner);
         Status toRemove = Status.None;
         if (targetStatus.Count > 1)
@@ -74,13 +74,13 @@ public class NightNurse : PlayerCardEffect
                 break;
         }
 
-        _owner.CharStats.Health.RecoverHealth(1);
+        _owner.CharStats.Health.CurrentHealth += 1;
 
         medical.RemoveCounters(1);
 
         if (medical.CountersLeft == 0)
         {
-            _owner.Deck.Discard(Card);
+            _owner.Deck.Discard(_card);
         }
     }
 

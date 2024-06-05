@@ -16,7 +16,6 @@ MonoBehaviour:
   cardName: Spider-Tracer
   cardDesc: 'Attach to a Minion.
 
-
     When attached minion is defeated, remove 3
     threat from a scheme.'
   cardType: 4
@@ -25,6 +24,7 @@ MonoBehaviour:
   - Tech
   cardArt: {fileID: 0}
   cardCost: 1
+  maxCopies: 3
   isUnique: 0
   cardAspect: 5
   cardResources: 03000000

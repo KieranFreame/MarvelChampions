@@ -27,7 +27,7 @@ namespace CoreSet
 
         public override bool CanActivate()
         {
-            if (Card.Exhausted || (Card as AllyCard).CharStats.Health.CurrentHealth < 2)
+            if (_card.Exhausted || (Card as AllyCard).CharStats.Health.CurrentHealth < 2)
                 return false;
 
             enemies.Clear();
@@ -39,7 +39,7 @@ namespace CoreSet
 
         public override async Task Activate()
         {
-            Card.Exhaust();
+            _card.Exhaust();
             (Card as AllyCard).CharStats.Health.CurrentHealth -= 2;
 
             await DamageSystem.Instance.ApplyDamage(new(enemies, 1, true, card: Card));

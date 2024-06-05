@@ -26,7 +26,7 @@ public class TitaniasFury : EncounterCardEffect
 
                 if (!didAttack)
                 {
-                    titania.CharStats.Health.RecoverHealth(6);
+                    titania.CharStats.Health.CurrentHealth += 6;
                     ScenarioManager.inst.Surge(player);
                 }
 
@@ -34,7 +34,7 @@ public class TitaniasFury : EncounterCardEffect
             }
             else //alter-ego
             {
-                titania.CharStats.Health.RecoverHealth(6);
+                titania.CharStats.Health.CurrentHealth += 6;
                 ScenarioManager.inst.Surge(player);
             }
         }

@@ -4,8 +4,9 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Power Gauntlets", menuName = "MarvelChampions/Card Effects/Modulars/RotRS/Experimental Weapons/Power Gauntlets")]
-public class PowerGauntlets : AttachmentCardEffect
+public class PowerGauntlets : EncounterCardEffect, IAttachment
 {
+    public ICharacter Attached { get; set; }
     Player _target;
 
     public override Task WhenRevealed(Villain owner, EncounterCard card, Player player)
@@ -40,19 +41,19 @@ public class PowerGauntlets : AttachmentCardEffect
         ScenarioManager.inst.EncounterDeck.Discard(Card);
     }
 
-    public override void Attach()
+    public void Attach()
     {
         _owner.CharStats.AttackInitiated += InitiateAttack;
 
-        _owner.Attachments.Add(Card as AttachmentCard);
+        _owner.Attachments.Add(this);
     }
 
     
-    public override void Detach()
+    public void Detach()
     {
         _owner.CharStats.AttackInitiated -= InitiateAttack;
 
-        _owner.Attachments.Remove(Card as AttachmentCard);
+        _owner.Attachments.Remove(this);
     }
 
     private void InitiateAttack()

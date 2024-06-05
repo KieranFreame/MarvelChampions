@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Neurological Implants", menuName = "MarvelChampions/Card Effects/RotRS/Zola/Neurological Implants")]
-public class NeurologicalImplants : AttachmentCardEffect
+public class NeurologicalImplants : EncounterCardEffect, IAttachment
 {
+    public ICharacter Attached { get; set; }
+
     public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
         Card = card;
@@ -18,11 +21,11 @@ public class NeurologicalImplants : AttachmentCardEffect
             if (m.CharStats.Health.CurrentHealth > highHp)
             {
                 highHp = m.CharStats.Health.CurrentHealth;
-                attached = m;
+                Attached = m;
             }
         }
 
-        if (attached == null)
+        if (Attached == null)
         {
             ScenarioManager.inst.Surge(player);
             ScenarioManager.inst.EncounterDeck.Discard(Card);
@@ -33,21 +36,23 @@ public class NeurologicalImplants : AttachmentCardEffect
         return Task.CompletedTask;
     }
 
-    public override void Attach()
+    public void Attach()
     {
-        attached.Attachments.Add(Card as AttachmentCard);
-        attached.CharStats.Attacker.CurrentAttack += 2;
-        attached.CharStats.Schemer.CurrentScheme += 2;
-        attached.CharStats.Health.IncreaseMaxHealth(2);
+        Attached.Attachments.Add(this);
+        Attached.CharStats.Attacker.CurrentAttack += 2;
+        Attached.CharStats.Schemer.CurrentScheme += 2;
+        Attached.CharStats.Health.IncreaseMaxHealth(2);
 
-        base.Attach();
+        _card.transform.SetParent((Attached as MonoBehaviour).transform);
+        _card.transform.SetAsFirstSibling();
+        _card.transform.localPosition = new Vector3(-30 * Attached.Attachments.Count, 0, 0);
     }
 
-    public override void Detach()
+    public void Detach()
     {
-        attached.Attachments.Remove(Card as AttachmentCard);
-        attached.CharStats.Attacker.CurrentAttack -= 2;
-        attached.CharStats.Schemer.CurrentScheme -= 2;
-        attached.CharStats.Health.IncreaseMaxHealth(-2);
+        Attached.Attachments.Remove(this);
+        Attached.CharStats.Attacker.CurrentAttack -= 2;
+        Attached.CharStats.Schemer.CurrentScheme -= 2;
+        Attached.CharStats.Health.IncreaseMaxHealth(-2);
     }
 }

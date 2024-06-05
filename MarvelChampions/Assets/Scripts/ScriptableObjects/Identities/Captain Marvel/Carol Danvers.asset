@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41b90d4d616d8524facd5fbcffd7c1e5, type: 3}
   m_Name: Carol Danvers
   m_EditorClassIdentifier: 
+  effectDescription: 'Commander - Action: Draw 1 card'

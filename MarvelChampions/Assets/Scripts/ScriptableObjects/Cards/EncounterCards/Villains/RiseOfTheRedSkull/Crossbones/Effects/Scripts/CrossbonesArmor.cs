@@ -12,7 +12,7 @@ public class CrossbonesArmor : AttachmentCardEffect
         _owner = owner;
         Card = card;
 
-        counters = Card.gameObject.AddComponent<Counters>();
+        counters = _card.gameObject.AddComponent<Counters>();
         _owner.CharStats.Health.Modifiers.Add(OnTakeDamage);
 
         _owner.CharStats.Attacker.CurrentAttack++;

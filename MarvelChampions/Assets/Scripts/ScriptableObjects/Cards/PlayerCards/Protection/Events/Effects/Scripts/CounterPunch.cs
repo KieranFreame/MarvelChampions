@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Counter-Punch", menuName = "MarvelChampions/Card Effects/Protection/Events/Counter-Punch")]
-public class CounterPunch : PlayerCardEffect
+public class CounterPunch : PlayerCardEffect, IOptional
 {
     AttackAction attack;
 
@@ -14,31 +14,23 @@ public class CounterPunch : PlayerCardEffect
         DefendSystem.Instance.OnDefenderSelected += DefenderSelected;
     }
 
+    private void DefenderSelected(ICharacter target, AttackAction action)
+    {
+        if (target != _owner as ICharacter) return;
+            EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+    }
+
     public override async Task OnEnterPlay()
     {
-        AttackAction counter = new(_owner.CharStats.Attacker.CurrentAttack, attack.Owner, owner:_owner, card:Card);
+        AttackAction counter = new(_owner.CharStats.Attacker.CurrentAttack, attack.Owner, owner: _owner, card: _card);
         await _owner.CharStats.InitiateAttack(counter);
     }
 
-    private void DefenderSelected(ICharacter target)
+    public override async Task Resolve()
     {
-        if (target == null) return;
-
-        if (target == _owner as ICharacter)
-            AttackSystem.Instance.OnAttackCompleted.Add(OnAttackComplete);
-    }
-
-    private async Task OnAttackComplete(Action action)
-    {
-        AttackSystem.Instance.OnAttackCompleted.Remove(OnAttackComplete);
-        attack = action as AttackAction;
-
-        bool decision = await ConfirmActivateUI.MakeChoice(Card);
-
-        if (decision)
-        {
-            await PlayCardSystem.Instance.InitiatePlayCard(new(Card));
-        }
+        attack = AttackSystem.Instance.Action;
+        await PlayCardSystem.Instance.InitiatePlayCard(new(_card));
+        DefendSystem.Instance.OnDefenderSelected -= DefenderSelected;
     }
 
     public override void OnDiscard()

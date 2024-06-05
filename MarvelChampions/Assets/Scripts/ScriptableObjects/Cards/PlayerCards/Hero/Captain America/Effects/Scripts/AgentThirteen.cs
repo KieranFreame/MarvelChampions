@@ -14,7 +14,7 @@ namespace CaptainAmericaHeroPack
             if (ScenarioManager.sideSchemes.Count == 0 && ScenarioManager.inst.MainScheme.Threat.CurrentThreat == 0)
                 return;
 
-            await ThwartSystem.Instance.InitiateThwart(new(2));
+            await ThwartSystem.Instance.InitiateThwart(new(2, Card as ICharacter));
         }
 
         public override bool CanBePlayed()

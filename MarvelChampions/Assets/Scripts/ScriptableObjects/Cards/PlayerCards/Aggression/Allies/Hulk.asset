@@ -14,24 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardID: AGGRESSION-A-001
   cardName: Hulk
-  cardDesc: 'After this card attacks, discard the top card of your deck. Activate
-    the effect that matches the printed resource.
+  cardDesc: 'After Hulk attacks, discard the top card of your deck. If it''s resources
+    include;
 
+    Physical - Deal 2 damage to an enemy
 
-    Physical - Deal 2 damage
-    to an enemy
+    Energy - Deal 1 damage
+    to all characters
 
-    Energy - Deal 1 damage to all characters
-
-    Scientific - Discard
-    Hulk
+    Scientific - Discard Hulk
 
     Wild - All of the above'
   cardType: 0
   cardTraits:
   - Avenger
   - Gamma
-  cardArt: {fileID: 0}
+  cardArt: {fileID: 21300000, guid: fef16fae79954f14f94be81c7923fcf6, type: 3}
   cardCost: 2
   maxCopies: 1
   isUnique: 1

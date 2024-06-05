@@ -6,9 +6,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Luke Cage", menuName = "MarvelChampions/Card Effects/Protection/Allies/Luke Cage")]
 public class LukeCage : PlayerCardEffect
 {
-    public override async Task OnEnterPlay()
+    public override Task OnEnterPlay()
     {
         (Card as AllyCard).CharStats.Health.Tough = true;
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 }

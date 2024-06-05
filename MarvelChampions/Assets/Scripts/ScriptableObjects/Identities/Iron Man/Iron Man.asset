@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 799d35a7468f8894fba00e1fed53600f, type: 3}
   m_Name: Iron Man
   m_EditorClassIdentifier: 
+  effectDescription: You get +1 hand size for each Tech upgrade under your control
+    (to a maximum of 7)

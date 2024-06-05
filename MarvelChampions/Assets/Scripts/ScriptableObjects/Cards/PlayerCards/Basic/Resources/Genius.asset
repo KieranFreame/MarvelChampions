@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardID: BASIC-R-002
   cardName: Genius
-  cardDesc: Max 2 per Deck
+  cardDesc: Max 1 per Deck
   cardType: 2
   cardTraits: []
-  cardArt: {fileID: 0}
+  cardArt: {fileID: 21300000, guid: 8ca68e949268ee640a263a74693a7771, type: 3}
   cardCost: 0
-  maxCopies: 2
+  maxCopies: 1
   isUnique: 0
   cardAspect: 4
   cardResources: 0100000001000000

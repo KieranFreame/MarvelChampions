@@ -13,12 +13,10 @@ public class RelentlessAssault : PlayerCardEffect
 
     public override async Task OnEnterPlay()
     {
-        AttackAction attack;
+        AttackAction attack = new(5, new List<TargetType>() { TargetType.TargetMinion }, owner: _owner) ;
 
         if (PayCostSystem.instance.Resources.Contains(Resource.Physical))
-            attack = new(5, new List<Keywords>() { Keywords.Overkill }, _owner);
-        else
-            attack = new(5, owner:_owner);
+            attack.Keywords.Add("Overkill");
 
         await _owner.CharStats.InitiateAttack(attack);
     }

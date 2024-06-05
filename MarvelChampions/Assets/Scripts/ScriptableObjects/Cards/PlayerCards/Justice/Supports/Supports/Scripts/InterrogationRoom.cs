@@ -1,54 +1,37 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Interrogation Room", menuName = "MarvelChampions/Card Effects/Justice/Interrogation Room")]
-public class InterrogationRoom : PlayerCardEffect
+public class InterrogationRoom : PlayerCardEffect, IOptional
 {
-    MinionCard _target;
-
     public override Task OnEnterPlay()
     {
-        _owner.CharStats.AttackInitiated += AttackInitiated;
+        AttackSystem.TargetAcquired += CheckTarget;
         return Task.CompletedTask;
     }
 
-    private void AttackInitiated()
+    public override async Task Resolve()
     {
-        if (_target != null)
-            _target.CharStats.Health.Defeated.Remove(Defeated);
-
-        if (ScenarioManager.sideSchemes.Count > 0 || ScenarioManager.inst.MainScheme.Threat.CurrentThreat > 0)
-            AttackSystem.TargetAcquired += CheckTarget;
+        _card.Exhaust();
+        await ThwartSystem.Instance.InitiateThwart(new(1, null));
     }
 
     private void CheckTarget(ICharacter target)
     {
-        AttackSystem.TargetAcquired -= CheckTarget;
-
         if (target is MinionCard)
-        {
-            _target = target as MinionCard;
-            _target.CharStats.Health.Defeated.Add(Defeated);
-        }
+            AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
     }
 
-    private async Task Defeated()
+    private void IsTriggerMet(AttackAction action)
     {
-        _target.CharStats.Health.Defeated.Remove(Defeated);
+        if (action.Target.CharStats.Health.CurrentHealth <= 0 && ScenarioManager.inst.ThreatPresent() && !_card.Exhausted)
+            EffectResolutionManager.Instance.ResolvingEffects.Push(this);
 
-        bool decision = await ConfirmActivateUI.MakeChoice(Card);
-
-        if (decision)
-        {
-            Card.Exhaust();
-            await ThwartSystem.Instance.InitiateThwart(new(1));
-        }
+        AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
     }
 
     public override void OnExitPlay()
     {
-        _owner.CharStats.AttackInitiated -= AttackInitiated;
+        AttackSystem.TargetAcquired -= CheckTarget;
     }
 }

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8500fc7aedc00204b8366777dadbcc23, type: 3}
+  m_Name: MODOK
+  m_EditorClassIdentifier: 
+  cardID: DOOMSDAY-M-001
+  cardName: MODOK
+  cardDesc: Retaliate 2
+  cardType: 5
+  cardTraits:
+  - Cyborg
+  - Elite
+  cardArt: {fileID: 0}
+  boostIcons: 2
+  boostDescription: 
+  effect: {fileID: 11400000, guid: 5a1fddb8b8b874a46bb9d43eff607249, type: 2}
+  baseAttack: 2
+  baseScheme: 2
+  baseHealth: 8

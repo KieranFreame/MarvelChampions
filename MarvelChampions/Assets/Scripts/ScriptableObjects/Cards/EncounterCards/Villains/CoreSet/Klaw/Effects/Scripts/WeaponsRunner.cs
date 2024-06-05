@@ -15,11 +15,11 @@ public class WeaponsRunner : EncounterCardEffect
 
     public override Task Boost(Action action)
     {
-        var card = GameObject.Find("EncounterCards").transform.Find("Weapons Runner").GetComponent<EncounterCard>();
+        var card = GameObject.Find("EncounterCards").transform.Find("Weapons Runner");
 
-        card.InPlay = true;
-        card.transform.SetParent(GameObject.Find("MinionTransform").transform);
-        VillainTurnController.instance.MinionsInPlay.Add(card as MinionCard);
+        card.GetComponentInChildren<MinionCard>().InPlay = true;
+        card.transform.SetParent(RevealEncounterCardSystem.Instance.MinionTransform);
+        VillainTurnController.instance.MinionsInPlay.Add(card.GetComponentInChildren<MinionCard>());
 
         return Task.CompletedTask;
     }

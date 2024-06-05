@@ -7,6 +7,7 @@ using UnityEngine.Events;
 public class Counters : MonoBehaviour
 {
     public GameObject Counter { get; set; }
+    TMP_Text counterText;
 
     private int countersLeft;
 
@@ -15,25 +16,26 @@ public class Counters : MonoBehaviour
         set
         {
             countersLeft = value;
-            Counter.GetComponentInChildren<TMP_Text>().text = CountersLeft.ToString();
+            counterText.text = CountersLeft.ToString();
         }
     }
 
     private void Awake()
     {
         Counter = Instantiate(Resources.Load<GameObject>("Prefabs/Counters"), transform, false);
-        Counter.GetComponentInChildren<TMP_Text>().text = CountersLeft.ToString();
+        counterText = Counter.GetComponentInChildren<TMP_Text>();
+        counterText.text = CountersLeft.ToString();
     }
 
     public void RemoveCounters(int counters)
     {
         CountersLeft -= counters;
-        Counter.GetComponentInChildren<TMP_Text>().text = CountersLeft.ToString();
+        counterText.text = CountersLeft.ToString();
     }
 
     public void AddCounters(int counters)
     {
         CountersLeft += counters;
-        Counter.GetComponentInChildren<TMP_Text>().text = CountersLeft.ToString();
+        counterText.text = CountersLeft.ToString();
     }
 }

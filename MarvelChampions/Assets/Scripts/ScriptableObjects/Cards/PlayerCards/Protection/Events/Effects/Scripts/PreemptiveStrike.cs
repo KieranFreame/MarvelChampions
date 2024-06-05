@@ -22,7 +22,7 @@ public class PreemptiveStrike : PlayerCardEffect
 
     public override bool CanActivate()
     {
-        if (_owner.ResourcesAvailable(Card) < Card.CardCost)
+        if (_owner.ResourcesAvailable(_card) < _card.CardCost)
             return false;
 
         return true; 
@@ -30,7 +30,7 @@ public class PreemptiveStrike : PlayerCardEffect
 
     public override async Task OnEnterPlay()
     {
-        await _owner.CharStats.InitiateAttack(new(damage, ScenarioManager.inst.ActiveVillain, owner: _owner, card: Card));
+        await _owner.CharStats.InitiateAttack(new(damage, ScenarioManager.inst.ActiveVillain, owner: _owner, card: _card));
         BoostSystem.Instance.Modifiers.Remove(ReduceBoost);
     }
 
@@ -38,14 +38,14 @@ public class PreemptiveStrike : PlayerCardEffect
     {
         if (!CanActivate()) return boostIcons;
 
-        bool activate = await ConfirmActivateUI.MakeChoice(Card);
+        bool activate = await ConfirmActivateUI.MakeChoice(_card);
 
         if (activate)
         {
             damage = boostIcons;
             boostIcons = 0;
 
-            await PlayCardSystem.Instance.InitiatePlayCard(new(Card));
+            await PlayCardSystem.Instance.InitiatePlayCard(new(_card));
         }
 
         return boostIcons;

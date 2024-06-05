@@ -11,19 +11,19 @@ public class Hulk : PlayerCardEffect
 
     public override Task OnEnterPlay()
     {
-        (Card as AllyCard).CharStats.AttackInitiated += AttackInitiated;
+        AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
         (Card as AllyCard).CanThwart = false;
         return Task.CompletedTask;
     }
 
-    private void AttackInitiated() {AttackSystem.Instance.OnAttackCompleted.Add(AttackComplete); } 
-
-    private async Task AttackComplete(Action action)
+    public void IsTriggerMet(AttackAction action)
     {
-        AttackSystem.Instance.OnAttackCompleted.Remove(AttackComplete);
+        if (action.Owner == Card as ICharacter)
+            EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+    }
 
-        var attack = action as AttackAction;
-
+    public override async Task Resolve()
+    {
         _owner.Deck.Mill(1);
         var card = _owner.Deck.discardPile.Last() as PlayerCardData;
 
@@ -55,15 +55,15 @@ public class Hulk : PlayerCardEffect
 
     private async Task PhysicalEffect()
     {
-        enemies.Add(FindObjectOfType<Villain>());
-        enemies.AddRange(FindObjectsOfType<MinionCard>());
+        enemies.Add(ScenarioManager.inst.ActiveVillain);
+        enemies.AddRange(VillainTurnController.instance.MinionsInPlay);
         await DamageSystem.Instance.ApplyDamage(new(enemies, 2, card:Card));
     }
 
     private async Task EnergyEffect()
     {
-        enemies.Add(FindObjectOfType<Villain>());
-        enemies.AddRange(FindObjectsOfType<MinionCard>());
+        enemies.Add(ScenarioManager.inst.ActiveVillain);
+        enemies.AddRange(VillainTurnController.instance.MinionsInPlay);
         enemies.Add(_owner);
         enemies.AddRange(_owner.CardsInPlay.Allies);
         await DamageSystem.Instance.ApplyDamage(new(enemies, 1, true, card:Card));
@@ -71,13 +71,13 @@ public class Hulk : PlayerCardEffect
 
     private void ScientificEffect()
     {
-        (Card as AllyCard).CharStats.AttackInitiated -= AttackInitiated;
+        AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
         _owner.CardsInPlay.Allies.Remove(Card as AllyCard);
         _owner.Deck.Discard(Card);
     }
 
     public override void OnExitPlay()
     {
-        (Card as AllyCard).CharStats.AttackInitiated -= AttackInitiated;
+        AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
     }
 }

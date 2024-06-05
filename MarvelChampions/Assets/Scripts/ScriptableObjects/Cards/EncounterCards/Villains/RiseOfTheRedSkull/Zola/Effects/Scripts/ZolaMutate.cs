@@ -24,7 +24,7 @@ public class ZolaMutate : EncounterCardEffect
 
         tech.Effect.Attach(card as MinionCard, tech);
 
-        (card as MinionCard).Attachments.Add(tech);
+        (card as MinionCard).Attachments.Add(tech.Effect as IAttachment);
 
         return Task.CompletedTask;
     }

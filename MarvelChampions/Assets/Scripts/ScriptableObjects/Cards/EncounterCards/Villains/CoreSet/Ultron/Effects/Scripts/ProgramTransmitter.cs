@@ -11,34 +11,22 @@ public class ProgramTransmitter : EncounterCardEffect
         _owner = owner;
         Card = card;
 
-        _owner.CharStats.SchemeInitiated += SchemeInitiated;
+        SchemeSystem.Instance.SchemeComplete.Add(SchemeCompleted);
 
         return Task.CompletedTask;
     }
 
-    private void SchemeInitiated()
+    private void SchemeCompleted(SchemeAction action)
     {
-        SchemeSystem.Instance.SchemeComplete.Add(SchemeCompleted);
-    }
-
-    private Task SchemeCompleted(SchemeAction action)
-    {
-        SchemeSystem.Instance.SchemeComplete.Remove(SchemeCompleted);
-
         foreach (var scheme in ScenarioManager.sideSchemes)
         {
             scheme.Threat.GainThreat(1);
         }
-
-        return Task.CompletedTask;
     }
 
     public override bool CanActivate(Player player)
     {
-        if (player.Exhausted)
-            return false;
-
-        return true;
+        return (!player.Exhausted && player.HaveResource(Resource.Scientific, 2));
     }
 
     public override async Task Activate(Player player)
@@ -46,7 +34,7 @@ public class ProgramTransmitter : EncounterCardEffect
         await PayCostSystem.instance.GetResources(Resource.Scientific, 2);
         player.Exhaust();
 
-        _owner.CharStats.SchemeInitiated -= SchemeInitiated;
+        SchemeSystem.Instance.SchemeComplete.Remove(SchemeCompleted);
         ScenarioManager.inst.EncounterDeck.Discard(Card);
     }
 }

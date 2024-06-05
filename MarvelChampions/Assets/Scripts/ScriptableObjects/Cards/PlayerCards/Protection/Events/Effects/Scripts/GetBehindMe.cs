@@ -5,39 +5,27 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Get Behind Me", menuName = "MarvelChampions/Card Effects/Protection/Events/Get Behind Me")]
-public class GetBehindMe : PlayerCardEffect
+public class GetBehindMe : PlayerCardEffect, IOptional
 {
     public override void OnDrawn()
     {
-        RevealEncounterCardSystem.Instance.EffectCancelers.Add(CancelEffect);
+        RevealEncounterCardSystem.Instance.EffectCancelers.Add(this);
     }
 
-    public override async Task OnEnterPlay()
+    public override bool CanResolve()
     {
-        await FindObjectOfType<Villain>().CharStats.InitiateAttack();
-        RevealEncounterCardSystem.Instance.EffectCancelers.Remove(CancelEffect);
+        return RevealEncounterCardSystem.Instance.CardToReveal.CardType is CardType.Treachery && _owner.ResourcesAvailable(_card) >= _card.CardCost;
     }
 
-    public async Task<bool> CancelEffect(ICard cardToCancel)
+    public override async Task Resolve()
     {
-        var card = cardToCancel as EncounterCard;
-
-        if (card.Data.cardType is not CardType.Treachery)
-            return false;
-
-        bool decision = await ConfirmActivateUI.MakeChoice(Card);
-
-        if (decision)
-        {
-            await PlayCardSystem.Instance.InitiatePlayCard(new(Card));
-            return true;
-        }
-
-        return false;
+        await PlayCardSystem.Instance.InitiatePlayCard(new(_card));
+        await ScenarioManager.inst.ActiveVillain.CharStats.InitiateAttack();
+        RevealEncounterCardSystem.Instance.EffectCancelers.Remove(this);
     }
 
     public override void OnDiscard()
     {
-        RevealEncounterCardSystem.Instance.EffectCancelers.Remove(CancelEffect);
+        RevealEncounterCardSystem.Instance.EffectCancelers.Remove(this);
     }
 }

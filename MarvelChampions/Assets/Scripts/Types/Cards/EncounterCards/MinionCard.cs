@@ -21,7 +21,7 @@ public class MinionCard : EncounterCard, ICharacter
 
         for (int i = Attachments.Count - 1; i >= 0; i--)
         {
-            (Attachments[i] as AttachmentCard).Effect.WhenRemoved();
+            Attachments[i].WhenRemoved();
         }
 
         VillainTurnController.instance.MinionsInPlay.Remove(this);

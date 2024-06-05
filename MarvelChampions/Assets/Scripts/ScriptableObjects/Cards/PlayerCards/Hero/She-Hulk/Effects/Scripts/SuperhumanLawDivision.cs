@@ -15,7 +15,7 @@ public class SuperhumanLawDivision : PlayerCardEffect
         if (!FindObjectsOfType<SchemeCard>().Any(x => x.Threat.CurrentThreat > 0))
             return false;
 
-        if (Card.Exhausted)
+        if (_card.Exhausted)
             return false;
 
         if (_owner.HaveResource(Resource.Scientific))
@@ -27,8 +27,8 @@ public class SuperhumanLawDivision : PlayerCardEffect
     public override async Task Activate()
     {
         await PayCostSystem.instance.GetResources(Resource.Scientific, 1);
-        Card.Exhaust();
+        _card.Exhaust();
 
-        await _owner.CharStats.InitiateThwart(new(2));
+        await _owner.CharStats.InitiateThwart(new(2, null));
     }
 }

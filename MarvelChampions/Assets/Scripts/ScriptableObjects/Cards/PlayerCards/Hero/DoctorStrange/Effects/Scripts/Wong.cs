@@ -8,14 +8,14 @@ public class Wong : PlayerCardEffect
 {
     public override bool CanActivate()
     {
-        if (Card.Exhausted) return false;
+        if (_card.Exhausted) return false;
 
         return true;
     }
 
     public override async Task Activate()
     {
-        Card.Exhaust();
+        _card.Exhaust();
 
         if (_owner.CharStats.Health.Damaged())
         {
@@ -23,7 +23,7 @@ public class Wong : PlayerCardEffect
 
             if (decision == 1)
             {
-                _owner.CharStats.Health.RecoverHealth(1);
+                _owner.CharStats.Health.CurrentHealth += 1;
                 return;
             }
         }

@@ -22,7 +22,7 @@ public class LegalPractice : PlayerCardEffect
     {
         if (_owner.Hand.cards.Count == 0)
         {
-            await _owner.CharStats.InitiateThwart(new(0));
+            await _owner.CharStats.InitiateThwart(new(0, Owner));
             return;
         }
 
@@ -40,7 +40,7 @@ public class LegalPractice : PlayerCardEffect
             _owner.Deck.Discard(c);
         }
         
-        await _owner.CharStats.InitiateThwart(new(thwart));
+        await _owner.CharStats.InitiateThwart(new(thwart, Owner));
     }
 
     private void CardsSelected()

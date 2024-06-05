@@ -29,11 +29,11 @@ public class HonoraryAvenger : PlayerCardEffect
     {
         ally = await TargetSystem.instance.SelectTarget(_owner.CardsInPlay.Allies.ToList());
 
-        ally.Attachments.Add(Card as IAttachment);
+        ally.Attachments.Add(_card as IAttachment);
 
-        Card.transform.SetParent(ally.transform, false);
-        Card.transform.SetAsFirstSibling();
-        Card.transform.localPosition = new Vector3(-30, 0, 0);
+        _card.transform.SetParent(ally.transform, false);
+        _card.transform.SetAsFirstSibling();
+        _card.transform.localPosition = new Vector3(-30, 0, 0);
 
         if (ally.CardTraits.Contains("Avenger") == false)
         {
@@ -48,7 +48,7 @@ public class HonoraryAvenger : PlayerCardEffect
     {
         if (ally == null) return;
 
-        ally.Attachments.Remove(Card as IAttachment);
+        ally.Attachments.Remove(_card as IAttachment);
 
         if (addedTrait)
             ally.CardTraits.Remove("Avenger");

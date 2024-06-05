@@ -25,7 +25,7 @@ public class MadDoctor : EncounterCardEffect
             minion = await TargetSystem.instance.SelectTarget(minions);
 
             VillainTurnController.instance.MinionsInPlay.Add(minion);
-            minion.transform.SetParent(GameObject.Find("MinionTransform").transform);
+            minion.transform.SetParent(RevealEncounterCardSystem.Instance.MinionTransform);
 
             await minion.Effect.WhenRevealed(_owner, minion, p);
         }
@@ -55,10 +55,9 @@ public class MadDoctor : EncounterCardEffect
             ScenarioManager.inst.EncounterDeck.discardPile.Remove(minion);
             ScenarioManager.inst.EncounterDeck.limbo.Add(minion);
 
-            MinionCard card = CreateCardFactory.Instance.CreateCard(minion, GameObject.Find("MinionTransform").transform) as MinionCard;
+            MinionCard card = CreateCardFactory.Instance.CreateCard(minion, RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
 
             VillainTurnController.instance.MinionsInPlay.Add(card);
-            card.transform.SetParent(GameObject.Find("MinionTransform").transform);
 
             await card.Effect.OnEnterPlay(_owner, card, TurnManager.instance.FirstPlayer);
 

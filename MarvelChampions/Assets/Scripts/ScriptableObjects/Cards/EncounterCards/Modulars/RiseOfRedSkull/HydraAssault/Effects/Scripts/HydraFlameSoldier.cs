@@ -5,44 +5,33 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
+/// <summary>
+/// Main Effect: After this makes an undefended attack, discard a support you control
+/// Boost: If this is boosting an undefended attack, discard a support you control.
+/// </summary>
+
 [CreateAssetMenu(fileName = "Hydra Flame-Soldier", menuName = "MarvelChampions/Card Effects/Modulars/RotRS/Hydra Assault/Hydra Flame-Soldier")]
 public class HydraFlameSoldier : EncounterCardEffect
 {
-    bool undefended = false;
-
     public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
         Card = card;
 
-        (Card as MinionCard).CharStats.AttackInitiated += AttackInitiated;
+        DefendSystem.Instance.OnDefenderSelected += DefenderSelected;
 
         return Task.CompletedTask;
     }
 
-    private void AttackInitiated()
+    private void DefenderSelected(ICharacter target, AttackAction action)
     {
-        DefendSystem.Instance.OnDefenderSelected += DefenderSelected;
+        if (action.Card == Card as ICard)
+            if (target == null)
+                EffectResolutionManager.Instance.ResolvingEffects.Push(this);
     }
 
-    private void DefenderSelected(ICharacter arg0)
+    public override async Task Resolve()
     {
-        undefended = (arg0 == null);
-        AttackSystem.Instance.OnAttackCompleted.Add(AttackComplete);
-    }
-
-    private async Task AttackComplete(AttackAction action)
-    {
-        if (undefended)
-        {
-            await DiscardSupport(action);
-        }
-
-        return;
-    }
-
-    async Task DiscardSupport(AttackAction action)
-    {
-        Player p = (action.Target as Player);
+        Player p = TurnManager.instance.CurrPlayer;
         List<PlayerCard> playerCards = new();
 
         playerCards.AddRange(p.CardsInPlay.Permanents.Where(x => x.CardType is CardType.Support));
@@ -70,7 +59,7 @@ public class HydraFlameSoldier : EncounterCardEffect
     {
         if (action is AttackAction && !DefendSystem.Instance.Defended)
         {
-            await DiscardSupport(action as AttackAction);
+            await Resolve();
         }
     }
 }
