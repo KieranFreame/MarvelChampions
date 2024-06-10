@@ -9,21 +9,14 @@ public class SpiderTracer : PlayerCardEffect, IAttachment
 {
     public ICharacter Attached { get; set; }
 
-    readonly List<MinionCard> minions = new();
+    List<MinionCard> minions = new();
 
     public override bool CanBePlayed()
     {
         if (base.CanBePlayed())
         {
-            minions.Clear();
-
-            if (VillainTurnController.instance.MinionsInPlay.Count == 0)
-                return false;
-
-            minions.AddRange(VillainTurnController.instance.MinionsInPlay);
-            minions.RemoveAll(x => x.Attachments.FirstOrDefault(x => (x as ICard).CardName == _card.CardName) != default);
-
-            if (minions.Count > 0) return true;
+            minions = VillainTurnController.instance.MinionsInPlay.Where(x => !x.Attachments.Any(x => (x as IEffect).Card.CardName == "Spider-Tracer")).ToList();
+            return minions.Count > 0;
         }
 
         return false;
@@ -38,8 +31,6 @@ public class SpiderTracer : PlayerCardEffect, IAttachment
     public override async Task Resolve()
     {
         await ThwartSystem.Instance.InitiateThwart(new(3, Owner));
-
-        _owner.CardsInPlay.Permanents.Remove(_card);
         _owner.Deck.Discard(Card);
     }
 
@@ -54,6 +45,9 @@ public class SpiderTracer : PlayerCardEffect, IAttachment
 
     public void WhenRemoved()
     {
+        _owner.CardsInPlay.Permanents.Remove(_card);
+        Attached.Attachments.Remove(this);
+
         if (ScenarioManager.inst.ThreatPresent())
             EffectResolutionManager.Instance.ResolvingEffects.Push(this);
     }

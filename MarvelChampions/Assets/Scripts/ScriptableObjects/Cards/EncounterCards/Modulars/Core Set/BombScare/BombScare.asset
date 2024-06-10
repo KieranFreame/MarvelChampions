@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardID: BOMBSCARE-SS-001
   cardName: Bomb Scare
-  cardDesc: 'When Revealed: Hinder 1 per player'
+  cardDesc: ACCELERATION (The main scheme gains +1 threat each Villain Phase)
   cardType: 8
   cardTraits: []
   cardArt: {fileID: 0}

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardID: RHINO-SS-002
   cardName: Crowd Control
-  cardDesc: CRISIS
+  cardDesc: CRISIS (You cannot thwart the Main Scheme)
   cardType: 8
   cardTraits: []
   cardArt: {fileID: 0}

@@ -23,7 +23,7 @@ public class Melter : EncounterCardEffect
     #region MainEffect
     private void SelectingDefender(Player player, AttackAction action)
     {
-        if (action.Card.CardName != "Melter")
+        if (action.Card != null && action.Card.CardName != "Melter")
             return;
 
         if (player.CardsInPlay.Allies.Count > 0)

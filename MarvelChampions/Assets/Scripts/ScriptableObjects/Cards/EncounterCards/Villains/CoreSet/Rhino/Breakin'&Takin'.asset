@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardID: RHINO-SS-001
   cardName: Breakin' & Takin'
-  cardDesc: Hinder 1 per player
+  cardDesc: HAZARD (You get +1 encounter cards per turn)
   cardType: 8
   cardTraits: []
   cardArt: {fileID: 0}

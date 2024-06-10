@@ -1,6 +1,5 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Tony Stark", menuName = "MarvelChampions/Identity Effects/Iron Man/Alter Ego")]
@@ -14,26 +13,19 @@ public class TonyStark : IdentityEffect
         TurnManager.OnEndPlayerPhase += Reset;
     }
 
-    public override bool CanActivate()
-    {
-        if (owner.Deck.deck.Count < 3)
-            return false;
-
-        return !hasActivated;
-    }
+    public override bool CanActivate() => !hasActivated;
 
     public override async void Activate()
     {
         hasActivated = true;
+        int cardsToGet = Math.Min(owner.Deck.deck.Count, 3);
 
-        List<CardData> data = owner.Deck.GetTop(3);
+        List<CardData> data = new();
         
-        for (int i = 0; i < 3; i++)
-        { 
-            owner.Deck.deck.RemoveAt(i);
+        for (int i = 0; i < cardsToGet; i++)
+        {
+            data.Add(owner.Deck.DealCard());
         }
-
-        owner.Deck.limbo.AddRange(data);
 
         List<ICard> cards = CardViewerUI.inst.EnablePanel(data);
 

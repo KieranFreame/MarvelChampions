@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardID: BOMBSCARE-T-001
   cardName: Explosion
-  cardDesc: ' If Bomb Scare is in play, deal X indirect damage where X is the amount
-    of threat on Bomb Scare. Else, Surge.'
+  cardDesc: Take indirect damage equal to the amount of threat on Bomb Scare. If
+    Bomb Scare is not present, Surge.
   cardType: 7
   cardTraits: []
   cardArt: {fileID: 0}

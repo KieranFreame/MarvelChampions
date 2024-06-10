@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardID: BOMBSCARE-T-002
   cardName: False Alarm
-  cardDesc: 'When Revealed: You are confused. If you are already confused, Surge'
+  cardDesc: You gain Confused. If you're already Confused, Surge
   cardType: 7
   cardTraits: []
   cardArt: {fileID: 0}

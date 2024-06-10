@@ -13,6 +13,7 @@ public class EncounterCardUI : CardUI
     [SerializeField] private Image boostIcon;
     [SerializeField] private Transform boostIconParent;
     [SerializeField] private TMP_Text effectText;
+    [SerializeField] private TMP_Text nameText;
 
     protected virtual void OnEnable()
     {
@@ -29,6 +30,7 @@ public class EncounterCardUI : CardUI
 
     protected override void LoadData()
     {
+        if (nameText != null) nameText.text = encounterCard.CardName;
         if (effectText != null) effectText.text = encounterCard.CardDesc;
 
         if (boostIconParent != null && boostIconParent.childCount > 0)

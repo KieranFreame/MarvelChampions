@@ -19,9 +19,10 @@ public class ArmoredRhinoSuit : EncounterCardEffect
         await Task.Yield();
     }
 
-    public async Task<DamageAction> OnTakeDamage(DamageAction action)
+    public Task<DamageAction> OnTakeDamage(DamageAction action)
     {
         counters.AddCounters(action.Value);
+        action.Value = 0;
 
         if (counters.CountersLeft >= 5)
         {
@@ -29,7 +30,6 @@ public class ArmoredRhinoSuit : EncounterCardEffect
             ScenarioManager.inst.EncounterDeck.Discard(Card);
         }
 
-        await Task.Yield();
-        return action;
+        return Task.FromResult(action);
     }
 }
