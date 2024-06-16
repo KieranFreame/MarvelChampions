@@ -1,20 +1,23 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Pepper Potts", menuName = "MarvelChampions/Card Effects/Iron Man/Pepper Potts")]
 public class PepperPotts : PlayerCardEffect, IGenerate
 {
-    public bool CanGenerateResource(ICard cardToPlay)
+    public override Task OnEnterPlay()
     {
-        if (_card.Exhausted)
-            return false;
+        _owner.resourceGenerators.Add(CanGenerateResource);
+        return Task.CompletedTask;
+    }
 
-        if (_owner.Deck.discardPile.Count == 0)
-            return false;
+    public int CanGenerateResource()
+    {
+        if (_card.Exhausted || _owner.Deck.discardPile.Count == 0)
+            return 0;
 
-        return true;
+        return ((PlayerCardData)_owner.Deck.discardPile.Last()).cardResources.Count;
     }
 
     public bool CompareResource(Resource resource)
@@ -34,5 +37,10 @@ public class PepperPotts : PlayerCardEffect, IGenerate
     public int ResourceCount()
     {
         return (_owner.Deck.discardPile.Last() as PlayerCardData).cardResources.Count;
+    }
+
+    public override void OnExitPlay()
+    {
+        _owner.resourceGenerators.Remove(CanGenerateResource);
     }
 }

@@ -25,14 +25,6 @@ public class PlayerCard : MonoBehaviour, ICard, IExhaust
         TurnManager.OnEndPlayerPhase += Ready;
     }
 
-    protected virtual void OnDisable()
-    {
-        if ((InPlay || Owner.Hand.Contains(this)) && Effect != null)
-            Effect.OnExitPlay();
-
-        TurnManager.OnEndPlayerPhase -= Ready;
-    }
-
     private void OnDestroy()
     {
         if ((InPlay || Owner.Hand.Contains(this)) && Effect != null)
@@ -62,15 +54,11 @@ public class PlayerCard : MonoBehaviour, ICard, IExhaust
         SetupComplete?.Invoke();
     }
 
-    public async Task OnEnterPlay()
-    {
-        await Effect.OnEnterPlay();
-    }
     public virtual void Ready()
     {
         if (_exhausted)
         {
-            if (TryGetComponent<Animator>(out _animator))
+            if (TryGetComponent(out _animator))
                 _animator.Play("Ready");
 
             _exhausted = false;

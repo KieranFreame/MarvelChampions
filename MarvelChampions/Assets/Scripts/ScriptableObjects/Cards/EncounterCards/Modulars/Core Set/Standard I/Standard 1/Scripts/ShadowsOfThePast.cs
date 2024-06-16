@@ -7,11 +7,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Shadows of the Past", menuName = "MarvelChampions/Card Effects/Standard I/Shadows of the Past")]
 public class ShadowsOfThePast : EncounterCardEffect
 {
-    Identity identity;
-
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
-        identity = player.Identity;
+        var player = TurnManager.instance.CurrPlayer;
+        var identity = player.Identity;
         string databaseId = string.Concat(identity.Hero.Name.Where(c => !char.IsWhiteSpace(c))) + "Nemesis.txt";
 
         if (ScenarioManager.inst.SOTPResolved)

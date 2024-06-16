@@ -1,31 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Caught Off Guard", menuName = "MarvelChampions/Card Effects/Standard I/Caught Off Guard")]
 public class CaughtOffGuard : EncounterCardEffect
 {
-    Player _player;
-
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
-        _owner = owner;
-        Card = card;
-        _player = player;
-
-        if (player.CardsInPlay.Permanents.Count == 0)
-            ScenarioManager.inst.Surge(player);
-        else
-            await DiscardUpgradeOrSupport();
-        
-    }
-
-    private async Task DiscardUpgradeOrSupport()
-    {
+        var _player = TurnManager.instance.CurrPlayer;
         List<PlayerCard> playerCards = new();
 
-        playerCards.AddRange(_player.CardsInPlay.Permanents);
+        playerCards.AddRange(_player.CardsInPlay.Permanents.Where(x => x.CardType == CardType.Upgrade || x.CardType == CardType.Support));
 
         if (playerCards.Count == 0)
         {

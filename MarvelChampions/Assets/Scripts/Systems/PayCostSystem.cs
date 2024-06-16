@@ -93,7 +93,7 @@ public class PayCostSystem : MonoBehaviour
 
                             if (!_effects.Contains(eff))
                             {
-                                if (eff.CanGenerateResource(cardToPlay))
+                                if (eff.CanGenerateResource() > 0)
                                 {
                                     _effects.Add(eff);
                                     resourceCount++;
@@ -167,7 +167,7 @@ public class PayCostSystem : MonoBehaviour
                     {
                         PlayerCard card = r.gameObject.GetComponent<PlayerCard>();
 
-                        if (card.Resources.Contains(resourceToCheck) || card.Resources.Contains(Resource.Wild) || resourceToCheck == Resource.Any)
+                        if (card.Resources.Contains(resourceToCheck) || card.Resources.Contains(Resource.Wild) || resourceToCheck == Resource.Any || card.Effect is IGenerate)
                         {
                             resourceCount += HandleCardSelected(card);
                             continue;
@@ -267,7 +267,7 @@ public class PayCostSystem : MonoBehaviour
                 IGenerate eff = card.Effect as IGenerate;
                 if (!_effects.Contains(eff))
                 {
-                    if (eff.CanGenerateResource(_cardToPlay))
+                    if (eff.CanGenerateResource() > 0)
                     {
                         _effects.Add(eff);
                         return eff.ResourceCount();

@@ -24,9 +24,9 @@ public class HydraFlameSoldier : EncounterCardEffect
 
     private void DefenderSelected(ICharacter target, AttackAction action)
     {
-        if (action.Card == Card as ICard)
+        if (action.Card == Card)
             if (target == null)
-                EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+                Debug.Log("FUCK");//EffectManager.Inst.Resolving.Push(this);
     }
 
     public override async Task Resolve()

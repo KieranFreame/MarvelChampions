@@ -1,17 +1,13 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class Villain : MonoBehaviour, ICharacter
 {
     //public VillainData data;
     public ObservableCollection<IAttachment> Attachments { get; set; } = new();
-    public string VillainName { get; set; }
-    public List<string> VillainTraits { get; private set; }
+    public string Name { get; set; }
+    public HashSet<string> VillainTraits { get; private set; }
     public VillainEffect VillainEffect { get; private set; }
     public Sprite Art { get; set; }
     public bool CanAttack { get; set; } = true;
@@ -26,8 +22,8 @@ public class Villain : MonoBehaviour, ICharacter
 
     public async void LoadData(VillainData data)
     {
-        VillainName = data.villainName;
-        VillainTraits = data.villainTraits;
+        Name = data.villainName;
+        VillainTraits = new(data.villainTraits);
         VillainEffect = data.villainEffect;
 
         Art = data.villainArt;

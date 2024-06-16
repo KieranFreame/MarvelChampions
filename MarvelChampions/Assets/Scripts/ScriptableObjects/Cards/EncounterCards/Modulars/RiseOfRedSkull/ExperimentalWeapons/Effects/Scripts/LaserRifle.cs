@@ -25,7 +25,7 @@ public class LaserRifle : EncounterCardEffect, IAttachment
 
     public override async Task Activate(Player player)
     {
-        List<Task> tasks = new List<Task>() 
+        List<Task> tasks = new() 
         { 
             PayCostSystem.instance.GetResources(Resource.Energy, 1),
             PayCostSystem.instance.GetResources(Resource.Physical, 1)
@@ -43,7 +43,7 @@ public class LaserRifle : EncounterCardEffect, IAttachment
     public void Attach()
     {
         Attached.CharStats.Attacker.CurrentAttack++;
-        Attached.CharStats.Attacker.Keywords.Add("Ranged");
+        Attached.CharStats.Attacker.Keywords.Add(Keywords.Ranged);
 
         Attached.Attachments.Add(this);
     }
@@ -51,7 +51,7 @@ public class LaserRifle : EncounterCardEffect, IAttachment
     public void Detach()
     {
         Attached.CharStats.Attacker.CurrentAttack--;
-        Attached.CharStats.Attacker.Keywords.Remove("Ranged");
+        Attached.CharStats.Attacker.Keywords.Remove(Keywords.Ranged);
 
         Attached.Attachments.Remove(this);
     }

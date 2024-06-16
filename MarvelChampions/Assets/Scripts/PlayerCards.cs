@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerCards
@@ -14,10 +15,7 @@ public class PlayerCards
     public int AllyLimit
     {
         get => allyLimit;
-        set
-        {
-            allyLimit = value;
-        }
+        set => allyLimit = value;
     }
 
     public bool ReachedAllyLimit() => Allies.Count > AllyLimit;
@@ -25,21 +23,18 @@ public class PlayerCards
 
     public bool HaveResource(Resource resource)
     {
-        foreach (var card in Permanents)
+        foreach (var card in Permanents.Where(x => x.Effect is IGenerate))
         {
-            if (card.Effect is IGenerate)
-            {
-                IGenerate eff = card.Effect as IGenerate;
+            IGenerate eff = card.Effect as IGenerate;
 
-                if (eff.CompareResource(resource))
-                    return true;
-            }
+            if (eff.CompareResource(resource))
+                return true;
         }
 
         return false;
     }
     
-    public int HaveResource(Resource resource, int amount = 1)
+    public int GetResourceCount(Resource resource = Resource.Any)
     {
         int count = 0;
 
@@ -49,7 +44,7 @@ public class PlayerCards
             {
                 IGenerate eff = card.Effect as IGenerate;
 
-                if (eff.CompareResource(resource))
+                if (eff.CompareResource(resource) || resource == Resource.Any)
                     count++;
             }
         }

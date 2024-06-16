@@ -22,7 +22,7 @@ public class ScenarioManager : MonoBehaviour
 
     public VillainData villain;
 
-    public List<CardData> obligations { get; set; } = new();
+    public List<CardData> Obligations { get; set; } = new();
 
     public List<CardData> RemovedFromGame { get; private set; } = new();
 
@@ -34,12 +34,8 @@ public class ScenarioManager : MonoBehaviour
     [SerializeField] private HashSet<string> encounterSets;
     public HashSet<string> EncounterSets {
         get
-        { 
-            if (encounterSets == null)
-            {
-                encounterSets = new();
-            } 
-
+        {
+            encounterSets ??= new();
             return encounterSets;
         }
         set => encounterSets = value; 
@@ -84,7 +80,7 @@ public class ScenarioManager : MonoBehaviour
             EncounterDeck.AddToDeck(TextReader.PopulateDeck("Modulars/" + string.Concat(s.Where(c => !char.IsWhiteSpace(c))) + ".txt"));
         }
 
-        EncounterDeck.AddToDeck(obligations);
+        EncounterDeck.AddToDeck(Obligations);
 
         /*EncounterDeck.AddToDeck(TextReader.PopulateDeck("Standard.txt"));
 

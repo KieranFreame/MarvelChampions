@@ -30,6 +30,6 @@ public class Tackle : PlayerCardEffect
         target.CharStats.Attacker.Stunned = true;
 
         if (PayCostSystem.instance.Resources.Contains(Resource.Physical) || PayCostSystem.instance.Resources.Contains(Resource.Wild))
-            await _owner.CharStats.InitiateAttack(new(3, target, owner: _owner, card: Card));
+            await _owner.CharStats.InitiateAttack(new(3, target, AttackType.Card, owner: _owner, card: Card));
     }
 }

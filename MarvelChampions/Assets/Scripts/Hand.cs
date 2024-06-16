@@ -18,7 +18,9 @@ public class Hand
         cards.Add(card);
         card.PrevZone = card.CurrZone;
         card.CurrZone = Zone.Hand;
-        card.Effect?.OnDrawn();
+
+        if (card.Effect != null)
+            card.Effect.OnDrawn();
     }
 
     public bool Contains(PlayerCard card)
@@ -30,7 +32,9 @@ public class Hand
     {
         if (cards.Contains(card))
         {
-            card.Effect?.OnDiscard();
+            if (card.Effect != null)
+                card.Effect.OnDiscard();
+
             cards.Remove(card);
         }
     }

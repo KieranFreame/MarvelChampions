@@ -61,7 +61,6 @@ public class ConfirmActivateUI : MonoBehaviour
     {
         activate = true;
         choiceMade = true;
-        
     }
 
     public void NoActivate()

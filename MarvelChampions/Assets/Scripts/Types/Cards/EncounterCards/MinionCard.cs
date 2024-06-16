@@ -6,6 +6,7 @@ using UnityEngine.Events;
 
 public class MinionCard : EncounterCard, ICharacter
 {
+    public string Name { get => CardName; }
     public ObservableCollection<IAttachment> Attachments { get; set; } = new();
     public int BaseAttack { get => (Data as MinionCardData).baseAttack; }
     public int BaseScheme { get => (Data as MinionCardData).baseScheme; }

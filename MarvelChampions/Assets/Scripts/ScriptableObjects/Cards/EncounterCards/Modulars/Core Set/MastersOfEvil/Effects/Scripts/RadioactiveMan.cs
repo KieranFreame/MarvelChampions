@@ -13,15 +13,17 @@ namespace CoreSet
             _owner = owner;
             Card = card;
 
-            AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
+            GameStateManager.Instance.OnActivationCompleted += CanRespond;
 
             return Task.CompletedTask;
         }
 
-        private void IsTriggerMet(AttackAction action)
+        private async void CanRespond(Action action)
         {
-            if (action.Card.CardName == "Radioactive Man")
-                EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+            if (action is not AttackAction || ((AttackAction)action).Card.CardName != "Radioactive Man")
+                return;
+
+            await EffectManager.Inst.AddEffect(_card, this);
         }
 
         public override Task Resolve()
@@ -56,8 +58,7 @@ namespace CoreSet
 
         public override Task WhenDefeated()
         {
-            AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
-
+            GameStateManager.Instance.OnActivationCompleted -= CanRespond;
             return Task.CompletedTask;
         }
     }

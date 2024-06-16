@@ -9,14 +9,11 @@ public class ArmoredRhinoSuit : EncounterCardEffect
 {
     private Counters counters;
 
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task Resolve()
     {
-        _owner = owner;
-        Card = card;
-
         counters = _card.gameObject.AddComponent<Counters>();
         _owner.CharStats.Health.Modifiers.Add(OnTakeDamage);
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 
     public Task<DamageAction> OnTakeDamage(DamageAction action)

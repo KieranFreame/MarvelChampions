@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class AllyCard : PlayerCard, ICharacter, IExhaust
 {
+    public string Name { get => CardName; }
     public ObservableCollection<IAttachment> Attachments { get; set; } = new();
     public CharacterStats CharStats { get; set; }
     public int ThwartConsq { get; set; }

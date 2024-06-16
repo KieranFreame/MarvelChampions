@@ -14,7 +14,7 @@ public class Payoff : EncounterCardEffect
 
     public override Task Boost(Action action)
     {
-        if (ScenarioManager.inst.ActiveVillain.VillainName == "Norman Osborn")
+        if (ScenarioManager.inst.ActiveVillain.Name == "Norman Osborn")
         {
             RiskyBusiness.Instance.environment.AddCounters(1);
         }

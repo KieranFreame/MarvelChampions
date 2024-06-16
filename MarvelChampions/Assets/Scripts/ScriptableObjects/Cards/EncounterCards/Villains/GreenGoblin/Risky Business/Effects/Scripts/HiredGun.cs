@@ -8,7 +8,7 @@ public class HiredGun : EncounterCardEffect
 {
     public override async Task WhenRevealed(Villain owner, EncounterCard card, Player player)
     {
-        if (owner.VillainName != "Norman Osborn")
+        if (owner.Name != "Norman Osborn")
         {
             BoostSystem.Instance.BoostCardCount++;
             return;
@@ -29,7 +29,7 @@ public class HiredGun : EncounterCardEffect
 
     public override Task Boost(Action action)
     {
-        if (ScenarioManager.inst.ActiveVillain.VillainName == "Norman Osborn")
+        if (ScenarioManager.inst.ActiveVillain.Name == "Norman Osborn")
         {
             RiskyBusiness.Instance.environment.AddCounters(1);
         }

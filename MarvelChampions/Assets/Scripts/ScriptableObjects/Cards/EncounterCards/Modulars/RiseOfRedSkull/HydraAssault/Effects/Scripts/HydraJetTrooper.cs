@@ -19,7 +19,7 @@ public class HydraJetTrooper : EncounterCardEffect
     public override Task Boost(Action action)
     {
         if (TurnManager.instance.CurrPlayer.Identity.ActiveIdentity is not Hero)
-            EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+            EffectManager.Inst.Resolving.Push(this);
 
         return Task.CompletedTask;
     }

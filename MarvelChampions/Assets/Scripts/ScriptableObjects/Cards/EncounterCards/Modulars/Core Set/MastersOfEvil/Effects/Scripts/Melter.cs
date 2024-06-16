@@ -30,13 +30,13 @@ public class Melter : EncounterCardEffect
         {
             CancelButton.CanEnable = false;
             DefendSystem.Instance.candidates.Remove(player);
-            AttackSystem.Instance.OnAttackCompleted.Add(AttackCompleted);
+            GameStateManager.Instance.OnActivationCompleted += AttackCompleted;
         }
     }
 
     private void AttackCompleted(Action action)
     {
-        AttackSystem.Instance.OnAttackCompleted.Remove(AttackCompleted);
+        GameStateManager.Instance.OnActivationCompleted -= AttackCompleted;
         CancelButton.CanEnable = true;
     }
     #endregion

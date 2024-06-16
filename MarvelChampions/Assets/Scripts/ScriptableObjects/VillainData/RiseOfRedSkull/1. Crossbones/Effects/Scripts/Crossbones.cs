@@ -22,13 +22,13 @@ public class Crossbones : VillainEffect
 
         if (attachments.Any(x => (x as ICard).CardTraits.Contains("Weapon")))
         {
-            if (!_owner.CharStats.Attacker.Keywords.Contains("Piercing"))
-                _owner.CharStats.Attacker.Keywords.Add("Piercing");
+            if (!_owner.CharStats.Attacker.Keywords.Contains(Keywords.Piercing))
+                _owner.CharStats.Attacker.Keywords.Add(Keywords.Piercing);
         }
         else
         {
-            if (_owner.CharStats.Attacker.Keywords.Contains("Piercing"))
-                _owner.CharStats.Attacker.Keywords.Remove("Piercing");
+            if (_owner.CharStats.Attacker.Keywords.Contains(Keywords.Piercing))
+                _owner.CharStats.Attacker.Keywords.Remove(Keywords.Piercing);
         }
     }
 

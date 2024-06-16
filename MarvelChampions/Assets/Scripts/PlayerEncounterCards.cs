@@ -1,17 +1,18 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class PlayerEncounterCards
 {
-    private Transform transform;
+    Transform transform;
     public List<CardData> EncounterCards = new();
+    TMP_Text ui;
 
     public PlayerEncounterCards(Transform parent)
     {
         transform = parent;
+        ui = GameObject.Find("ECCount").GetComponent<TMP_Text>();
     }
 
     public async Task RevealEncounterCards()
@@ -23,8 +24,13 @@ public class PlayerEncounterCards
             await RevealEncounterCardSystem.Instance.InitiateRevealCard(card as EncounterCard);
 
             EncounterCards.RemoveAt(0);
+            ui.text = EncounterCards.Count.ToString();
         }
     }
 
-    public void AddCard(CardData card) => EncounterCards.Add(card);
+    public void AddCard(CardData card)
+    {
+        EncounterCards.Add(card);
+        ui.text = EncounterCards.Count.ToString();
+    }
 }

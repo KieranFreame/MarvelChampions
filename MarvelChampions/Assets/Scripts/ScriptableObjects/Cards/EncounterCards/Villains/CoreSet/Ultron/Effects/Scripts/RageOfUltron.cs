@@ -18,7 +18,7 @@ public class RageOfUltron : EncounterCardEffect
         else
             await owner.CharStats.InitiateAttack();
 
-        EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+        EffectManager.Inst.Resolving.Push(this);
     }
 
     public override Task Resolve()

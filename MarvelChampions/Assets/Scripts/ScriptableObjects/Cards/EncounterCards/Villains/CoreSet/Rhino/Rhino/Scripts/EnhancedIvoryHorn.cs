@@ -6,11 +6,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Enhanced Ivory Horn", menuName = "MarvelChampions/Card Effects/Rhino/Enhanced Ivory Horn")]
 public class EnhancedIvoryHorn : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
-        _owner = owner;
-        Card = card;
-
         _owner.CharStats.Attacker.CurrentAttack += 1;
         await Task.Yield();
     }

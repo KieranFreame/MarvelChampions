@@ -76,6 +76,6 @@ public class ThwartSystem// : MonoBehaviour
             OnThwartComplete[i](action);
         }
 
-        await EffectResolutionManager.Instance.ResolveEffects();
+        //await EffectManager.Instance.ResolveEffects();
     }
 }

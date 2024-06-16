@@ -37,7 +37,7 @@ public class Monster : EncounterCardEffect
 
     public override Task Boost(Action action)
     {
-        EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+        EffectManager.Inst.Resolving.Push(this);
         return Task.CompletedTask;
     }
     #endregion

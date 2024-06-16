@@ -34,7 +34,7 @@ public class Attacker
     }
     #endregion
     public ICharacter Owner { get; private set; }
-    public List<string> Keywords { get; private set; } = new();
+    public List<Keywords> Keywords { get; private set; } = new();
 
     public delegate Task<AttackAction> CancelAttack(AttackAction action);
     public List<CancelAttack> AttackCancel { get; private set; } = new();
@@ -58,7 +58,6 @@ public class Attacker
     {
         Owner = owner;
         CurrentAttack = BaseATK = data.baseATK;
-        Keywords.Add("Basic");
     }
     public Attacker(Villain owner)
     {
@@ -84,7 +83,7 @@ public class Attacker
             return null;
         }
 
-        action ??= new AttackAction(CurrentAttack, targets:new() { TargetType.TargetVillain, TargetType.TargetMinion }, _keywords: Keywords, owner: Owner);
+        action ??= new AttackAction(CurrentAttack, new List<TargetType>() { TargetType.TargetVillain, TargetType.TargetMinion }, AttackType.Basic, _keywords: Keywords, owner: Owner);
 
         for (int i = AttackCancel.Count-1; i >= 0; i--)
         {

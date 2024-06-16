@@ -20,7 +20,7 @@ public class GoblinKnight : EncounterCardEffect
     private void IsTriggerMet(AttackAction action)
     {
         if (action.Card == Card as ICard)
-            EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+            EffectManager.Inst.Resolving.Push(this);
     }
 
     public override async Task Resolve()
@@ -57,7 +57,7 @@ public class GoblinKnight : EncounterCardEffect
     #region Boost
     public override Task Boost(Action action)
     {
-        EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+        EffectManager.Inst.Resolving.Push(this);
         return Task.CompletedTask;
     }
     #endregion

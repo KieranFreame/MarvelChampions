@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,24 +8,50 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Enhanced Spider-Sense", menuName = "MarvelChampions/Card Effects/Spider-Man (Peter Parker)/Enhanced Spider-Sense")]
 public class EnhancedSpiderSense : PlayerCardEffect, IOptional
 {
+    /// <summary>
+    /// When a treachery card is revealed, cancel its When Revealed effects
+    /// </summary>
+
     public override void OnDrawn()
     {
-        RevealEncounterCardSystem.Instance.EffectCancelers.Add(this);
+        EffectManager.Inst.OnEffectActivated += CanRespond;
     }
 
-    public override bool CanResolve()
+    void CanRespond(ICard card)
     {
-        return RevealEncounterCardSystem.Instance.CardToReveal.CardType == CardType.Treachery && _owner.ResourcesAvailable(_card) >= _card.CardCost;    
+        if (card.CardType == CardType.Treachery && _owner.ResourcesAvailable(_card) >= 1)
+            EffectManager.Inst.Responding.Add(this);
     }
 
-    public override async Task Resolve()
+    public override Task OnEnterPlay()
     {
-        await PlayCardSystem.Instance.InitiatePlayCard(new(_card));
+        EffectManager.Inst.OnEffectActivated -= CanRespond;
+        EffectManager.Inst.Responding.RemoveAll(x => x.Card.CardName == "Enhanced Spider-Sense");
+
+        return Task.CompletedTask;
+    }
+
+    public override Task Resolve()
+    {
+        Stack<IEffect> stack = new();
+
+        while (EffectManager.Inst.Resolving.Count != 0 && EffectManager.Inst.Resolving.Peek().Card.CardType is not CardType.Treachery)
+        {
+            stack.Push(EffectManager.Inst.Resolving.Pop());
+        }
+
+        EffectManager.Inst.Resolving.Pop(); //Cancel effect
+
+        while (stack.Count > 0)
+        {
+            EffectManager.Inst.Resolving.Push(stack.Pop());
+        }
+
+        return Task.CompletedTask;
     }
 
     public override void OnDiscard()
     {
-        RevealEncounterCardSystem.Instance.EffectCancelers.Remove(this);
+        EffectManager.Inst.OnEffectActivated -= CanRespond;
     }
-
 }

@@ -6,9 +6,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Sandman", menuName = "MarvelChampions/Card Effects/Rhino/Sandman")]
 public class Sandman : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task Resolve()
     {
-        (card as MinionCard).CharStats.Health.Tough = true;
-        await Task.Yield();
+        ((MinionCard)_card).CharStats.Health.Tough = true;
+        return Task.CompletedTask;
     }
 }

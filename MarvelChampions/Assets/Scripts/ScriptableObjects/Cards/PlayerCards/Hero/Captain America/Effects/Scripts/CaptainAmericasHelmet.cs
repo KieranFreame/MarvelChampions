@@ -9,20 +9,21 @@ public class CaptainAmericasHelmet : PlayerCardEffect
 {
     public override Task OnEnterPlay()
     {
-        _owner.CharStats.Health.Defeated.Add(Defeated);
+        GameStateManager.Instance.OnCharacterDefeated += Defeated;
 
         return Task.CompletedTask;
     }
 
-    private void Defeated()
+    private void Defeated(ICharacter player)
     {
+        if (player !=(ICharacter) _owner) return;
+
         _owner.CharStats.Health.CurrentHealth = 1;
-        _owner.CharStats.Health.Defeated.Remove(Defeated);
         _owner.Deck.Discard(Card);
     }
 
     public override void OnExitPlay()
     {
-        _owner.CharStats.Health.Defeated.Remove(Defeated);
+        GameStateManager.Instance.OnCharacterDefeated -= Defeated;
     }
 }

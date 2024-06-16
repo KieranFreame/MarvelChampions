@@ -12,13 +12,13 @@ public class EnhancedReflexes : PlayerCardEffect, IGenerate
     {
         energy = _card.gameObject.AddComponent<Counters>();
         energy.AddCounters(3);
-
+        _owner.resourceGenerators.Add(CanGenerateResource);
         return Task.CompletedTask;
     }
 
-    public bool CanGenerateResource(ICard cardToPlay)
+    public int CanGenerateResource()
     {
-        return !_card.Exhausted;
+        return (!_card.Exhausted) ? 1 : 0;
     }
 
     public bool CompareResource(Resource resource)

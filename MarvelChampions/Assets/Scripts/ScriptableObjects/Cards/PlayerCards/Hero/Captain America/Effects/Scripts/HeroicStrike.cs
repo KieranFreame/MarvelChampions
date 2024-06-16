@@ -10,7 +10,7 @@ public class HeroicStrike : PlayerCardEffect
 {
     public override async Task OnEnterPlay()
     {   
-        if (await _owner.CharStats.InitiateAttack(new(6, targets: new() { TargetType.TargetVillain, TargetType.TargetMinion }, owner: _owner, card: Card)))
+        if (await _owner.CharStats.InitiateAttack(new(6, targets: new() { TargetType.TargetVillain, TargetType.TargetMinion }, attackType: AttackType.Card, owner: _owner, card: Card)))
         {
             ICharacter target = AttackSystem.Instance.Action.Target;
 

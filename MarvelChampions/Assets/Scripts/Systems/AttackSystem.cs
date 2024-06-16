@@ -12,9 +12,7 @@ public class AttackSystem
     {
         get
         {
-            if (instance == null)
-                instance = new AttackSystem();
-
+            instance ??= new AttackSystem();
             return instance;
         }
     }
@@ -56,10 +54,10 @@ public class AttackSystem
     }
     private void CheckKeywords()
     {
-        if (Action.Keywords.Contains("Piercing"))
+        if (Action.Keywords.Contains(Keywords.Piercing))
             Action.Target.CharStats.Health.Tough = false;
 
-        if (Action.Keywords.Contains("Overkill"))
+        if (Action.Keywords.Contains(Keywords.Overkill))
             if (Action.Target is not Player && Action.Target is not Villain)
                 Excess = Action.Value - Action.Target.CharStats.Health.CurrentHealth;
     }
@@ -73,7 +71,7 @@ public class AttackSystem
         ResetSystem();
 
         if (Target == null)
-            await FriendlyAttack();
+            await PlayerAttack();
         else
             await EnemyAttack();
 
@@ -87,15 +85,11 @@ public class AttackSystem
             await DamageSystem.Instance.ApplyDamage(new DamageAction(overkillTarget, Excess, card: action.Card));
         }
 
-        for (int i = OnAttackCompleted.Count -1; i >= 0; i--)
-        {
-            OnAttackCompleted[i](Action);
-        }
-
-        await EffectResolutionManager.Instance.ResolveEffects();
+        GameStateManager.Instance.ActivationCompleted(action);
+        await EffectManager.Inst.CheckResponding();
     }
 
-    private async Task FriendlyAttack()
+    private async Task PlayerAttack()
     {
         List<ICharacter> enemies = new();
         enemies.AddRange(VillainTurnController.instance.MinionsInPlay);
@@ -113,14 +107,14 @@ public class AttackSystem
 
     private async Task EnemyAttack()
     {
-        if (Action.Owner is Villain || Action.Keywords.Contains("Villainous"))
+        if (Action.Owner is Villain || Action.Keywords.Contains(Keywords.Villainous))
         {
             BoostSystem.Instance.DealBoostCards();
         }
 
         Action.Target = await DefendSystem.Instance.GetDefender(TurnManager.instance.CurrPlayer, Action);
 
-        if (Action.Owner is Villain || Action.Keywords.Contains("Villainous"))
+        if (Action.Owner is Villain || Action.Keywords.Contains(Keywords.Villainous))
            Action.Value += await BoostSystem.Instance.FlipCard(Action);
     }
     #endregion

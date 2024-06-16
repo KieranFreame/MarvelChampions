@@ -1,19 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Biokinetic Polymer Suit", menuName = "MarvelChampions/Card Effects/Ms Marvel/Biokinetic Polymer Suit")]
 public class BiokineticPolymerSuit : PlayerCardEffect, IGenerate
 {
-    public bool CanGenerateResource(ICard cardToPlay)
+    public override Task Resolve()
+    {
+        _owner.resourceGenerators.Add(CanGenerateResource);
+        return Task.CompletedTask;
+    }
+
+    public int CanGenerateResource()
     {
         if (_card.Exhausted)
-            return false;
+            return 0;
 
-        if (cardToPlay.CardType != CardType.Event) 
-            return false;
-
-        return true;
+        return 1;
     }
 
     public bool CompareResource(Resource resource)

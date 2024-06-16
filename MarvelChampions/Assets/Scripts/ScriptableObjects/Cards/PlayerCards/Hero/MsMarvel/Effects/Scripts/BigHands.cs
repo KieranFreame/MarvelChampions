@@ -8,6 +8,6 @@ public class BigHands : PlayerCardEffect
 {
     public override async Task OnEnterPlay()
     {
-        await _owner.CharStats.InitiateAttack(new(4, targets: new() { TargetType.TargetVillain, TargetType.TargetMinion }, owner:_owner));
+        await _owner.CharStats.InitiateAttack(new(4, new List<TargetType>() { TargetType.TargetVillain, TargetType.TargetMinion }, AttackType.Card, owner:_owner));
     }
 }

@@ -9,7 +9,7 @@ public class OneTwoPunch : PlayerCardEffect, IOptional
 {
     public override void OnDrawn()
     {
-        AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
+        GameStateManager.Instance.OnActivationCompleted += IsTriggerMet;
     }
 
     public override bool CanBePlayed()
@@ -17,30 +17,27 @@ public class OneTwoPunch : PlayerCardEffect, IOptional
         return false;
     }
 
-    private void IsTriggerMet(AttackAction action)
+    private void IsTriggerMet(Action action)
     {
-        if (action.Keywords.Contains("Basic"))
-            if ((action.Owner as Player).Identity.IdentityName == "She-Hulk")
-                EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+        if (action is not AttackAction || action.Owner.Name != "She-Hulk") return;
+
+        var attack = (AttackAction)action;
+
+        if (attack.AttackType == AttackType.Basic && _owner.ResourcesAvailable(_card) >= _card.CardCost)
+            EffectManager.Inst.Responding.Add(this);
     }
 
-    public override bool CanActivate()
+    public override Task Resolve()
     {
-        return _owner.ResourcesAvailable(_card) < _card.CardCost;
-    }
-
-    public override async Task Resolve()
-    {
-        await PlayCardSystem.Instance.InitiatePlayCard(new(_card));
-
-        AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
         _owner.Ready();
-
+        GameStateManager.Instance.OnActivationCompleted -= IsTriggerMet;
         _owner.Deck.Discard(_card);
+
+        return Task.CompletedTask;
     }
 
     public override void OnDiscard()
     {
-        AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
+        GameStateManager.Instance.OnActivationCompleted -= IsTriggerMet;
     }
 }

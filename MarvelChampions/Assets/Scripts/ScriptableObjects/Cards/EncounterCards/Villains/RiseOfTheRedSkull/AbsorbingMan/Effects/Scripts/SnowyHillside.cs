@@ -29,7 +29,7 @@ public class SnowyHillside : EncounterCardEffect
     {
         if (target == null)
         {
-            EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+            EffectManager.Inst.Resolving.Push(this);
         }
     }
 
@@ -55,7 +55,7 @@ public class SnowyHillside : EncounterCardEffect
     public override Task Boost(Action action)
     {
         isBoost = true;
-        EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+        EffectManager.Inst.Resolving.Push(this);
 
         return Task.CompletedTask;
     }

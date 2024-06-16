@@ -29,7 +29,7 @@ public class DenseForest : EncounterCardEffect
     {
         if (arg0 == null)
         {
-            EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+            EffectManager.Inst.Resolving.Push(this);
         }
     }
 
@@ -59,7 +59,7 @@ public class DenseForest : EncounterCardEffect
     public override Task Boost(Action action)
     {
         isBoost = true;
-        EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+        EffectManager.Inst.Resolving.Push(this);
 
         return Task.CompletedTask;
     }

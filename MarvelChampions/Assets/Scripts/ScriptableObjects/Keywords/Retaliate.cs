@@ -15,7 +15,7 @@ public class Retaliate
         _damage = damage;
         _health = _owner.CharStats.Health;
 
-        _health.Defeated.Add(WhenDefeated);
+        GameStateManager.Instance.OnCharacterDefeated += WhenDefeated;
         _health.OnTakeDamage += Effect;
     }
 
@@ -25,15 +25,17 @@ public class Retaliate
             await DamageSystem.Instance.ApplyDamage(new(action.Owner, _damage));
     }
 
-    private void WhenDefeated()
+    private void WhenDefeated(ICharacter defeated)
     {
-        _health.Defeated.Remove(WhenDefeated);
+        if (defeated != _owner) return;
+
+        GameStateManager.Instance.OnCharacterDefeated -= WhenDefeated;
         _health.OnTakeDamage -= Effect;
     }
 
     public void WhenRemoved()
     {
-        _health.Defeated.Remove(WhenDefeated);
+        GameStateManager.Instance.OnCharacterDefeated -= WhenDefeated;
         _health.OnTakeDamage -= Effect;
     }
 
@@ -41,12 +43,12 @@ public class Retaliate
     {
         if (subscribe)
         {
-            _health.Defeated.Add(WhenDefeated);
+            GameStateManager.Instance.OnCharacterDefeated += WhenDefeated;
             _health.OnTakeDamage += Effect;
         }
         else
         {
-            _health.Defeated.Remove(WhenDefeated);
+            GameStateManager.Instance.OnCharacterDefeated -= WhenDefeated;
             _health.OnTakeDamage -= Effect;
         }
     }

@@ -9,8 +9,7 @@ public class DeckUI : MonoBehaviour
 {
     private Player owner;
     [SerializeField] private TMP_Text deckCountText;
-
-    
+    [SerializeField] private TMP_Text discardCountText;
 
     private void Awake()
     {
@@ -23,9 +22,10 @@ public class DeckUI : MonoBehaviour
         owner.Deck.DeckChanged += DeckCountChanged;
     }
 
-    private void DeckCountChanged(CardData data)
+    private void DeckCountChanged()
     {
         deckCountText.text = owner.Deck.deck.Count.ToString();
+        discardCountText.text = owner.Deck.discardPile.Count.ToString();
     }
 
     private void OnMouseDown()

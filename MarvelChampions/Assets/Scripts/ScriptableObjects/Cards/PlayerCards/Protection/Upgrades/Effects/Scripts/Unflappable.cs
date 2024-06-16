@@ -48,7 +48,7 @@ public class Unflappable : PlayerCardEffect
         _owner.CharStats.Health.OnTakeDamage -= IsTriggerMet;
 
         if (damage.Value == 0)
-            EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+            EffectManager.Inst.Resolving.Push(this);
     }
 
     public override void OnExitPlay()

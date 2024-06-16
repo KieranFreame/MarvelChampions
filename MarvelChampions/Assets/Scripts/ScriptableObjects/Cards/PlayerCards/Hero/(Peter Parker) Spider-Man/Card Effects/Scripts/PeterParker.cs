@@ -13,9 +13,9 @@ public class PeterParker : IdentityEffect, IGenerate
         TurnManager.OnStartPlayerPhase += Reset;
     }
 
-    public bool CanGenerateResource(ICard cardToPlay)
+    public int CanGenerateResource()
     {
-        return !hasActivated;
+        return (!hasActivated) ? 1 : 0;
     }
 
     public List<Resource> GenerateResource()

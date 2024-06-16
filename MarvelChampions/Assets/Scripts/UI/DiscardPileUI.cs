@@ -14,7 +14,7 @@ public class DiscardPileUI : MonoBehaviour
     private void Awake()
     {
         owner = TurnManager.instance.CurrPlayer;
-        owner.Deck.DiscardChanged += UpdateDiscardCount;
+        //owner.Deck.DiscardChanged += UpdateDiscardCount;
     }
 
     private void UpdateDiscardCount()

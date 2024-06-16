@@ -11,15 +11,15 @@ public class Hulk : PlayerCardEffect
 
     public override Task OnEnterPlay()
     {
-        AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
+        GameStateManager.Instance.OnActivationCompleted += IsTriggerMet;
         (Card as AllyCard).CanThwart = false;
         return Task.CompletedTask;
     }
 
-    public void IsTriggerMet(AttackAction action)
+    public async void IsTriggerMet(Action action)
     {
-        if (action.Owner == Card as ICharacter)
-            EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+        if (action is AttackAction && action.Owner.Name == "Hulk")
+            await EffectManager.Inst.AddEffect(_card, this);
     }
 
     public override async Task Resolve()
@@ -71,13 +71,13 @@ public class Hulk : PlayerCardEffect
 
     private void ScientificEffect()
     {
-        AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
+        GameStateManager.Instance.OnActivationCompleted -= IsTriggerMet;
         _owner.CardsInPlay.Allies.Remove(Card as AllyCard);
         _owner.Deck.Discard(Card);
     }
 
     public override void OnExitPlay()
     {
-        AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
+        GameStateManager.Instance.OnActivationCompleted -= IsTriggerMet;
     }
 }

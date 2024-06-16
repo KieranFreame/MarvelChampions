@@ -25,7 +25,7 @@ public class BerserkMutate : EncounterCardEffect
         ScenarioManager.inst.ActiveVillain.CharStats.Attacker.CurrentAttack += counters;
         ScenarioManager.inst.ActiveVillain.CharStats.Schemer.CurrentScheme += counters;
 
-        EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+        EffectManager.Inst.Resolving.Push(this);
 
         return Task.CompletedTask;
     }

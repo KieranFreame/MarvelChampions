@@ -32,9 +32,9 @@ public class RiskyBusiness
 
     public void Flip()
     {
-        if (villain.VillainName == "Norman Osborn")
+        if (villain.Name == "Norman Osborn")
         {
-            villain.gameObject.name = villain.VillainName = "Green Goblin";
+            villain.gameObject.name = villain.Name = "Green Goblin";
             villain.Art = goblinArt;
 
             //Adjust Stats
@@ -46,7 +46,7 @@ public class RiskyBusiness
         }
         else
         {
-            villain.gameObject.name = villain.VillainName = "Norman Osborn";
+            villain.gameObject.name = villain.Name = "Norman Osborn";
             villain.Art = osbornArt;
 
             //Adjust Stats

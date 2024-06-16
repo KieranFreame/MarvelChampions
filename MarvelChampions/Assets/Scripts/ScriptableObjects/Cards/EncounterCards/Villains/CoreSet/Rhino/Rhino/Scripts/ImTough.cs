@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -9,16 +7,16 @@ public class ImTough : EncounterCardEffect
     /// <summary>
     /// Give Rhino a tough status card. If Rhino already has a tough status card, this card gains surge.
     /// </summary>
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+
+    public override Task Resolve()
     {
-        if (owner.CharStats.Health.Tough)
+        if (_owner.CharStats.Health.Tough)
         {
-            ScenarioManager.inst.Surge(player);
-            return;
+            ScenarioManager.inst.Surge(TurnManager.instance.CurrPlayer);
+            return Task.CompletedTask;
         }
 
-        owner.CharStats.Health.Tough = true;
-
-        await Task.Yield();
+        _owner.CharStats.Health.Tough = true;
+        return Task.CompletedTask;
     }
 }

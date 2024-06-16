@@ -6,10 +6,19 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Hydra Mercenary", menuName = "MarvelChampions/Card Effects/Rhino/Hydra Mercenary")]
 public class HydraMercenary : EncounterCardEffect
 {
-    Guard _guard;
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task Resolve()
     {
-        _guard = new(card as MinionCard);
-        await Task.Yield();
+        AttackSystem.Instance.Guards.Add((MinionCard)_card);
+        GameStateManager.Instance.OnCharacterDefeated += WhenDefeated;
+        return Task.CompletedTask;
+    }
+
+    public void WhenDefeated(ICharacter defeated)
+    {
+        if (defeated is not MinionCard || defeated as MinionCard != _card as MinionCard)
+            return;
+
+        AttackSystem.Instance.Guards.Remove((MinionCard)_card);
+        GameStateManager.Instance.OnCharacterDefeated -= WhenDefeated;
     }
 }

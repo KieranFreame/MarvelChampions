@@ -11,9 +11,9 @@ public class BombScare : EncounterCardEffect
     /// Acceleration Icon
     /// </summary>
 
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
-        (card as SchemeCard).Threat.GainThreat(1 * TurnManager.Players.Count);
+        (_card as SchemeCard).Threat.GainThreat(1 * TurnManager.Players.Count);
         ScenarioManager.inst.MainScheme.Threat.Acceleration += 1;
         await Task.Yield();
     }

@@ -66,7 +66,7 @@ public class DeckPreviewPanel : MonoBehaviour
 
         foreach (CardData c in TextReader.PopulateDeck(alterEgoName + ".txt"))
         {
-            if (c.cardID.Contains("-O-")) { ScenarioManager.inst.obligations.Add(c as EncounterCardData); continue; }
+            if (c.cardID.Contains("-O-")) { ScenarioManager.inst.Obligations.Add(c as EncounterCardData); continue; }
 
             playerDeck.Add(c as PlayerCardData);
         }

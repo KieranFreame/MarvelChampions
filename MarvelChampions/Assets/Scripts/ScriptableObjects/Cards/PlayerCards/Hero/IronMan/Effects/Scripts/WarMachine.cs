@@ -16,10 +16,7 @@ namespace CoreSet
         {
             if (base.CanBePlayed())
             {
-                foreach (AllyCard a in _owner.CardsInPlay.Allies)
-                {
-                    return _owner.CardsInPlay.Allies.Any(x => (x.Data as AllyCardData).alterEgo == "James Rhodes");
-                }
+                return !_owner.CardsInPlay.Allies.Any(x => (x.Data as AllyCardData).alterEgo == "James Rhodes");
             }
 
             return false;

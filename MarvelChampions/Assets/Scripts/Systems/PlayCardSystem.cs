@@ -51,6 +51,7 @@ public class PlayCardSystem
     {
         Action = action;
         _player = Action.Owner as Player;
+        GameStateManager.Instance.CurrentState = GameState.PlayingCard;
 
         if (CardToPlay.CardCost > 0)
             await PayCostSystem.instance.PayForCard(CardToPlay);
@@ -61,10 +62,12 @@ public class PlayCardSystem
         OnCardPlayed?.Invoke(CardToPlay);
 
         await ChangeZones();
-        await CardToPlay.OnEnterPlay();
+        await CardToPlay.Effect.OnEnterPlay();
 
         if (CardToPlay.CardType == CardType.Event && CardToPlay.InPlay)
             _player.Deck.Discard(CardToPlay);
+
+        GameStateManager.Instance.CurrentState = GameState.Idle;
     }
 
     private async Task ChangeZones()

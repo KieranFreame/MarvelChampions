@@ -43,12 +43,12 @@ public class TaskmastersSword : AttachmentCardEffect
     public override void Attach()
     {
         _owner.CharStats.Attacker.CurrentAttack++;
-        _owner.CharStats.Attacker.Keywords.Add("Piercing");
+        _owner.CharStats.Attacker.Keywords.Add(Keywords.Piercing);
     }
 
     public override void Detach()
     {
         _owner.CharStats.Attacker.CurrentAttack--;
-        _owner.CharStats.Attacker.Keywords.Remove("Piercing");
+        _owner.CharStats.Attacker.Keywords.Remove(Keywords.Piercing);
     }
 }

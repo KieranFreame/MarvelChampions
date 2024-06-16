@@ -48,7 +48,7 @@ public class SchemeSystem
         Action = action;
         Target = null;
 
-        if (Action.Owner is Villain || Action.Keywords.Contains("Villainous"))
+        if (Action.Owner is Villain || Action.Keywords.Contains(Keywords.Villainous))
         {
             BoostSystem.Instance.DealBoostCards();
             Action.Value += await BoostSystem.Instance.FlipCard(Action);
@@ -76,6 +76,6 @@ public class SchemeSystem
             SchemeComplete[i](Action);
         }
 
-       await EffectResolutionManager.Instance.ResolveEffects();
+       //await EffectManager.Instance.ResolveEffects();
     }
 }

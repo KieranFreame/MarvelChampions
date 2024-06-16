@@ -46,7 +46,7 @@ public class ShieldToss : PlayerCardEffect
 
         foreach (ICharacter target in targets)
         {
-            await AttackSystem.Instance.InitiateAttack(new(4, target, owner: _owner, card: Card));
+            await AttackSystem.Instance.InitiateAttack(new(4, target, owner: _owner, attackType: AttackType.Card, card: Card));
         }
 
         PlayerCard shield = _owner.CardsInPlay.Permanents.First(x => x.CardName == "Captain America's Shield");

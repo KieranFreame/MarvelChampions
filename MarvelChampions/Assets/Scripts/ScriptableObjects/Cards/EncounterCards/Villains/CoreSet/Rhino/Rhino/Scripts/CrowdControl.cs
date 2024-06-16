@@ -9,9 +9,9 @@ public class CrowdControl : EncounterCardEffect
 {
     Crisis _crisis;
 
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task Resolve()
     {
-        _crisis = new(card as SchemeCard);
+        _crisis = new(_card as SchemeCard);
         return Task.CompletedTask;
     }
 }

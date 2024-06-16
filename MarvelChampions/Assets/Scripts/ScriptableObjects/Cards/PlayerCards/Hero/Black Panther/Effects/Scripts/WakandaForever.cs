@@ -34,7 +34,6 @@ public class WakandaForever : PlayerCardEffect
 
         for (int i = 0; i < effectOrder.Count; i++)
         {
-            Debug.Log("Activating " + effectOrder[i].CardName);
             await (effectOrder[i].Effect as IBlackPanther).Special(i == pantherUpgrades.Count - 1);
         }
     }

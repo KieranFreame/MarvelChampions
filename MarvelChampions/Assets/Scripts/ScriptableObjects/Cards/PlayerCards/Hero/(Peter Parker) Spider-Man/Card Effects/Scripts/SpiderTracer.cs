@@ -49,6 +49,6 @@ public class SpiderTracer : PlayerCardEffect, IAttachment
         Attached.Attachments.Remove(this);
 
         if (ScenarioManager.inst.ThreatPresent())
-            EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+            EffectManager.Inst.Resolving.Push(this);
     }
 }

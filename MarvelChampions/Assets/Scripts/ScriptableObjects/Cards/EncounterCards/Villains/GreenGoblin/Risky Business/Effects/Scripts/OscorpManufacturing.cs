@@ -8,7 +8,7 @@ public class OscorpManufacturing : EncounterCardEffect
 {
     public override Task WhenRevealed(Villain owner, EncounterCard card, Player player)
     {
-        if (owner.VillainName == "Norman Osborn")
+        if (owner.Name == "Norman Osborn")
         {
             (card as SchemeCard).Threat.GainThreat(1 * TurnManager.Players.Count);
         }

@@ -10,10 +10,7 @@ public class Deck
     public List<CardData> limbo;
     public List<CardData> discardPile;
 
-    private readonly DeckUI deckUI;
-
-    public event UnityAction<CardData> DeckChanged;
-    public event UnityAction DiscardChanged;
+    public event UnityAction DeckChanged;
     public event UnityAction OnDeckReset;
 
     public Deck(List<CardData> cards)
@@ -21,9 +18,6 @@ public class Deck
         deck = new();
         limbo = new List<CardData>();
         discardPile = new List<CardData>();
-
-        deckUI = Object.FindObjectOfType<DeckUI>();
-
         AddToDeck(cards);
     }
     public void ResetDeck()
@@ -52,7 +46,7 @@ public class Deck
         deck.Add(cardToAdd);
         Shuffle();
 
-        DeckChanged?.Invoke(cardToAdd);
+        DeckChanged?.Invoke();
     }
     public void AddToDeck(List<CardData> cardsToAdd)
     {
@@ -68,7 +62,7 @@ public class Deck
         limbo.Add(cardToDeal);
         deck.Remove(cardToDeal);
 
-        DeckChanged?.Invoke(null);
+        DeckChanged?.Invoke();
 
         return cardToDeal;
     }
@@ -86,8 +80,6 @@ public class Deck
                 Object.Destroy((discard as MonoBehaviour).transform.parent.gameObject);
             else
                 Object.Destroy((discard as MonoBehaviour).gameObject);
-
-        DiscardChanged?.Invoke();
     }
     public void Discard(List<ICard> discards)
     {
@@ -114,7 +106,7 @@ public class Deck
             Discard(card);
         }
 
-        DeckChanged?.Invoke(null);
+        DeckChanged?.Invoke();
     }
     public void Shuffle()
     {
@@ -144,6 +136,7 @@ public class Deck
         {
             deck.Remove(data);
             limbo.Add(data);
+            DeckChanged?.Invoke();
         }
         else
         {
@@ -160,9 +153,6 @@ public class Deck
         }
 
         Shuffle();
-
-        DeckChanged?.Invoke(data);
-
         return data;
     }       
 }

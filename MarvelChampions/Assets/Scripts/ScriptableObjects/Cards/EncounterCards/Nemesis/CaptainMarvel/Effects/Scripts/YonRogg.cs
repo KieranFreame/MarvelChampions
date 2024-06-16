@@ -16,15 +16,15 @@ public class YonRogg : EncounterCardEffect
         _owner = owner;
         Card = card;
 
-        AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
+        GameStateManager.Instance.OnActivationCompleted += CanRespond;
 
         await Task.Yield();
     }
 
-    private void IsTriggerMet(AttackAction action)
+    private async void CanRespond(Action action)
     {
-        if (action.Owner == Card as ICharacter)
-            EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+        if (action is AttackAction && action.Owner.Name == "Yon-Rogg")
+            await EffectManager.Inst.AddEffect(_card, this);
     }
 
     public override Task Resolve()
@@ -39,7 +39,7 @@ public class YonRogg : EncounterCardEffect
 
     public override Task WhenDefeated()
     {
-        AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
+        GameStateManager.Instance.OnActivationCompleted -= CanRespond;
         return Task.CompletedTask;
     }
 }

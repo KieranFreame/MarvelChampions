@@ -19,12 +19,6 @@ public class Health
             if (_currHealth > BaseHP)
                 _currHealth = BaseHP;
 
-            if (_currHealth <= 0)
-            {
-                _currHealth = 0;
-                TriggerDefeated();
-            }
-
             HealthChanged?.Invoke();
         }
     }
@@ -48,9 +42,6 @@ public class Health
 
     public delegate Task<DamageAction> ModifyDamage(DamageAction action);
     public List<ModifyDamage> Modifiers { get; private set; } = new();
-
-    public delegate void WhenDefeated();
-    public List<WhenDefeated> Defeated { get; private set; } = new();
 
     public Health(Player owner, AlterEgoData data)
     {
@@ -98,28 +89,12 @@ public class Health
 
         if (CurrentHealth <= 0)
         {
-            CurrentHealth = 0;
-
-            //EffectResolutionManager.Instance.ResolvingList.Add(TriggerDefeated);
-
-            if (CurrentHealth == 0)
-            {
-                (Owner as MonoBehaviour).SendMessage("WhenDefeated", SendMessageOptions.DontRequireReceiver);
-                return;
-            } 
+            GameStateManager.Instance.CharacterDefeated(Owner);
+            Owner.WhenDefeated();
+            return;
         }
 
         OnTakeDamage?.Invoke(action);
-    }
-
-    public void TriggerDefeated()
-    {
-        for (int i = Defeated.Count - 1; i >= 0; i--)
-        {
-            Defeated[i]();
-        }
-
-        //EffectResolutionManager.Instance.ResolvingList.Remove(TriggerDefeated);
     }
 
     public void IncreaseMaxHealth(int amount)

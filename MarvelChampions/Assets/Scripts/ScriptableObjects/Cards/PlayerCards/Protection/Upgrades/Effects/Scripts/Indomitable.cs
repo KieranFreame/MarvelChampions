@@ -16,7 +16,7 @@ public class Indomitable : PlayerCardEffect, IOptional
     {
         if (target != _owner as ICharacter) return;
 
-        EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+        EffectManager.Inst.Responding.Add(this);
     }
 
     public override Task Resolve()

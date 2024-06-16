@@ -36,7 +36,7 @@ public class CrisisInterdiction : PlayerCardEffect
             return;
 
         prevTarget = action.Target;
-        EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+        EffectManager.Inst.Resolving.Push(this);
     }
 
     public override async Task Resolve()

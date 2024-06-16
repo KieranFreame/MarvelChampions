@@ -10,28 +10,32 @@ public class ChaseThemDown : PlayerCardEffect, IOptional
 {
     public override void OnDrawn()
     {
-        AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
+        GameStateManager.Instance.OnActivationCompleted += IsTriggerMet;
     }
 
-    private void IsTriggerMet(AttackAction action)
+    private void IsTriggerMet(Action action)
     {
-        if (action.Owner == _owner as ICharacter)
-            if (action.Target.CharStats.Health.CurrentHealth <= 0 && ScenarioManager.inst.ThreatPresent())
-                EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+        if (action is not AttackAction || action.Owner.Name == _owner.Name) return;
+
+        var attack = (AttackAction)action;
+
+        if (attack.Target.CharStats.Health.CurrentHealth <= 0 && ScenarioManager.inst.ThreatPresent())
+            EffectManager.Inst.Responding.Add(this);
     }
 
     public override async Task Resolve()
     {
-        await PlayCardSystem.Instance.InitiatePlayCard(new(_card));
+        await _owner.CharStats.InitiateThwart(new(2, Owner));
     }
 
-    public override async Task OnEnterPlay()
+    public override Task OnEnterPlay()
     {
-        await _owner.CharStats.InitiateThwart(new(2, Owner));
+        GameStateManager.Instance.OnActivationCompleted -= IsTriggerMet;
+        return Task.CompletedTask;
     }
 
     public override void OnDiscard()
     {
-        AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
+        GameStateManager.Instance.OnActivationCompleted -= IsTriggerMet;
     }
 }

@@ -17,7 +17,7 @@ public class RiskyBusinessVillain : VillainEffect
 
     public async void Flip()
     {
-        if (_owner.VillainName == "Norman Osborn")
+        if (_owner.Name == "Norman Osborn")
         {
             _owner.CharStats.Attacker.AttackCancel.Add(CancelAttack);
             _owner.CharStats.Health.Modifiers.Add(DamageCancel);

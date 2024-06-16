@@ -14,10 +14,7 @@ public class PlayerCardEffect : ScriptableObject, IEffect
 
     public virtual void OnDrawn() { }
     public virtual bool CanActivate() { return false; }
-    public virtual bool CanBePlayed() { 
-        if (Card.CurrZone != Zone.Hand) return false; 
-        return true; 
-    }
+    public virtual bool CanBePlayed() => Card.CurrZone == Zone.Hand;
     public virtual bool CanResolve() {  return true; }
 
     public virtual Task OnEnterPlay() { return Task.CompletedTask; }

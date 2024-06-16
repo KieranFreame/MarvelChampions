@@ -28,7 +28,7 @@ public class PumpkinBombs : AttachmentCardEffect
         if (action.Owner != (ICharacter)_owner)
             return;
 
-        EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+        EffectManager.Inst.Resolving.Push(this);
     }
 
     public override async Task Resolve()

@@ -19,7 +19,7 @@ public class Daredevil : PlayerCardEffect
     private void IsTriggerMet(ThwartAction action)
     {
         if (action.Owner == Card as ICharacter)
-            EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+            EffectManager.Inst.Resolving.Push(this);
     }
 
     public override async Task Resolve()

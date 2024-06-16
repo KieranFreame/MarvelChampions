@@ -13,6 +13,8 @@ public class IdentityPointer : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     public void OnPointerEnter(PointerEventData eventData) 
     {
+        if (GameStateManager.Instance.CurrentState != (GameState)0) return;
+
         if (identity == null)
             identity = GetComponent<Player>().Identity;
 

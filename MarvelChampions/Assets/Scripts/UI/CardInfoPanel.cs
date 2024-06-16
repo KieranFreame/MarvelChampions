@@ -80,7 +80,7 @@ public class InfoPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         {
             Villain v = (Villain)character;
 
-            NameText.text = v.VillainName;
+            NameText.text = v.Name;
             DescText.text = v.VillainEffect.effectDescription;
         }
     }

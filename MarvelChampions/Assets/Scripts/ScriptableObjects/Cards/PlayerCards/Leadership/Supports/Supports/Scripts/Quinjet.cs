@@ -36,22 +36,24 @@ public class Quinjet : PlayerCardEffect
     {
         AllyCard card = await TargetSystem.instance.SelectTarget(avengers);
 
-        _owner.Hand.Remove(card);
+        await PlayCardSystem.Instance.InitiatePlayCard(new(card));
 
-        card.transform.SetParent(GameObject.Find("AlliesTransform").transform);
-        _owner.CardsInPlay.Allies.Add(card);
+        //_owner.Hand.Remove(card);
 
-        if (_owner.CardsInPlay.ReachedAllyLimit())
-        {
-            Debug.Log("Exceeded Ally Limit, Discard 1 Ally from Play");
-            await PlayCardSystem.Instance.DiscardAlly();
-        }
+        //card.transform.SetParent(GameObject.Find("AlliesTransform").transform);
+        //_owner.CardsInPlay.Allies.Add(card);
 
-        card.PrevZone = card.CurrZone;
-        card.CurrZone = Zone.Ally;
-        card.InPlay = true;
+        //if (_owner.CardsInPlay.ReachedAllyLimit())
+        //{
+        //    Debug.Log("Exceeded Ally Limit, Discard 1 Ally from Play");
+        //    await PlayCardSystem.Instance.DiscardAlly();
+        //}
 
-        await card.OnEnterPlay();
+        //card.PrevZone = card.CurrZone;
+        //card.CurrZone = Zone.Ally;
+        //card.InPlay = true;
+
+        //await card.Effect.OnEnterPlay();
 
         TurnManager.OnStartPlayerPhase -= AddCounter;
         _owner.Deck.Discard(_card);

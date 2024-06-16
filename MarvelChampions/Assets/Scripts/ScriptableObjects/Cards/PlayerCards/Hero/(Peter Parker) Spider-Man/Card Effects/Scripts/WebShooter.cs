@@ -8,12 +8,14 @@ public class WebShooter : PlayerCardEffect, IGenerate
 {
     Counters counters;
 
-    public override async Task OnEnterPlay()
+    public override Task OnEnterPlay()
     {
         counters = _card.gameObject.AddComponent<Counters>();
         counters.AddCounters(3);
 
-        await Task.Yield();
+        _owner.resourceGenerators.Add(CanGenerateResource);
+
+        return Task.CompletedTask;
     }
 
     public List<Resource> GenerateResource()
@@ -24,19 +26,25 @@ public class WebShooter : PlayerCardEffect, IGenerate
         if (counters.CountersLeft == 0)
         {
             _owner.CardsInPlay.Permanents.Remove(_card);
+            _owner.resourceGenerators.Remove(CanGenerateResource);
             _owner.Deck.Discard(Card);
         }
 
         return new List<Resource>() { Resource.Wild };
     }
 
-    public bool CanGenerateResource(ICard cardToPlay)
+    public int CanGenerateResource()
     {
-        return !_card.Exhausted;
+        return (!_card.Exhausted) ? 1 : 0;
     }
 
     public bool CompareResource(Resource resource)
     {
-        return true; //Generates a Wild Resource, which matches everything;
+        return true;
+    }
+
+    public override void OnExitPlay()
+    {
+        _owner.resourceGenerators.Remove(CanGenerateResource);
     }
 }

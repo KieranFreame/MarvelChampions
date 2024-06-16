@@ -6,28 +6,24 @@ public class Tigra : PlayerCardEffect
 {
     public override Task OnEnterPlay()
     {
-        AttackSystem.TargetAcquired += CheckTarget;
+        GameStateManager.Instance.OnActivationCompleted += IsTriggerMet;
         return Task.CompletedTask;
     }
 
-    private void CheckTarget(ICharacter target)
+    private void IsTriggerMet(Action action)
     {
-        if (target is MinionCard)
-        {
-            AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
-        }   
-    }
+        if (action is not AttackAction || action.Owner.Name != "Tigra") return;
 
-    private void IsTriggerMet(AttackAction action)
-    {
-        if (action.Target == null && action.Owner == Card as ICharacter)
+        var attack = (AttackAction)action;
+
+        if (attack.Target is MinionCard && attack.Target.CharStats.Health.CurrentHealth <= 0)
         {
-            (Card as AllyCard).CharStats.Health.CurrentHealth += 1;
+            (Card as AllyCard).CharStats.Health.CurrentHealth++;
         }
     }
 
     public override void OnExitPlay()
     {
-        AttackSystem.TargetAcquired -= CheckTarget;
+        GameStateManager.Instance.OnActivationCompleted -= IsTriggerMet;
     }
 }

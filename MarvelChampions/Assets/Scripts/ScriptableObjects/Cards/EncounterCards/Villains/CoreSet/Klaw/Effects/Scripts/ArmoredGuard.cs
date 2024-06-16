@@ -6,13 +6,21 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Armored Guard", menuName = "MarvelChampions/Card Effects/Klaw/Armored Guard")]
 public class ArmoredGuard : EncounterCardEffect
 {
-    Guard guard;
-
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task Resolve()
     {
-        guard = new(card as MinionCard);
-        (card as MinionCard).CharStats.Health.Tough = true;
+        AttackSystem.Instance.Guards.Add((MinionCard)_card);
+        GameStateManager.Instance.OnCharacterDefeated += WhenDefeated;
+        (_card as MinionCard).CharStats.Health.Tough = true;
 
-        await Task.Yield();
+        return Task.CompletedTask;
+    }
+
+    public void WhenDefeated(ICharacter defeated)
+    {
+        if (defeated is not MinionCard || defeated as MinionCard != _card as MinionCard)
+            return;
+
+        AttackSystem.Instance.Guards.Remove((MinionCard)_card);
+        GameStateManager.Instance.OnCharacterDefeated -= WhenDefeated;
     }
 }

@@ -6,9 +6,5 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Advance", menuName = "MarvelChampions/Card Effects/Standard I/Advance")]
 public class Advance : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
-    {
-        _owner = owner;
-        await _owner.CharStats.InitiateScheme();
-    }
+    public override async Task Resolve() => await _owner.CharStats.InitiateScheme();
 }

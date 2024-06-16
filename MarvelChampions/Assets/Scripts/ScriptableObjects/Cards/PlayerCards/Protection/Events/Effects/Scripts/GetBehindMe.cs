@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,23 +10,50 @@ public class GetBehindMe : PlayerCardEffect, IOptional
 {
     public override void OnDrawn()
     {
-        RevealEncounterCardSystem.Instance.EffectCancelers.Add(this);
+        EffectManager.Inst.OnEffectActivated += CanRespond;
     }
 
-    public override bool CanResolve()
+    private void CanRespond(ICard arg0)
     {
-        return RevealEncounterCardSystem.Instance.CardToReveal.CardType is CardType.Treachery && _owner.ResourcesAvailable(_card) >= _card.CardCost;
+        if (arg0.CardType is CardType.Treachery && _owner.ResourcesAvailable(_card) >= _card.CardCost)
+            EffectManager.Inst.Responding.Add(this);
+    }
+
+    public override Task OnEnterPlay()
+    {
+        EffectManager.Inst.OnEffectActivated -= CanRespond;
+        EffectManager.Inst.Responding.RemoveAll(x => x.Card.CardName == "Get Behind Me");
+
+        return Task.CompletedTask;
     }
 
     public override async Task Resolve()
     {
-        await PlayCardSystem.Instance.InitiatePlayCard(new(_card));
+        CancelEffect();
         await ScenarioManager.inst.ActiveVillain.CharStats.InitiateAttack();
-        RevealEncounterCardSystem.Instance.EffectCancelers.Remove(this);
+    }
+
+    public void CancelEffect()
+    {
+        Stack<IEffect> stack = new Stack<IEffect>();
+
+        while (EffectManager.Inst.Resolving.Peek().Card.CardType is not CardType.Treachery && EffectManager.Inst.Resolving.Count != 0)
+        {
+            stack.Push(EffectManager.Inst.Resolving.Pop());
+        }
+
+
+        if (EffectManager.Inst.Resolving.Count >= 1)
+            EffectManager.Inst.Resolving.Pop(); //Cancel effect
+
+        while (stack.Count > 0)
+        {
+            EffectManager.Inst.Resolving.Push(stack.Pop());
+        }
     }
 
     public override void OnDiscard()
     {
-        RevealEncounterCardSystem.Instance.EffectCancelers.Remove(this);
+        EffectManager.Inst.OnEffectActivated -= CanRespond;
     }
 }

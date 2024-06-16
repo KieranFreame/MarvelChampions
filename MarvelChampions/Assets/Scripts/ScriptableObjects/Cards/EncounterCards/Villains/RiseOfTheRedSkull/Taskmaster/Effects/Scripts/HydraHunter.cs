@@ -8,7 +8,7 @@ public class HydraHunter : EncounterCardEffect
 {
     public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
-        (card as MinionCard).CharStats.Attacker.Keywords.AddRange(new List<string>() { "Ranged", "Piercing" });
+        (card as MinionCard).CharStats.Attacker.Keywords.AddRange(new List<Keywords>() { Keywords.Ranged, Keywords.Piercing });
         return Task.CompletedTask;
     }
 

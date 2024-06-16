@@ -19,19 +19,17 @@ public class MadameHydra : EncounterCardEffect
 
         (Card as MinionCard).CharStats.Health.Modifiers.Add(ModifyDamage);
 
-        AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
-        SchemeSystem.Instance.SchemeComplete.Add(IsTriggerMet);
+        GameStateManager.Instance.OnActivationCompleted += CanRespond;
 
         return Task.CompletedTask;
     }
 
     #region AddThreatToLegions
-    public void IsTriggerMet(Action action)
+    public async void CanRespond(Action action)
     {
-        if (action.Owner is MinionCard)
+        if (action.Owner.Name == "Madame Hydra")
         {
-            if ((action.Owner as MinionCard) == (MinionCard)Card)
-                EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+            await EffectManager.Inst.AddEffect(_card, this);
         }
     }
 
@@ -63,8 +61,7 @@ public class MadameHydra : EncounterCardEffect
     {
         (Card as MinionCard).CharStats.Health.Modifiers.Remove(ModifyDamage);
 
-        AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
-        SchemeSystem.Instance.SchemeComplete.Remove(IsTriggerMet);
+        GameStateManager.Instance.OnActivationCompleted -= CanRespond;
 
         return Task.CompletedTask;
     }

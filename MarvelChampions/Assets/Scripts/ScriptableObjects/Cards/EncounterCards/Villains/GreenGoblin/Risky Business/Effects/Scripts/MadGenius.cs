@@ -10,7 +10,7 @@ public class MadGenius : EncounterCardEffect
 {
     public override async Task WhenRevealed(Villain owner, EncounterCard card, Player player)
     {
-        if (ScenarioManager.inst.ActiveVillain.VillainName == "Norman Osborn")
+        if (ScenarioManager.inst.ActiveVillain.Name == "Norman Osborn")
         {
             player.Deck.Mill(RiskyBusiness.Instance.environment.GetCounters());
             return;

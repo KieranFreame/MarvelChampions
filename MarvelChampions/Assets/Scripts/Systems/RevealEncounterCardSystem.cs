@@ -42,7 +42,6 @@ public class RevealEncounterCardSystem
     public static event UnityAction<EncounterCard> OnEncounterCardRevealed;
     #endregion
 
-    public List<PlayerCardEffect> EffectCancelers { get; private set; } = new();
     public EncounterCard CardToReveal { get; private set; }
 
     #region Methods
@@ -52,20 +51,26 @@ public class RevealEncounterCardSystem
         Debug.Log("Revealing " + cardToReveal.CardName);
         await Task.Delay(3000);
 
-        await CheckCancellers();
+        await EffectManager.Inst.AddEffect(cardToReveal, cardToReveal.Effect);
 
-        if (CardToReveal == null) //effect is cancelled
-            return;
+        if (CardToReveal == null) return;
 
-        if (CardToReveal.Data.cardType is not CardType.Treachery)
-            MoveCard(CardToReveal);
-
-        await CardToReveal.OnRevealCard();
-
-        if (CardToReveal.Data.cardType is CardType.Treachery || (CardToReveal.Data.cardType == CardType.Obligation && ScenarioManager.inst.EncounterDeck.limbo.Contains(CardToReveal.Data)))
-            ScenarioManager.inst.EncounterDeck.Discard(CardToReveal);
+        switch (CardToReveal.CardType)
+        {
+            case CardType.Treachery:
+                ScenarioManager.inst.EncounterDeck.Discard(CardToReveal);
+                break;
+            case CardType.Obligation:
+                if (!ScenarioManager.inst.RemovedFromGame.Contains(CardToReveal.Data))
+                    ScenarioManager.inst.EncounterDeck.Discard(CardToReveal);
+                break;
+            default:
+                MoveCard(CardToReveal);
+                break;
+        }
 
         OnEncounterCardRevealed?.Invoke(CardToReveal);
+        await EffectManager.Inst.CheckResponding();
     }
 
     public void MoveCard(EncounterCard cardToReveal)
@@ -87,25 +92,10 @@ public class RevealEncounterCardSystem
         }
     }
 
-    private async Task CheckCancellers()
+    public void CancelCard()
     {
-        for (int i = EffectCancelers.Count - 1; i >= 0; i--)
-        {
-            if (!EffectCancelers[i].CanResolve()) //if false; cannot resolve, move to next
-                continue;
-
-            if (EffectCancelers[i] is IOptional) //differentiate from a card like Adam Warlock's Cosmic Ward, which is a mandatory cancel
-            {
-                if (!await ConfirmActivateUI.MakeChoice(EffectCancelers[i].Card))
-                    continue;
-            }
-
-            await EffectCancelers[i].Resolve();
-            ScenarioManager.inst.EncounterDeck.Discard(CardToReveal);
-            CardToReveal = null;
-
-            break;
-        }
+        ScenarioManager.inst.EncounterDeck.Discard(CardToReveal);
+        CardToReveal = null;
     }
     #endregion
 }

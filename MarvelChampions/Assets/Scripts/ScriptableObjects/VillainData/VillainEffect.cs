@@ -8,7 +8,7 @@ public abstract class VillainEffect : ScriptableObject
     protected Villain _owner;
 
     public string effectDescription;
-    public virtual void LoadEffect(Villain owner) { _owner = owner; _owner.gameObject.name = _owner.VillainName; }
+    public virtual void LoadEffect(Villain owner) { _owner = owner; _owner.gameObject.name = _owner.Name; }
     public virtual Task StageOneEffect() { return Task.CompletedTask; }
     public virtual Task StageTwoEffect() { return Task.CompletedTask; }
     public virtual Task StageThreeEffect() { return Task.CompletedTask; }

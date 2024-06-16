@@ -9,50 +9,54 @@ namespace CoreSet
     [CreateAssetMenu(fileName = "Black Widow", menuName = "MarvelChampions/Card Effects/Protection/Allies/Black Widow")]
     public class BlackWidow : PlayerCardEffect, IOptional
     {
+        /// <summary>
+        /// When an encounter card is revealed, exhaust Black Widow and spend a scientific resource; cancel its effects and discard it. Surge.
+        /// </summary>
+
         public override Task OnEnterPlay()
         {
-            RevealEncounterCardSystem.Instance.EffectCancelers.Add(this);
+            EffectManager.Inst.OnEffectActivated += CanRespond;
             return Task.CompletedTask;
         }
 
-        public override bool CanResolve()
+        public void CanRespond(ICard card)
         {
-            return !_card.Exhausted && _owner.HaveResource(Resource.Scientific);
+            if (_card.Exhausted || !_owner.HaveResource(Resource.Scientific))
+                return;
+
+            EffectManager.Inst.Responding.Add(this);
         }
 
         public override async Task Resolve()
         {
             await PayCostSystem.instance.GetResources(Resource.Scientific, 1);
             _card.Exhaust();
+            CancelEffect();
+            RevealEncounterCardSystem.Instance.CancelCard();
+
             ScenarioManager.inst.Surge(_owner);
         }
 
-        public async Task<bool> CancelEffect(ICard cardToCancel)
+        public void CancelEffect()
         {
-            if (!_owner.Hand.cards.Any(x => x.Resources.Contains(Resource.Scientific) || x.Resources.Contains(Resource.Wild)))
-                return false;
+            Stack<IEffect> stack = new Stack<IEffect>();
 
-            var card = cardToCancel as EncounterCard;
-
-            bool decision = await ConfirmActivateUI.MakeChoice(Card);
-
-            if (decision)
+            while (EffectManager.Inst.Resolving.Peek().Card is not EncounterCard && EffectManager.Inst.Resolving.Count != 0)
             {
-                await PayCostSystem.instance.GetResources(Resource.Scientific, 1);
-                _card.Exhaust();
-                ScenarioManager.inst.Surge(_owner);
-
-                ScenarioManager.inst.EncounterDeck.Discard(card);
-
-                return true;
+                stack.Push(EffectManager.Inst.Resolving.Pop());
             }
 
-            return false;
+            EffectManager.Inst.Resolving.Pop(); //Cancel effect
+
+            while (stack.Count > 0)
+            {
+                EffectManager.Inst.Resolving.Push(stack.Pop());
+            }
         }
 
         public override void OnExitPlay()
         {
-            RevealEncounterCardSystem.Instance.EffectCancelers.Remove(this);
+            EffectManager.Inst.OnEffectActivated -= CanRespond;
         }
     }
 }

@@ -17,15 +17,14 @@ public class TigerShark : EncounterCardEffect
         _owner = owner;
         Card = card;
 
-        AttackSystem.Instance.OnAttackCompleted.Add(AttackCompleted);
+        GameStateManager.Instance.OnActivationCompleted += AttackCompleted;
         return Task.CompletedTask;
     }
 
-    private void AttackCompleted(AttackAction action)
+    private void AttackCompleted(Action action)
     {
-        if (action.Card != null && action.Card.CardName == "Tiger Shark")
-            if (((MinionCard)Card).CharStats.Health.Tough)
-                return;
+        if (action is not AttackAction || ((AttackAction)action).Card.CardName != "Tiger Shark")
+            return;
 
         ((MinionCard)Card).CharStats.Health.Tough = true;
     }
@@ -38,7 +37,7 @@ public class TigerShark : EncounterCardEffect
 
     public override Task WhenDefeated()
     {
-        AttackSystem.Instance.OnAttackCompleted.Remove(AttackCompleted);
+        GameStateManager.Instance.OnActivationCompleted -= AttackCompleted;
         return Task.CompletedTask;
     }
 }

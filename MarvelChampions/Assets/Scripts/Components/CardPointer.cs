@@ -18,6 +18,8 @@ public class CardPointer : MonoBehaviour, IPointerExitHandler, IPointerEnterHand
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (GameStateManager.Instance.CurrentState == (GameState)1) return;
+
         if (cardData == null)
         {
             ICard card = GetComponent<ICard>();

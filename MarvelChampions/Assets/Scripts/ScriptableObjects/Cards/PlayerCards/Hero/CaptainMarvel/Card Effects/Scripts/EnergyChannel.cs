@@ -56,7 +56,7 @@ public class EnergyChannel : PlayerCardEffect
 
     private async Task DealDamage()
     {
-        var action = new AttackAction(attack: (counters.CountersLeft <= 10 ? counters.CountersLeft * 2 : 10), targets: new() { TargetType.TargetVillain, TargetType.TargetMinion }, owner : _owner);
+        var action = new AttackAction(attack: (counters.CountersLeft <= 10 ? counters.CountersLeft * 2 : 10), targets: new() { TargetType.TargetVillain, TargetType.TargetMinion }, attackType: AttackType.Card, owner : _owner);
         await AttackSystem.Instance.InitiateAttack(action);
 
         _owner.CardsInPlay.Permanents.Remove(_card);

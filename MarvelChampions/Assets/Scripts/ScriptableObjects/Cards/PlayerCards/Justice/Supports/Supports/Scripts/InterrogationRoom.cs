@@ -4,34 +4,32 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Interrogation Room", menuName = "MarvelChampions/Card Effects/Justice/Interrogation Room")]
 public class InterrogationRoom : PlayerCardEffect, IOptional
 {
+    /// <summary>
+    /// After you defeat a minion, exhaust this; remove 1 threat from a scheme
+    /// </summary>
+
     public override Task OnEnterPlay()
     {
-        AttackSystem.TargetAcquired += CheckTarget;
+        GameStateManager.Instance.OnCharacterDefeated += QueueEffect;
         return Task.CompletedTask;
+    }
+
+    public void QueueEffect(ICharacter minion)
+    {
+        if (minion.GetType() == typeof(MinionCard) && !(Card as PlayerCard).Exhausted)
+        {
+            EffectManager.Inst.Resolving.Push(this);
+        }
     }
 
     public override async Task Resolve()
     {
-        _card.Exhaust();
-        await ThwartSystem.Instance.InitiateThwart(new(1, null));
-    }
-
-    private void CheckTarget(ICharacter target)
-    {
-        if (target is MinionCard)
-            AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
-    }
-
-    private void IsTriggerMet(AttackAction action)
-    {
-        if (action.Target.CharStats.Health.CurrentHealth <= 0 && ScenarioManager.inst.ThreatPresent() && !_card.Exhausted)
-            EffectResolutionManager.Instance.ResolvingEffects.Push(this);
-
-        AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
+        (Card as PlayerCard).Exhaust();
+        await ThwartSystem.Instance.InitiateThwart(new(1, _owner));
     }
 
     public override void OnExitPlay()
     {
-        AttackSystem.TargetAcquired -= CheckTarget;
+        GameStateManager.Instance.OnCharacterDefeated -= QueueEffect;
     }
 }

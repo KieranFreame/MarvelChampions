@@ -8,7 +8,7 @@ public class DaysWork : EncounterCardEffect
 {
     public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
-        if (ScenarioManager.inst.ActiveVillain.VillainName == "Norman Osborn")
+        if (ScenarioManager.inst.ActiveVillain.Name == "Norman Osborn")
         {
             RiskyBusiness.Instance.environment.AddCounters(2);
         }
@@ -22,7 +22,7 @@ public class DaysWork : EncounterCardEffect
 
     public override Task Boost(Action action)
     {
-        if (ScenarioManager.inst.ActiveVillain.VillainName == "Norman Osborn")
+        if (ScenarioManager.inst.ActiveVillain.Name == "Norman Osborn")
         {
             RiskyBusiness.Instance.environment.AddCounters(1);
         }

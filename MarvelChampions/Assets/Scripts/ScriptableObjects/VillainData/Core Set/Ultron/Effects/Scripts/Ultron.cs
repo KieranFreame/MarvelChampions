@@ -24,7 +24,7 @@ public class Ultron : VillainEffect
 
     private async void OnAttackComplete(Action action)
     {
-        if (action.Owner != _owner as ICharacter) return;
+        if (action is not AttackAction || action.Owner.Name != "Ultron") return;
 
         if (_owner.Stages.Stage == 1)
         {
@@ -49,7 +49,7 @@ public class Ultron : VillainEffect
     }
     public override Task StageOneEffect()
     {
-        AttackSystem.Instance.OnAttackCompleted.Add(OnAttackComplete);
+        GameStateManager.Instance.OnActivationCompleted += OnAttackComplete;
         _owner.CharStats.AttackInitiated += AttackInitiated;
         return Task.CompletedTask;
     }

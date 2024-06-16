@@ -10,7 +10,10 @@ public class SuperAbsorbingPower : EncounterCardEffect
     {
         _owner = owner;
         (card as SchemeCard).Threat.CurrentThreat *= TurnManager.Players.Count;
-        owner.VillainTraits.AddRange(new List<string>() { "Ice", "Metal", "Stone", "Wood" });
+        owner.VillainTraits.Add("Ice");
+        owner.VillainTraits.Add("Metal");
+        owner.VillainTraits.Add("Stone");
+        owner.VillainTraits.Add("Wood");
         return Task.CompletedTask;
     }
 

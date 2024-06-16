@@ -11,13 +11,15 @@ public class FalseAlarm : EncounterCardEffect
     /// When Revealed: You are confused. If you are already confused, Surge
     /// </summary>
 
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task Resolve()
     {
+        var player = TurnManager.instance.CurrPlayer;
+
         if (player.CharStats.Thwarter.Confused)
             ScenarioManager.inst.Surge(player);
         else
             player.CharStats.Thwarter.Confused = true;
 
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 }

@@ -6,20 +6,20 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Hydra Soldier", menuName = "MarvelChampions/Card Effects/Hydra/Hydra Soldier")]
 public class HydraSoldier : EncounterCardEffect
 {
-    Guard _guard;
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task Resolve()
     {
-        _owner = owner;
-
-        _guard = new(card as MinionCard);
-
+        AttackSystem.Instance.Guards.Add((MinionCard)_card);
+        GameStateManager.Instance.OnCharacterDefeated += WhenDefeated;
         return Task.CompletedTask;
     }
 
-    public override Task WhenDefeated()
+    public void WhenDefeated(ICharacter defeated)
     {
-        ScenarioManager.inst.Surge(TurnManager.instance.CurrPlayer);
+        if (defeated is not MinionCard || defeated as MinionCard != _card as MinionCard)
+            return;
 
-        return Task.CompletedTask;
+        AttackSystem.Instance.Guards.Remove((MinionCard)_card);
+        GameStateManager.Instance.OnCharacterDefeated -= WhenDefeated;
+        ScenarioManager.inst.Surge(TurnManager.instance.CurrPlayer);
     }
 }

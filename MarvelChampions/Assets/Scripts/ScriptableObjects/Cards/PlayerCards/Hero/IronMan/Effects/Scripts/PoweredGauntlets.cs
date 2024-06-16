@@ -20,6 +20,6 @@ public class PoweredGauntlets : PlayerCardEffect
     public override async Task Activate()
     {
         _card.Exhaust();
-        await _owner.CharStats.InitiateAttack(new(_owner.Identity.IdentityTraits.Contains("Aerial") ? 2 : 1, targets: new() { TargetType.TargetVillain, TargetType.TargetMinion }, owner: _owner, card: Card));
+        await _owner.CharStats.InitiateAttack(new(_owner.Identity.IdentityTraits.Contains("Aerial") ? 2 : 1, targets: new() { TargetType.TargetVillain, TargetType.TargetMinion }, attackType: AttackType.Card, owner: _owner, card: Card));
     }
 }

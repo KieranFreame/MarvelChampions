@@ -1,50 +1,41 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 [CreateAssetMenu(fileName = "Stampede", menuName = "MarvelChampions/Card Effects/Rhino/Stampede")]
 public class Stampede : EncounterCardEffect
 {
-    ICharacter _target;
-    int charHP;
-
     /// <summary>
     /// When Revealed (Alter-Ego): This card gains surge.
     /// When Revealed(Hero): Rhino attacks you.If a character is damaged by this attack, that character is stunned.
     /// </summary>
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+
+    public override async Task Resolve()
     {
-        _owner = owner;
-        _target = player;
+        var player = TurnManager.instance.CurrPlayer;
         var identity = player.Identity.ActiveIdentity;
 
         if (identity is AlterEgo)
         {
             ScenarioManager.inst.Surge(player);
         }
-        else //identity is Hero;
+        else
         {
-            DefendSystem.Instance.OnTargetSelected += SetDefender;
+            GameStateManager.Instance.OnActivationCompleted += AttackComplete;
             await _owner.CharStats.InitiateAttack();
-        } 
+        }
     }
 
-    private void SetDefender(ICharacter target)
+    private void AttackComplete(Action action)
     {
-        DefendSystem.Instance.OnTargetSelected -= SetDefender;
+        GameStateManager.Instance.OnActivationCompleted -= AttackComplete;
 
-        _target = target;
-        _target.CharStats.Health.OnTakeDamage += AttackComplete;
-    }
-
-    private void AttackComplete(DamageAction action)
-    {
-        _target.CharStats.Health.OnTakeDamage -= AttackComplete;
-
-        if (action.Value > 0)
+        if (((AttackAction)action).Target.CharStats.Health.CurrentHealth > 0)
         {
-            _target.CharStats.Attacker.Stunned = true;
+            ((AttackAction)action).Target.CharStats.Attacker.Stunned = true;
         }
     }
 }

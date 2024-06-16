@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -8,8 +9,9 @@ using UnityEngine;
 namespace CoreSet
 {
     [CreateAssetMenu(fileName = "Hawkeye (Clint Barton)", menuName = "MarvelChampions/Card Effects/Leadership/Hawkeye (Clint Barton)")]
-    public class Hawkeye : PlayerCardEffect
+    public class Hawkeye : PlayerCardEffect, IOptional
     {
+        MinionCard target;
         Counters arrows;
 
         public override async Task OnEnterPlay()
@@ -17,35 +19,34 @@ namespace CoreSet
             arrows = _card.gameObject.AddComponent<Counters>();
             arrows.AddCounters(4);
 
-            VillainTurnController.instance.MinionsInPlay.CollectionChanged += MinionAdded;
+            RevealEncounterCardSystem.OnEncounterCardRevealed += CanRespond;
 
             await Task.Yield();
         }
 
-        private void MinionAdded(object sender, NotifyCollectionChangedEventArgs e)
+        private void CanRespond(EncounterCard arg0)
         {
-            if (e.Action is NotifyCollectionChangedAction.Add)
+            if (arg0.CardType == CardType.Minion)
             {
-                EffectResolutionManager.Instance.ResolvingEffects.Push(this);
-            }
+                target = (MinionCard)arg0;
+                EffectManager.Inst.Responding.Add(this);
+            }   
         }
 
         public override Task Resolve()
         {
-            MinionCard card = VillainTurnController.instance.MinionsInPlay.Last();
-
             arrows.RemoveCounters(1);
-            card.CharStats.Health.TakeDamage(new(card, 2, card: Card));
+            target.CharStats.Health.TakeDamage(new(target, 2, card: Card));
 
             if (arrows.CountersLeft == 0)
-                VillainTurnController.instance.MinionsInPlay.CollectionChanged -= MinionAdded;
+                RevealEncounterCardSystem.OnEncounterCardRevealed -= CanRespond;
 
             return Task.CompletedTask;
         }
 
         public override void OnExitPlay()
         {
-            VillainTurnController.instance.MinionsInPlay.CollectionChanged -= MinionAdded;
+            RevealEncounterCardSystem.OnEncounterCardRevealed -= CanRespond;
         }
     }
 }

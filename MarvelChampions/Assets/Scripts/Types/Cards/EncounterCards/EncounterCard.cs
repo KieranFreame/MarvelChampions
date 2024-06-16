@@ -49,7 +49,12 @@ public class EncounterCard : MonoBehaviour, ICard
         cardUI.CardArt = Data.cardArt;
 
         if (Data.effect != null)
+        {
             effect = Instantiate(Data.effect);
+            effect.Owner = Owner;
+            effect._card = this;
+        }
+            
 
         SetupComplete?.Invoke();
     }

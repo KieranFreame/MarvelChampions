@@ -11,12 +11,8 @@ public class Guard
         _card = card;
 
         AttackSystem.Instance.Guards.Add(card);
-        _card.CharStats.Health.Defeated.Add(WhenDefeated);
     }
 
-    private void WhenDefeated()
-    {
-        AttackSystem.Instance.Guards.Remove(_card);
-        _card.CharStats.Health.Defeated.Remove(WhenDefeated);
-    }
+    public void WhenDefeated() => AttackSystem.Instance.Guards.Remove(_card);
+    
 }

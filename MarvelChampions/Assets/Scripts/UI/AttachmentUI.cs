@@ -24,7 +24,11 @@ public class AttachmentUI : EncounterCardUI
     protected override void LoadData()
     {
         base.LoadData();
-        RedTxt.text = attachment.ATKModifier.ToString() ?? "*";
-        BlueTxt.text = attachment.THWSCHModifier.ToString() ?? "*";
+
+        if (attachment.ATKModifier > 0) RedTxt.text = attachment.ATKModifier.ToString();
+        else RedTxt.gameObject.SetActive(false);
+
+        if (attachment.THWSCHModifier > 0) BlueTxt.text = attachment.THWSCHModifier.ToString();
+        else BlueTxt.gameObject.SetActive(false);
     }
 }

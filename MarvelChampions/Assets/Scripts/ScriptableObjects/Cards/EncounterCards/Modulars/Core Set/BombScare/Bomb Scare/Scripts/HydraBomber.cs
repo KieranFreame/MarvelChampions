@@ -16,7 +16,12 @@ public class HydraBomber : EncounterCardEffect
 
     public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
-        target = player;
+       await EffectManager.Inst.AddEffect(_card, this);
+    }
+
+    public override async Task Resolve()
+    {
+        target = TurnManager.instance.CurrPlayer;
         int effectIndex = await ChooseEffectUI.ChooseEffect(new List<string> { takeDamage, placeThreat });
 
         switch (effectIndex)

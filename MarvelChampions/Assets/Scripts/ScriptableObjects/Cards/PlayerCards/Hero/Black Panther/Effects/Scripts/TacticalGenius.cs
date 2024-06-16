@@ -9,6 +9,7 @@ public class TacticalGenius : PlayerCardEffect, IBlackPanther
 {
     public async Task Special(bool last)
     {
-        await _owner.CharStats.InitiateThwart(new(last ? 2 : 1, Owner));
+        if (ScenarioManager.inst.ThreatPresent())
+            await _owner.CharStats.InitiateThwart(new(last ? 2 : 1, Owner));
     }
 }

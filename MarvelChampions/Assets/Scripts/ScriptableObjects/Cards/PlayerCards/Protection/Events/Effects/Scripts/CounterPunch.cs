@@ -7,34 +7,39 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Counter-Punch", menuName = "MarvelChampions/Card Effects/Protection/Events/Counter-Punch")]
 public class CounterPunch : PlayerCardEffect, IOptional
 {
-    AttackAction attack;
+    /// <summary>
+    /// After your hero defends against an attack, deal damage to that enemy equal to your hero's ATK
+    /// </summary>
+
+    ICharacter target;
 
     public override void OnDrawn()
     {
-        DefendSystem.Instance.OnDefenderSelected += DefenderSelected;
+       GameStateManager.Instance.OnActivationCompleted += CanRespond;
     }
 
-    private void DefenderSelected(ICharacter target, AttackAction action)
+    private void CanRespond(Action action)
     {
-        if (target != _owner as ICharacter) return;
-            EffectResolutionManager.Instance.ResolvingEffects.Push(this);
+        if (action is not AttackAction || ((AttackAction)action).Target != Owner || DefendSystem.Instance.Target != Owner) 
+            return;
+
+        target = action.Owner;
+        EffectManager.Inst.Responding.Add(this);
     }
 
-    public override async Task OnEnterPlay()
+    public override Task OnEnterPlay()
     {
-        AttackAction counter = new(_owner.CharStats.Attacker.CurrentAttack, attack.Owner, owner: _owner, card: _card);
-        await _owner.CharStats.InitiateAttack(counter);
+        GameStateManager.Instance.OnActivationCompleted -= CanRespond;
+        return Task.CompletedTask;
     }
 
     public override async Task Resolve()
     {
-        attack = AttackSystem.Instance.Action;
-        await PlayCardSystem.Instance.InitiatePlayCard(new(_card));
-        DefendSystem.Instance.OnDefenderSelected -= DefenderSelected;
+        await AttackSystem.Instance.InitiateAttack(new(Owner.CharStats.Attacker.CurrentAttack, target, AttackType.Card, owner:Owner, card:_card));
     }
 
     public override void OnDiscard()
     {
-        DefendSystem.Instance.OnDefenderSelected -= DefenderSelected;
+        GameStateManager.Instance.OnActivationCompleted -= CanRespond;
     }
 }

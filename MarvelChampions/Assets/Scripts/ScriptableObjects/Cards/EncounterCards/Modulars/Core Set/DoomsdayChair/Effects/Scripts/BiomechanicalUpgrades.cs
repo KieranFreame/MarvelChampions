@@ -7,8 +7,10 @@ using UnityEngine;
 
 
 [CreateAssetMenu(fileName = "Biomechanical Upgrades", menuName = "MarvelChampions/Card Effects/The Doomsday Chair/Biomechanical Upgrades")]
-public class BiomechanicalUpgrades : AttachmentCardEffect
+public class BiomechanicalUpgrades : AttachmentCardEffect, IAttachment
 {
+    public ICharacter Attached { get => attached; set => attached = value; }
+
     public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
     {
         ScenarioManager.inst.Surge(player);
@@ -46,7 +48,7 @@ public class BiomechanicalUpgrades : AttachmentCardEffect
     public override void Attach()
     {
         attached.Attachments.Add(Card as IAttachment);
-        attached.CharStats.Health.Defeated.Add(Defeated);
+        GameStateManager.Instance.OnCharacterDefeated += Defeated;
 
         _card.transform.SetParent((attached as MonoBehaviour).transform, false);
         _card.transform.SetAsFirstSibling();
@@ -54,16 +56,18 @@ public class BiomechanicalUpgrades : AttachmentCardEffect
 
     }
 
-    private void Defeated()
+    private void Defeated(ICharacter card)
     {
+        if (card != attached) return;
+
         attached.CharStats.Health.CurrentHealth = attached.CharStats.Health.BaseHP;
         WhenRemoved();
     }
 
     public override void Detach()
     {
-        attached.Attachments.Add(Card as IAttachment);
-        attached.CharStats.Health.Defeated.Remove(Defeated);
+        attached.Attachments.Add(this);
+        GameStateManager.Instance.OnCharacterDefeated -= Defeated;
     }
 
 }

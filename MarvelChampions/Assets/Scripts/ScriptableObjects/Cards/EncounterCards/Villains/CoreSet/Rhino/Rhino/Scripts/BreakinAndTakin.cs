@@ -11,17 +11,16 @@ public class BreakinAndTakin : EncounterCardEffect
     /// (Hazard Icon: Deal +1 encounter ICard during the villain phase.)
     /// </summary>
 
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task Resolve()
     {
-        (card as SchemeCard).Threat.GainThreat(1 * TurnManager.Players.Count);
+        (_card as SchemeCard).Threat.GainThreat(1 * TurnManager.Players.Count);
         VillainTurnController.instance.HazardCount++;
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 
     public override Task WhenDefeated()
     {
         VillainTurnController.instance.HazardCount--;
-
         return Task.CompletedTask;
     }
 }

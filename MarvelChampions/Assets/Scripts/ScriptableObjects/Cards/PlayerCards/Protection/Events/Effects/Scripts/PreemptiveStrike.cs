@@ -30,7 +30,7 @@ public class PreemptiveStrike : PlayerCardEffect
 
     public override async Task OnEnterPlay()
     {
-        await _owner.CharStats.InitiateAttack(new(damage, ScenarioManager.inst.ActiveVillain, owner: _owner, card: _card));
+        await _owner.CharStats.InitiateAttack(new(damage, ScenarioManager.inst.ActiveVillain, AttackType.Card, owner: _owner, card: _card));
         BoostSystem.Instance.Modifiers.Remove(ReduceBoost);
     }
 

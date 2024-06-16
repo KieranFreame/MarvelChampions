@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Player : MonoBehaviour, ICharacter, IExhaust
 {
     #region Fields
+    public string Name { get => Identity.ActiveIdentity.Name; }
     public Identity Identity { get; private set; }
     public CharacterStats CharStats { get; set; }
     public Deck Deck;
@@ -20,6 +22,10 @@ public class Player : MonoBehaviour, ICharacter, IExhaust
     public bool CanThwart { get; set; } = false;
 
     #endregion
+
+    public delegate int GetResources();
+    public List<GetResources> resourceGenerators = new();
+
     private void Awake()
     {
         EncounterCards = new(GameObject.Find("EncounterCards").transform);
@@ -103,7 +109,7 @@ public class Player : MonoBehaviour, ICharacter, IExhaust
 
         return resourceCount;
     }
-    public bool HaveResource(Resource resource, int amount = 1)
+    public bool HaveResource(Resource resource = Resource.Any, int amount = 1)
     {
         int count = 0;
 
@@ -115,15 +121,8 @@ public class Player : MonoBehaviour, ICharacter, IExhaust
             }
         }
 
-        if (Identity.ActiveEffect is IGenerate generate)
-        {
-            if (generate.CompareResource(resource))
-            {
-                count++;
-            }
-        }
-
-        count += CardsInPlay.HaveResource(resource, amount);
+        foreach (var generator in resourceGenerators)
+            count += generator();
 
         return count >= amount;
     }

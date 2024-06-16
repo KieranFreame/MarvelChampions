@@ -7,29 +7,25 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Explosion", menuName = "MarvelChampions/Card Effects/Bomb Scare/Explosion")]
 public class Explosion : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
-        _owner = owner;
-        List<SchemeCard> schemeCards = new();
-        schemeCards.AddRange(FindObjectsOfType<SchemeCard>());
-        SchemeCard bombScare = schemeCards.FirstOrDefault(x => x.name == "Bomb Scare");
+        var player = TurnManager.instance.CurrPlayer;
+        SchemeCard bombScare = ScenarioManager.sideSchemes.FirstOrDefault(x => x.name == "Bomb Scare");
 
-        if (bombScare == null)
+        if (bombScare == default)
         {
             ScenarioManager.inst.Surge(player);
         }
         else
         {
-            List<ICharacter> targets = new()
+            List<ICharacter> targets = new(player.CardsInPlay.Allies)
             {
                 player
             };
 
-            targets.AddRange(player.CardsInPlay.Allies);
-
             await IndirectDamageHandler.inst.HandleIndirectDamage(targets, bombScare.Threat.CurrentThreat);
         }
 
-        await Task.Yield();
+        return;
     }
 }

@@ -4,33 +4,36 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Charge", menuName = "MarvelChampions/Card Effects/Rhino/Charge")]
 public class Charge : EncounterCardEffect, IAttachment
 {
+    /// <summary>
+    /// Rhino's next attack gains Overkill
+    /// </summary>
+
     public ICharacter Attached { get; set; }
 
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task Resolve()
     {
-        Attached = _owner = owner;
-        Card = card;
+        Attached = _owner;
 
         Attach();
 
-        AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
+        GameStateManager.Instance.OnActivationCompleted += IsTriggerMet;
 
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 
     public void Attach()
     {
         Attached.CharStats.Attacker.CurrentAttack += 3;
-        Attached.CharStats.Attacker.Keywords.Add("Overkill");
+        Attached.CharStats.Attacker.Keywords.Add(Keywords.Overkill);
     }
 
-    private void IsTriggerMet(AttackAction action)
+    private void IsTriggerMet(Action action)
     {
-        if (action.Owner == _owner as ICharacter)
+        if (action is AttackAction && action.Owner.Name == "Rhino")
         {
             Detach();
 
-            AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
+            GameStateManager.Instance.OnActivationCompleted -= IsTriggerMet;
             ScenarioManager.inst.EncounterDeck.Discard(Card);
         }
     }
@@ -38,6 +41,6 @@ public class Charge : EncounterCardEffect, IAttachment
     public void Detach()
     {
         Attached.CharStats.Attacker.CurrentAttack -= 3;
-        Attached.CharStats.Attacker.Keywords.Remove("Overkill");
+        Attached.CharStats.Attacker.Keywords.Remove(Keywords.Overkill);
     }
 }
