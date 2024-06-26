@@ -38,7 +38,7 @@ namespace CoreSet
 
         private async void Effect()
         {
-            await PayCostSystem.instance.GetResources(Resource.Energy, 1);
+            await PayCostSystem.instance.GetResources(new() { { Resource.Energy, 1 } });
 
             owner.CharStats.Health.CurrentHealth += 1;
             DrawCardSystem.Instance.DrawCards(new(1));

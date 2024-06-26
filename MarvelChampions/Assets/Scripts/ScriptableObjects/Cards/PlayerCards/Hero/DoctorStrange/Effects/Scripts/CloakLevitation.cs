@@ -24,12 +24,7 @@ public class CloakLevitation : PlayerCardEffect
 
     public override Task OnEnterPlay()
     {
-        if (!_owner.Identity.IdentityTraits.Contains("Aerial"))
-        {
-            _owner.Identity.IdentityTraits.Add("Aerial");
-            addedTrait = true;
-        }
-
+        _owner.Identity.IdentityTraits.AddItem("Aerial");
         return Task.CompletedTask;
     }
 
@@ -42,9 +37,6 @@ public class CloakLevitation : PlayerCardEffect
 
     public override void OnExitPlay()
     {
-        if (addedTrait)
-        {
-            _owner.Identity.IdentityTraits.Remove("Aerial");
-        }
+        _owner.Identity.IdentityTraits.RemoveItem("Aerial");
     }
 }

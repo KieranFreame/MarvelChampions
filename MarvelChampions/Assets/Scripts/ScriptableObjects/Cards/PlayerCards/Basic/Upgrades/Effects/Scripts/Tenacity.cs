@@ -14,7 +14,7 @@ public class Tenacity : PlayerCardEffect
 
     public override async Task Activate()
     {
-        await PayCostSystem.instance.GetResources(resourceToCheck:Resource.Physical, amount: 1);
+        await PayCostSystem.instance.GetResources(new() { { Resource.Physical, 1 } });
 
         _owner.Ready();
 

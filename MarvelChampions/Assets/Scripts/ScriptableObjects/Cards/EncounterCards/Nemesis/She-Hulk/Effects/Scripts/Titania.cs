@@ -6,14 +6,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Titania", menuName = "MarvelChampions/Card Effects/Nemesis/She-Hulk/Titania")]
 public class Titania : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task OnEnterPlay()
     {
-        _owner = owner;
-        Card = card;
+        (_card as MinionCard).CharStats.Attacker.CurrentAttack = (_card as MinionCard).CharStats.Health.CurrentHealth;
 
-        (Card as MinionCard).CharStats.Attacker.CurrentAttack = (Card as MinionCard).CharStats.Health.CurrentHealth;
-
-        (Card as MinionCard).CharStats.Health.HealthChanged += HealthChanged;
+        (_card as MinionCard).CharStats.Health.HealthChanged += HealthChanged;
         await Task.Yield();
     }
 

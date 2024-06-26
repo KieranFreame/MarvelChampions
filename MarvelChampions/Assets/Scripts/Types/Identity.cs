@@ -17,7 +17,7 @@ public class Identity : IExhaust
     public AlterEgo AlterEgo { get; set; }
     public dynamic ActiveIdentity { get; set; }
     public string IdentityName { get => ActiveIdentity.Name; }
-    public ObservableCollection<string> IdentityTraits
+    public ObservableSet<string> IdentityTraits
     {
         get
         {

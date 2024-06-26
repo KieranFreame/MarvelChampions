@@ -11,13 +11,11 @@ public class PainInhibitors : EncounterCardEffect, IAttachment
     public ICharacter Attached { get; set; }
     Retaliate _retaliate;
 
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        Card = card;
-
         int highHp = int.MinValue;
 
-        foreach (var m in VillainTurnController.instance.MinionsInPlay.Where(x => !x.Attachments.Any(z => (z as ICard).CardName == card.CardName)))
+        foreach (var m in VillainTurnController.instance.MinionsInPlay.Where(x => !x.Attachments.Any(z => ((IEffect)z).Card.CardName == _card.CardName)))
         {
             if (m.CharStats.Health.CurrentHealth > highHp)
             {
@@ -28,7 +26,7 @@ public class PainInhibitors : EncounterCardEffect, IAttachment
 
         if (Attached == null)
         {
-            ScenarioManager.inst.Surge(player);
+            ScenarioManager.inst.Surge(TurnManager.instance.CurrPlayer);
             ScenarioManager.inst.EncounterDeck.Discard(Card);
             return Task.CompletedTask;
         }

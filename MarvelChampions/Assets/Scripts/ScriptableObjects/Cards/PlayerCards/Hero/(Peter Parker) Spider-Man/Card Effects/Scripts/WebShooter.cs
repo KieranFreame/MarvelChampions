@@ -14,6 +14,7 @@ public class WebShooter : PlayerCardEffect, IGenerate
         counters.AddCounters(3);
 
         _owner.resourceGenerators.Add(CanGenerateResource);
+        PayCostSystem.instance.GetAvailableResources += AvailableResources;
 
         return Task.CompletedTask;
     }
@@ -46,5 +47,16 @@ public class WebShooter : PlayerCardEffect, IGenerate
     public override void OnExitPlay()
     {
         _owner.resourceGenerators.Remove(CanGenerateResource);
+        PayCostSystem.instance.GetAvailableResources -= AvailableResources;
+    }
+
+    public List<Resource> GetResources()
+    {
+       return new List<Resource>() { Resource.Wild };
+    }
+
+    public void AvailableResources()
+    {
+        PayCostSystem.instance.availableResources.Add(_card, GetResources());
     }
 }

@@ -6,9 +6,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Imminent Overload", menuName = "MarvelChampions/Card Effects/Nemesis/Iron Man/Imminent Overload")]
 public class ImminentOverload : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task OnEnterPlay()
     {
-        (card as SchemeCard).Threat.GainThreat(1 * TurnManager.Players.Count);
+        (_card as SchemeCard).Threat.GainThreat(1 * TurnManager.Players.Count);
         ScenarioManager.inst.MainScheme.Threat.Acceleration++;
 
         await Task.Yield();

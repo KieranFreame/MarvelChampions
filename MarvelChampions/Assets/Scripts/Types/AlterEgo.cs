@@ -9,7 +9,7 @@ public class AlterEgo
 {
     public string Name { get; private set; }
     public Sprite Art { get; private set; }
-    public ObservableCollection<string> Traits { get; protected set; } = new();
+    public ObservableSet<string> Traits { get; protected set; } = new();
     public int BaseREC { get; set; }
     public int BaseHP { get; set; }
     public int BaseHandSize { get; protected set; }
@@ -25,7 +25,7 @@ public class AlterEgo
         Name = data.alterEgoName;
         
         foreach (string trait in data.alterEgoTags)
-            Traits.Add(trait);
+            Traits.AddItem(trait);
 
         Art = data.alterEgoArt;
 

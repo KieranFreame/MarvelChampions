@@ -12,16 +12,12 @@ public class AbandonedFacility : EncounterCardEffect
     public override async Task WhenRevealed(Villain owner, EncounterCard card, Player player)
     {
         ScenarioManager.inst.Surge(player);
-        await OnEnterPlay(owner, card, player);
+        await OnEnterPlay();
     }
 
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        _owner = owner;
-        _card = card;
-
         DefendSystem.Instance.OnDefenderSelected += OnDefenderSelected;
-
         return Task.CompletedTask;
     }
 
@@ -41,7 +37,7 @@ public class AbandonedFacility : EncounterCardEffect
 
             card.InPlay = true;
             RevealEncounterCardSystem.Instance.MoveCard(card);
-            await OnEnterPlay(ScenarioManager.inst.ActiveVillain, card, null);
+            await OnEnterPlay();
 
             (ScenarioManager.inst.MainScheme.Effect as NoneShallPass).EncounterCardRevealed(card);
 
@@ -49,7 +45,7 @@ public class AbandonedFacility : EncounterCardEffect
             return;
         }
 
-        await PayCostSystem.instance.GetResources(Resource.Any, (NoneShallPass.delay.CountersLeft >= 5) ? 2 : 1);
+        await PayCostSystem.instance.GetResources(new() { { Resource.Any, (NoneShallPass.delay.CountersLeft >= 5) ? 2 : 1 } });
     }
 
     public override Task Boost(Action action)

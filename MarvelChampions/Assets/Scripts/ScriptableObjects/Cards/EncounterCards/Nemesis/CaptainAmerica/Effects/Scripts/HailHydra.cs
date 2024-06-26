@@ -7,7 +7,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Hail Hydra!", menuName = "MarvelChampions/Card Effects/Hydra/Hail Hydra!")]
 public class HailHydra : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
         List<MinionCard> hydra = VillainTurnController.instance.MinionsInPlay.Where(x => x.CardTraits.Contains("Hydra")).ToList();
 
@@ -23,7 +23,7 @@ public class HailHydra : EncounterCardEffect
             VillainTurnController.instance.MinionsInPlay.Add(hydraMin);
             hydraMin.transform.SetParent(RevealEncounterCardSystem.Instance.MinionTransform);
             CardViewerUI.inst.DisablePanel();
-            await hydraMin.Effect.OnEnterPlay(owner, hydraMin, player);            
+            await hydraMin.Effect.OnEnterPlay();            
         }
         else
         {

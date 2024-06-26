@@ -6,10 +6,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Cornered Staff", menuName = "MarvelChampions/Card Effects/RotRS/Crossbones/Cornered Staff")]
 public class CorneredStaff : EncounterCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        Card = card;
-
         ThwartSystem.Instance.Crisis.Add(Card as SchemeCard);
 
         int threat = 0;

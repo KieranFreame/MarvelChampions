@@ -8,11 +8,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Ultimate Bio-Servant", menuName = "MarvelChampions/Card Effects/RotRS/Zola/Ultimate Bio-Servant")]
 public class UltimateBioServant : EncounterCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        Card = card;
-        (card as MinionCard).CharStats.Health.Tough = true;
-        (card as MinionCard).Attachments.CollectionChanged += ChangeAttack;
+        (_card as MinionCard).CharStats.Health.Tough = true;
+        (_card as MinionCard).Attachments.CollectionChanged += ChangeAttack;
 
         return Task.CompletedTask;
     }

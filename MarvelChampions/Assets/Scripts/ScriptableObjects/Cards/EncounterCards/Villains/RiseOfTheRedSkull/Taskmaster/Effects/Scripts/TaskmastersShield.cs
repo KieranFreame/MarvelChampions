@@ -8,13 +8,9 @@ public class TaskmastersShield: AttachmentCardEffect
 {
     Retaliate _retaliate;
 
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        _owner = owner;
-        Card = card;
-
         Attach();
-
         return Task.CompletedTask;
     }
 
@@ -33,10 +29,7 @@ public class TaskmastersShield: AttachmentCardEffect
     {
         player.Exhaust();
 
-        List<Task> tasks = new() { PayCostSystem.instance.GetResources(Resource.Scientific, 1), PayCostSystem.instance.GetResources(Resource.Physical, 1) };
-
-        foreach (var t in tasks)
-            await t;
+        await PayCostSystem.instance.GetResources(new() { { Resource.Scientific, 1 },{ Resource.Physical, 1 } });
 
         Detach();
         ScenarioManager.inst.EncounterDeck.Discard(Card);

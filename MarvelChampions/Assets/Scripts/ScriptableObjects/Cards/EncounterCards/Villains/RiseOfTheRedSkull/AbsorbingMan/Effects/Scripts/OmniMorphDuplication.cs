@@ -26,8 +26,7 @@ public class OmniMorphDuplication : EncounterCardEffect
 
             Debug.Log("Discarding " + pCard.CardName);
 
-            player.Hand.Remove(pCard);
-            player.Deck.Discard(pCard);
+            player.Hand.Discard(pCard);
         }
 
         return Task.CompletedTask;

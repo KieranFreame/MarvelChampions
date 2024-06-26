@@ -1,10 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class AttachmentCardEffect : EncounterCardEffect
 {
     public ICharacter attached { get; protected set; }
+
+    public override Task OnEnterPlay()
+    {
+        Attach();
+        return Task.CompletedTask;
+    }
 
     public virtual void Attach()
     {

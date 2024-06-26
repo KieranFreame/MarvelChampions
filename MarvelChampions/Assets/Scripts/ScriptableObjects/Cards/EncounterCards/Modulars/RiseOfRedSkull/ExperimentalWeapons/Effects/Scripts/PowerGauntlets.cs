@@ -26,17 +26,7 @@ public class PowerGauntlets : EncounterCardEffect, IAttachment
 
     public override async Task Activate(Player player)
     {
-        List<Task> tasks = new List<Task>()
-        {
-            PayCostSystem.instance.GetResources(Resource.Physical, 1),
-            PayCostSystem.instance.GetResources(Resource.Scientific, 1)
-        };
-
-        foreach (Task t in tasks)
-        {
-            await t;
-        }
-
+        await PayCostSystem.instance.GetResources(new() { { Resource.Physical, 1 }, { Resource.Scientific, 1 } });
         Detach();
         ScenarioManager.inst.EncounterDeck.Discard(Card);
     }
@@ -82,8 +72,7 @@ public class PowerGauntlets : EncounterCardEffect, IAttachment
 
             Debug.Log("Discarding" + pCard.CardName);
 
-            _target.Hand.Remove(pCard);
-            _target.Deck.Discard(pCard);
+            _target.Hand.Discard(pCard);
         }
     }
 }

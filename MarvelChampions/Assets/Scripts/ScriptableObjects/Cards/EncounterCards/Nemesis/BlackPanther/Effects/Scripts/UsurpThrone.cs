@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Usurp the Throne", menuName = "MarvelChampions/Card Effects/Nemesis/Black Panther/Usurp the Throne")]
 public class UsurpThrone : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task OnEnterPlay()
     {
         VillainTurnController.instance.HazardCount++;
         await Task.Yield();

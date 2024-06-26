@@ -8,19 +8,13 @@ using static UnityEngine.UI.GridLayoutGroup;
 [CreateAssetMenu(fileName = "Family Emergency", menuName = "MarvelChampions/Card Effects/Captain Marvel/Family Emergency")]
 public class FamilyEmergency : EncounterCardEffect
 {
-    Player danvers;
-
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
-        _owner = owner;
-        _card = card;
-        danvers = TurnManager.Players.FirstOrDefault(x => x.Identity.Hero.Name == "Captain Marvel");
+        var danvers = TurnManager.Players.FirstOrDefault(x => x.Identity.Hero.Name == "Captain Marvel");
 
         if (danvers.Identity.ActiveIdentity is not AlterEgo)
         {
-            bool decision = await ConfirmActivateUI.MakeChoice("Flip to Alter-Ego?");
-
-            if (decision)
+            if (await ConfirmActivateUI.MakeChoice("Flip to Alter-Ego?"))
             {
                 danvers.Identity.FlipToAlterEgo();
             }
@@ -40,6 +34,6 @@ public class FamilyEmergency : EncounterCardEffect
         }
 
         danvers.CharStats.Attacker.Stunned = true;
-        ScenarioManager.inst.Surge(player);
+        ScenarioManager.inst.Surge(TurnManager.instance.CurrPlayer);
     }
 }

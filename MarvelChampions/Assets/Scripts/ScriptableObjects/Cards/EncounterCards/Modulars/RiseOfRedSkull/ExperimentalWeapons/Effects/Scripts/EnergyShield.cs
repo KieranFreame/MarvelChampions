@@ -27,10 +27,10 @@ public class EnergyShield : EncounterCardEffect, IAttachment
 
     public override async Task Activate(Player player)
     {
-        List<Task> tasks = new List<Task>()
+        var tasks = new List<Task>()
         {
-            PayCostSystem.instance.GetResources(Resource.Energy, 1),
-            PayCostSystem.instance.GetResources(Resource.Scientific, 1)
+            PayCostSystem.instance.GetResources(new() { { Resource.Energy, 1 } }),
+            PayCostSystem.instance.GetResources(new() { { Resource.Scientific, 1 } })
         };
 
         foreach (Task t in tasks)

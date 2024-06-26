@@ -23,7 +23,7 @@ namespace CoreSet
 
         public override async Task Activate()
         {
-            await PayCostSystem.instance.GetResources(Resource.Energy, 1);
+            await PayCostSystem.instance.GetResources(new() { { Resource.Energy, 1 } });
 
             int choice = await ChooseEffectUI.ChooseEffect(new List<string>() { "Increase THW by 2", "Increase ATK by 2" });
 

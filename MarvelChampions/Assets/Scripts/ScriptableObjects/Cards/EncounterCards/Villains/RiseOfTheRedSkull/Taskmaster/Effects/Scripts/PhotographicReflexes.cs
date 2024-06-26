@@ -7,13 +7,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Photographic Reflexes", menuName = "MarvelChampions/Card Effects/RotRS/Taskmaster/Photographic Reflexes")]
 public class PhotographicReflexes : AttachmentCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        _owner = owner;
-        Card = card;
-
         Attach();
-
         return Task.CompletedTask;
     }
 
@@ -21,7 +17,7 @@ public class PhotographicReflexes : AttachmentCardEffect
     {
         if (action.IsAttack)
         {
-            await DamageSystem.Instance.ApplyDamage(new(action.Owner, action.Value, card: Card, owner: _owner));
+            await DamageSystem.Instance.ApplyDamage(new(action.Owner, action.Value, false, _card, _owner));
             action.Value = 0;
 
             Detach();

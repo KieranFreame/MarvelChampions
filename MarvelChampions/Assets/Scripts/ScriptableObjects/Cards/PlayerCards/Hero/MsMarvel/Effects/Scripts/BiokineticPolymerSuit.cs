@@ -28,6 +28,8 @@ public class BiokineticPolymerSuit : PlayerCardEffect, IGenerate
     public List<Resource> GenerateResource()
     {
         _card.Exhaust();
-        return new List<Resource>() { Resource.Wild };
+        return new() { Resource.Wild };
     }
+
+    public List<Resource> GetResources() => new(){ Resource.Wild };
 }

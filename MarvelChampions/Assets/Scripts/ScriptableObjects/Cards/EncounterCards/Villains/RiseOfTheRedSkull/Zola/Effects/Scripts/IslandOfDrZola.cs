@@ -35,7 +35,7 @@ public class IslandOfDrZola : EncounterCardEffect
 
             MinionCard BioServant = CreateCardFactory.Instance.CreateCard(minion, RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
             VillainTurnController.instance.MinionsInPlay.Add(BioServant);
-            await BioServant.Effect.OnEnterPlay(_owner, BioServant, p);
+            await BioServant.Effect.OnEnterPlay();
         }
 
         test = card.gameObject.AddComponent<Counters>();
@@ -65,7 +65,7 @@ public class IslandOfDrZola : EncounterCardEffect
             VillainTurnController.instance.MinionsInPlay.Add(card);
             card.transform.SetParent(RevealEncounterCardSystem.Instance.MinionTransform);
 
-            await card.Effect.OnEnterPlay(_owner, card, TurnManager.instance.FirstPlayer);
+            await card.Effect.OnEnterPlay();
 
             test.RemoveCounters(3);
         }

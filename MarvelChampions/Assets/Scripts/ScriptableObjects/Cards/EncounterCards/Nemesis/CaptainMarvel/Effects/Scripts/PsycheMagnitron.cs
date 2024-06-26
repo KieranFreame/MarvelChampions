@@ -6,16 +6,13 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "The Psyche-Magnitron", menuName = "MarvelChampions/Card Effects/Nemesis/Captain Marvel/The Psyche-Magnitron")]
 public class PsycheMagnitron : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task Resolve()
     {
-        _owner = owner;
-        Card = card;
-
-        (Card as SchemeCard).Threat.GainThreat(1 * TurnManager.Players.Count);
+        ((SchemeCard)Card).Threat.GainThreat(1 * TurnManager.Players.Count);
 
         VillainTurnController.instance.HazardCount++;
 
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 
     public override Task WhenDefeated()

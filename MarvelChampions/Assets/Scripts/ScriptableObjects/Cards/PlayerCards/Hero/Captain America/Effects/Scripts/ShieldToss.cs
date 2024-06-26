@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -38,15 +39,15 @@ public class ShieldToss : PlayerCardEffect
         if (AttackSystem.Instance.Guards.Count == 0)
             enemies.Add(ScenarioManager.inst.ActiveVillain);
 
-        await PayCostSystem.instance.GetResources(amount: enemies.Count, enableFinish:true);
-
-        int targetCount = PayCostSystem.instance._discards.Count;
-
-        List<ICharacter> targets = await TargetSystem.instance.SelectTargets(enemies, targetCount, default);
+        var token = FinishButton.ToggleFinishButton(true, TargetSystem.instance.FinishedSelecting);
+        var discards = await TargetSystem.instance.SelectTargets(_owner.Hand.cards.ToList(), enemies.Count, token);
+        var targets = await TargetSystem.instance.SelectTargets(enemies, discards.Count, default);
 
         foreach (ICharacter target in targets)
         {
             await AttackSystem.Instance.InitiateAttack(new(4, target, owner: _owner, attackType: AttackType.Card, card: Card));
+            _owner.Hand.Discard(discards[0]);
+            discards.RemoveAt(0);
         }
 
         PlayerCard shield = _owner.CardsInPlay.Permanents.First(x => x.CardName == "Captain America's Shield");

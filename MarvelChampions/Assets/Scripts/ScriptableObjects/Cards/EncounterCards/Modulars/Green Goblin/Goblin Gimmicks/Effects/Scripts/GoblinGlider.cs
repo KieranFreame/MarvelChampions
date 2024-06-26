@@ -7,13 +7,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Goblin Glider", menuName = "MarvelChampions/Card Effects/Modulars/Goblin Gimmicks/Goblin Glider")]
 public class GoblinGlider : AttachmentCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        Card = card;
-
-        List<ICharacter> attachable = new() { owner };
-        attachable.AddRange(VillainTurnController.instance.MinionsInPlay);
-        attachable.RemoveAll(x => x.Attachments.Where(x => (x as MonoBehaviour).gameObject.name == "Goblin Glider").Count() != 0);
+        List<ICharacter> attachable = new(VillainTurnController.instance.MinionsInPlay) { _owner };
+        attachable.RemoveAll(x => x.Attachments.Any(x => ((IEffect)x).Card.CardName == "Goblin Glider"));
 
         int highHP = int.MinValue;
 
@@ -32,21 +29,18 @@ public class GoblinGlider : AttachmentCardEffect
         }
         else
         {
-            ScenarioManager.inst.Surge(player);
-            ScenarioManager.inst.EncounterDeck.Discard(card);
+            ScenarioManager.inst.Surge(TurnManager.instance.CurrPlayer);
+            ScenarioManager.inst.EncounterDeck.Discard(_card);
         }
 
         return Task.CompletedTask;
     }
 
-    public override bool CanActivate(Player p)
-    {
-        return p.HaveResource(Resource.Energy, 2);
-    }
+    public override bool CanActivate(Player p) => p.HaveResource(Resource.Energy, 2);
 
     public override async Task Activate(Player p)
     {
-        await PayCostSystem.instance.GetResources(Resource.Energy, 2);
+        await PayCostSystem.instance.GetResources(new() { { Resource.Energy, 2 } });
 
         Detach();
         ScenarioManager.inst.EncounterDeck.Discard(Card);

@@ -7,11 +7,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Whirlwind", menuName = "MarvelChampions/Card Effects/Masters of Evil/Whirlwind")]
 public class Whirlwind : EncounterCardEffect
 {
-    public override async Task Boost(Action action)
+    public override Task OnEnterPlay()
     {
-        foreach (Player p in TurnManager.Players.Where(x => x.Identity.ActiveIdentity is Hero))
-        {
-            await DamageSystem.Instance.ApplyDamage(new(p, 1, card:GameObject.Find("Whirlwind").GetComponent<EncounterCard>(), owner:action.Owner));
-        }
+        Debug.Log("Whirlwind's effect cannot resolve in a solo game");
+        return Task.CompletedTask;
     }
 }

@@ -7,7 +7,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "The Doomsday Chair", menuName = "MarvelChampions/Card Effects/The Doomsday Chair/The Doomsday Chair")]
 public class TheDoomsdayChair : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task OnEnterPlay()
     {
         MinionCard modok = VillainTurnController.instance.MinionsInPlay.FirstOrDefault(x => x.CardName == "MODOK");
 
@@ -19,7 +19,7 @@ public class TheDoomsdayChair : EncounterCardEffect
             {
                 modok = CreateCardFactory.Instance.CreateCard(data, RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
                 VillainTurnController.instance.MinionsInPlay.Add(modok);
-                await modok.Effect.OnEnterPlay(owner, modok, player);
+                await modok.Effect.OnEnterPlay();
             }
         }
 

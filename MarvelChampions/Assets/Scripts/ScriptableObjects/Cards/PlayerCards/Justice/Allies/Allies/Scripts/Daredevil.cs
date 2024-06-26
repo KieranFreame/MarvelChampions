@@ -12,14 +12,14 @@ public class Daredevil : PlayerCardEffect
 
     public override Task OnEnterPlay()
     {
-        ThwartSystem.Instance.OnThwartComplete.Add(IsTriggerMet);
+        GameStateManager.Instance.OnActivationCompleted += IsTriggerMet;
         return Task.CompletedTask;
     }
 
-    private void IsTriggerMet(ThwartAction action)
+    private void IsTriggerMet(Action action)
     {
-        if (action.Owner == Card as ICharacter)
-            EffectManager.Inst.Resolving.Push(this);
+        if (action is ThwartAction && action.Owner.Name == "Daredevil")
+            EffectManager.Inst.Responding.Add(this);
     }
 
     public override async Task Resolve()
@@ -32,6 +32,6 @@ public class Daredevil : PlayerCardEffect
 
     public override void OnExitPlay()
     {
-        ThwartSystem.Instance.OnThwartComplete.Remove(IsTriggerMet);
+        GameStateManager.Instance.OnActivationCompleted -= IsTriggerMet;
     }
 }

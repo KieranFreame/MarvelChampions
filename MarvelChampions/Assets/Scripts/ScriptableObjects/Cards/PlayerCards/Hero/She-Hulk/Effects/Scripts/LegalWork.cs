@@ -7,23 +7,19 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Legal Work", menuName = "MarvelChampions/Card Effects/She-Hulk/Legal Work")]
 public class LegalWork : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
-        _owner = owner;
-        Card = card;
         Player walters = TurnManager.Players.FirstOrDefault(x => x.Identity.AlterEgo.Name == "Jennifer Walters");
 
         if (walters.Identity.ActiveIdentity is not AlterEgo)
         {
-            bool decision = await ConfirmActivateUI.MakeChoice("Flip to Alter-Ego?");
-
-            if (decision)
+            if (await ConfirmActivateUI.MakeChoice("Flip to Alter-Ego?"))
             {
                 walters.Identity.FlipToAlterEgo();
             }
         }
 
-        if (walters.Identity.ActiveIdentity is AlterEgo && !walters.Exhausted) //chose to flip\was already alterego && is not exhausted
+        if (walters.Identity.ActiveIdentity is AlterEgo && !walters.Exhausted)
         {
             int decision = await ChooseEffectUI.ChooseEffect(new List<string>() { "Exhaust Jennifer Walters. Remove Legal Work from the game", "The main scheme gains +1 acceleration" });
 

@@ -26,7 +26,7 @@ public class HuntingDownHeroes : EncounterCardEffect
 
         SchemeCard HydraPatrol = CreateCardFactory.Instance.CreateCard(sideScheme, GameObject.Find("SideSchemeTransform").transform) as SchemeCard;
         ScenarioManager.sideSchemes.Add(HydraPatrol);
-        await HydraPatrol.Effect.OnEnterPlay(owner, HydraPatrol, null);
+        await HydraPatrol.Effect.OnEnterPlay();
 
         (Card as MainSchemeCard).AfterStepOne.Add(AfterStepOne);
     }

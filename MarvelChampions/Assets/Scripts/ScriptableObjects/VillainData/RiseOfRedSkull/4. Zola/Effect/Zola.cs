@@ -24,7 +24,7 @@ public class Zola : VillainEffect
 
         SchemeCard TestSubjects = CreateCardFactory.Instance.CreateCard(sideScheme, GameObject.Find("SideSchemeTransform").transform) as SchemeCard;
         ScenarioManager.sideSchemes.Add(TestSubjects);
-        await TestSubjects.Effect.OnEnterPlay(_owner, TestSubjects, null);
+        await TestSubjects.Effect.OnEnterPlay();
     }
 
     public override async Task StageThreeEffect()

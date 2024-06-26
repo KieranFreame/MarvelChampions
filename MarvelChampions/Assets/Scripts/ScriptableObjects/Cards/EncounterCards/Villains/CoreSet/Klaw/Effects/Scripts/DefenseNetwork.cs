@@ -8,10 +8,9 @@ public class DefenseNetwork : EncounterCardEffect
 {
     Crisis _crisis;
 
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task Resolve()
     {
-        Card = card;
-        (Card as SchemeCard).Threat.GainThreat(1 * TurnManager.Players.Count);
+        (_card as SchemeCard).Threat.GainThreat(1 * TurnManager.Players.Count);
 
         _crisis = new(Card as SchemeCard);
 

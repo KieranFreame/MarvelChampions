@@ -7,7 +7,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Masters of Mayhem", menuName = "MarvelChampions/Card Effects/Masters of Evil/Masters of Mayhem")]
 public class MastersOfMayhem : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
         List<MinionCard> masters = VillainTurnController.instance.MinionsInPlay.Where(x => x.CardTraits.Contains("Masters of Evil")).ToList();
 
@@ -29,7 +29,7 @@ public class MastersOfMayhem : EncounterCardEffect
                 if (master == default)
                 {
                     Debug.Log("All Masters of Evil have been removed from the game. Surging");
-                    ScenarioManager.inst.Surge(player);
+                    ScenarioManager.inst.Surge(TurnManager.instance.CurrPlayer);
                     return;
                 }
 
@@ -42,7 +42,6 @@ public class MastersOfMayhem : EncounterCardEffect
 
             MinionCard masterofevil = CreateCardFactory.Instance.CreateCard(master, RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
             VillainTurnController.instance.MinionsInPlay.Add(masterofevil);
-            await masterofevil.Effect.OnEnterPlay(owner, masterofevil, player);
         }
     }
 }

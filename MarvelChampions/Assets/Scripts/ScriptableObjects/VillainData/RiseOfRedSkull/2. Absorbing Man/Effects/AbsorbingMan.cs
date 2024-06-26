@@ -18,8 +18,8 @@ public class AbsorbingMan : VillainEffect
 
     private void ChangeTraits(EncounterCard newEnvironment)
     {
-        _owner.VillainTraits.Remove(NoneShallPass.CurrentEnvironment.CardTraits[0]);
-        _owner.VillainTraits.Add(newEnvironment.CardTraits[0]);
+        _owner.VillainTraits.RemoveItem(NoneShallPass.CurrentEnvironment.CardTraits.Collection[0]);
+        _owner.VillainTraits.AddItem(newEnvironment.CardTraits.Collection[0]);
     }
 
     #region Stage Two

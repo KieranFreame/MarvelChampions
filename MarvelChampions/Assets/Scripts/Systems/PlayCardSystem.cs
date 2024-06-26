@@ -13,9 +13,7 @@ public class PlayCardSystem
     {
         get
         {
-            if (instance == null)
-                instance = new();
-
+            instance ??= new();
             return instance;
         }
     }
@@ -43,9 +41,9 @@ public class PlayCardSystem
     public event UnityAction<PlayerCard> OnCardPlayed;
     #endregion
 
-    private Transform alliesTransform;
-    private Transform permanentsTransform;
-    private Transform eventsTransform;
+    private readonly Transform alliesTransform;
+    private readonly Transform permanentsTransform;
+    private readonly Transform eventsTransform;
 
     public async Task InitiatePlayCard(PlayCardAction action)
     {
@@ -57,7 +55,7 @@ public class PlayCardSystem
             await PayCostSystem.instance.PayForCard(CardToPlay);
 
         if (CardToPlay.CurrZone == Zone.Hand)
-            _player.Hand.Remove(CardToPlay);
+            _player.Hand.RemoveFromHand(CardToPlay);
 
         OnCardPlayed?.Invoke(CardToPlay);
 

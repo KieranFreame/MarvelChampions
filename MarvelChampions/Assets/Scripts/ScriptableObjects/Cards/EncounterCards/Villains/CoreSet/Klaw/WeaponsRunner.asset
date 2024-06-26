@@ -22,6 +22,7 @@ MonoBehaviour:
   boostIcons: 0
   boostDescription: Put this card into play engaged with you.
   effect: {fileID: 11400000, guid: 46d5288d8c3aaae4a8713279da9be5fd, type: 2}
+  boost: {fileID: 11400000, guid: 693f89885bb5d2d4b88de704b3cec04a, type: 2}
   baseAttack: 1
   baseScheme: 1
   baseHealth: 2

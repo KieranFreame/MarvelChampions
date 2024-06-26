@@ -8,9 +8,8 @@ public class RiskyBusinessEnvironment : EncounterCardEffect
 {
     Counters counters;
 
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        Card = card;
         counters = _card.gameObject.AddComponent<Counters>();
         counters.AddCounters(2 * TurnManager.Players.Count);
 

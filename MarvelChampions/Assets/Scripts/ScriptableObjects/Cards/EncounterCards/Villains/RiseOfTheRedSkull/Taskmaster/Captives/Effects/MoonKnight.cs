@@ -10,21 +10,18 @@ namespace TaskmasterScenario
     [CreateAssetMenu(fileName = "Moon Knight", menuName = "MarvelChampions/Card Effects/RotRS/Taskmaster/Captives/Moon Knight")]
     public class MoonKnight : PlayerCardEffect
     {
-        public override async Task OnEnterPlay()
+        public override Task OnEnterPlay()
         {
-            if (Card.PrevZone == Zone.Hand)
-            {
-                CancellationToken token = CancelButton.ToggleCancelBtn(true, CancelEffect);
-                await PayCostSystem.instance.GetResources(Resource.Wild, 1, true);
-                CancelButton.ToggleCancelBtn(false, CancelEffect);
+            if (Card.PrevZone == Zone.Hand && _owner.HaveResource(Resource.Wild))
+                EffectManager.Inst.Responding.Add(this);
 
-                DrawCardSystem.Instance.DrawCards(new(2, _owner));
-            }
+            return Task.CompletedTask;
         }
 
-        private void CancelEffect()
+        public override async Task Resolve()
         {
-            CancelButton.ToggleCancelBtn(false, CancelEffect);
+            await PayCostSystem.instance.GetResources(new() { { Resource.Wild, 1 } });
+            DrawCardSystem.Instance.DrawCards(new(2, _owner));
         }
     }
 }

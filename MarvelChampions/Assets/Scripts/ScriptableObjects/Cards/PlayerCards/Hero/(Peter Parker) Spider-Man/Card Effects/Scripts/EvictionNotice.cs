@@ -7,21 +7,13 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Eviction Notice", menuName = "MarvelChampions/Card Effects/Spider-Man (Peter Parker)/Eviction Notice")]
 public class EvictionNotice : EncounterCardEffect
 {
-    Player parker;
-    Player currPlayer;
-
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
-        _owner = owner;
-        Card = card;
-        currPlayer = player;
-        parker = TurnManager.Players.FirstOrDefault(x => x.Identity.AlterEgo.Name == "Peter Parker");
+        var parker = TurnManager.Players.FirstOrDefault(x => x.Identity.AlterEgo.Name == "Peter Parker");
 
         if (parker.Identity.ActiveIdentity is not AlterEgo)
         {
-            bool decision = await ConfirmActivateUI.MakeChoice("Flip to Alter-Ego?");
-
-            if (decision)
+            if (await ConfirmActivateUI.MakeChoice("Flip to Alter-Ego?"))
             {
                 parker.Identity.FlipToAlterEgo();
             }
@@ -44,10 +36,9 @@ public class EvictionNotice : EncounterCardEffect
 
         Debug.Log(discard.CardName + " has been discarded");
 
-        parker.Hand.Remove(discard);
-        parker.Deck.Discard(discard);
+        parker.Hand.Discard(discard);
 
-        ScenarioManager.inst.Surge(currPlayer);
+        ScenarioManager.inst.Surge(TurnManager.instance.CurrPlayer);
 
     }
 }

@@ -24,7 +24,7 @@ public class MasterMysticArts : PlayerCardEffect
 
     public override async Task OnEnterPlay()
     {
-        await PayCostSystem.instance.GetResources(amount: InvocationDeck.Instance.Invocations[0].cardCost);
+        await PayCostSystem.instance.PayForCard(InvocationDeck.Instance.invocationTransform.GetComponentInChildren<PlayerCard>());
         await InvocationDeck.Instance.Activate();
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Corporate Acquisition", menuName = "MarvelChampions/Card Effects/Risky Business/Corporate Acquisition")]
 public class CorporateAcquisition : EncounterCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
         VillainTurnController.instance.HazardCount++;
         return Task.CompletedTask;

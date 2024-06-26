@@ -51,7 +51,7 @@ namespace MsMarvelHeroPack
 
                 if (choice)
                 {
-                    await PayCostSystem.instance.GetResources(Resource.Energy, 1);
+                    await PayCostSystem.instance.GetResources(new() { { Resource.Energy, 1 } });
                     action.Owner.CharStats.Health.TakeDamage(new(action.Owner, 2, card: Card, owner: _owner));
 
                     if (action.Owner.CharStats.Health.CurrentHealth <= 0)

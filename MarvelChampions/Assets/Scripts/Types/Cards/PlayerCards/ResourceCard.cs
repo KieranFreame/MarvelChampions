@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class ResourceCard : PlayerCard
 {
-    public List<Resource> GetResources()
+    public override void GetResources()
     {
         if (Effect != null)
-            return (Effect as ResourceCardEffect).GetResources();
+        {
+            (Effect as ResourceCardEffect).GetResources();
+            return;
+        }
 
-        return Resources;
+        base.GetResources();
     }
 
     public int ResourceCount(PlayerCard c)
@@ -19,4 +22,6 @@ public class ResourceCard : PlayerCard
 
         return Resources.Count;
     }
+
+
 }

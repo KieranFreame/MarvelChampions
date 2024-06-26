@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "The Masters of Evil", menuName = "MarvelChampions/Card Effects/Masters of Evil/Masters of Evil")]
 public class TheMastersOfEvil : EncounterCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
         EncounterCardData data;
 
@@ -22,7 +22,7 @@ public class TheMastersOfEvil : EncounterCardEffect
         MinionCard minion = CreateCardFactory.Instance.CreateCard(data, RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
         VillainTurnController.instance.MinionsInPlay.Add(minion);
 
-        (card as SchemeCard).Threat.CurrentThreat *= TurnManager.Players.Count;
+        (_card as SchemeCard).Threat.CurrentThreat *= TurnManager.Players.Count;
         ScenarioManager.inst.MainScheme.Threat.Acceleration++;
 
         return Task.CompletedTask;

@@ -13,12 +13,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Hydra Flame-Soldier", menuName = "MarvelChampions/Card Effects/Modulars/RotRS/Hydra Assault/Hydra Flame-Soldier")]
 public class HydraFlameSoldier : EncounterCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        Card = card;
-
         DefendSystem.Instance.OnDefenderSelected += DefenderSelected;
-
         return Task.CompletedTask;
     }
 
@@ -26,7 +23,7 @@ public class HydraFlameSoldier : EncounterCardEffect
     {
         if (action.Card == Card)
             if (target == null)
-                Debug.Log("FUCK");//EffectManager.Inst.Resolving.Push(this);
+                EffectManager.Inst.Resolving.Push(this);
     }
 
     public override async Task Resolve()

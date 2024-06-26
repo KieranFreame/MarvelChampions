@@ -9,10 +9,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Goblin Nation", menuName = "MarvelChampions/Card Effects/Mutagen Formula/Goblin Nation")]
 public class GoblinNation : EncounterCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        _owner = owner;
-
         VillainTurnController.instance.MinionsInPlay.CollectionChanged += AttackModify;
 
         foreach (var goblin in VillainTurnController.instance.MinionsInPlay.Where(x => x.CardTraits.Contains("Goblin")))
@@ -22,7 +20,7 @@ public class GoblinNation : EncounterCardEffect
 
         _owner.CharStats.Attacker.CurrentAttack++;
 
-        (card as SchemeCard).Threat.CurrentThreat *= TurnManager.Players.Count;
+        ((SchemeCard)_card).Threat.CurrentThreat *= TurnManager.Players.Count;
 
         return Task.CompletedTask;
     }
@@ -70,6 +68,6 @@ public class GoblinNation : EncounterCardEffect
         card.InPlay = true;
         card.transform.SetParent(GameObject.Find("SideSchemeTransform").transform);
         ScenarioManager.sideSchemes.Add(card as SchemeCard);
-        await card.Effect.OnEnterPlay(ScenarioManager.inst.ActiveVillain, card, TurnManager.instance.CurrPlayer);
+        await card.Effect.OnEnterPlay();
     }
 }

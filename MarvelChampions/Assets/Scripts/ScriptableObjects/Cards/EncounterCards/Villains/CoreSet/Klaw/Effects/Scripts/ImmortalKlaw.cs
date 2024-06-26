@@ -6,15 +6,12 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "The Immortal Klaw", menuName = "MarvelChampions/Card Effects/Klaw/Immortal Klaw")]
 public class ImmortalKlaw : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
-        _owner = owner;
-        Card = card;
-
-        (card as SchemeCard).Threat.CurrentThreat *= TurnManager.Players.Count;
+        (_card as SchemeCard).Threat.CurrentThreat *= TurnManager.Players.Count;
         ScenarioManager.inst.MainScheme.Threat.Acceleration++;
 
-        owner.CharStats.Health.IncreaseMaxHealth(10);
+        _owner.CharStats.Health.IncreaseMaxHealth(10);
 
         await Task.Yield();
     }

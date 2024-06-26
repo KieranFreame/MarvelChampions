@@ -26,7 +26,7 @@ public class SuperhumanLawDivision : PlayerCardEffect
 
     public override async Task Activate()
     {
-        await PayCostSystem.instance.GetResources(Resource.Scientific, 1);
+        await PayCostSystem.instance.GetResources(new() { { Resource.Scientific, 1 } });
         _card.Exhaust();
 
         await _owner.CharStats.InitiateThwart(new(2, null));

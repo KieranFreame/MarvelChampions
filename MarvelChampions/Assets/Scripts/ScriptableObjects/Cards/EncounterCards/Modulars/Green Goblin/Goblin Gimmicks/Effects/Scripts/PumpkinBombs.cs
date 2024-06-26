@@ -12,10 +12,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Pumpkin Bombs", menuName = "MarvelChampions/Card Effects/Modulars/Goblin Gimmicks/Pumpkin Bombs")]
 public class PumpkinBombs : AttachmentCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        attached = _owner = owner;
-        Card = card;
+        attached = _owner;
 
         Attach();
 
@@ -23,9 +22,9 @@ public class PumpkinBombs : AttachmentCardEffect
     }
 
     #region IndirectDamage
-    private void IsTriggerMet(AttackAction action)
+    private void IsTriggerMet(Action action)
     {
-        if (action.Owner != (ICharacter)_owner)
+        if (action is not AttackAction || action.Owner != Owner)
             return;
 
         EffectManager.Inst.Resolving.Push(this);
@@ -33,12 +32,10 @@ public class PumpkinBombs : AttachmentCardEffect
 
     public override async Task Resolve()
     {
-        List<ICharacter> targets = new()
+        List<ICharacter> targets = new(TurnManager.instance.CurrPlayer.CardsInPlay.Allies)
         {
             TurnManager.instance.CurrPlayer
         };
-
-        targets.AddRange(TurnManager.instance.CurrPlayer.CardsInPlay.Allies);
 
         await IndirectDamageHandler.inst.HandleIndirectDamage(targets, 2);
 
@@ -55,7 +52,7 @@ public class PumpkinBombs : AttachmentCardEffect
 
     public override async Task Activate(Player player)
     {
-        await PayCostSystem.instance.GetResources(Resource.Physical, 2);
+        await PayCostSystem.instance.GetResources(new() { { Resource.Physical, 2 } });
 
         Detach();
         ScenarioManager.inst.EncounterDeck.Discard(Card);
@@ -65,13 +62,13 @@ public class PumpkinBombs : AttachmentCardEffect
     public override void Attach()
     {
         attached.Attachments.Add(Card as IAttachment);
-        AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
+        GameStateManager.Instance.OnActivationCompleted += IsTriggerMet;
     }
 
     
     public override void Detach()
     {
         attached.Attachments.Remove(Card as IAttachment);
-        AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
+        GameStateManager.Instance.OnActivationCompleted -= IsTriggerMet;
     }
 }

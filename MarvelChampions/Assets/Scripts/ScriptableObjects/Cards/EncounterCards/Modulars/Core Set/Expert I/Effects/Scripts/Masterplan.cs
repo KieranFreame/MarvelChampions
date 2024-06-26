@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Masterplan", menuName = "MarvelChampions/Card Effects/Expert/Masterplan")]
 public class Masterplan : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
         if (ScenarioManager.sideSchemes.Count == 0)
         {

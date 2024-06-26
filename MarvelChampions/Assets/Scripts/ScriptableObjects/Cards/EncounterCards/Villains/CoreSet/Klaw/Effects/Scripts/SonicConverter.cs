@@ -7,34 +7,34 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Sonic Converter", menuName = "MarvelChampions/Card Effects/Klaw/Sonic Converter")]
 public class SonicConverter : EncounterCardEffect
 {
-    ICharacter _target;
-
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    readonly Dictionary<Resource, int> cost = new()
     {
-        _owner = owner;
-        Card = card;
+        {Resource.Energy, 1 },
+        {Resource.Scientific, 1 },
+        {Resource.Physical, 1 },
+    };
 
-        owner.CharStats.AttackInitiated += AttackInitiated;
+    public override Task Resolve()
+    {
+        GameStateManager.Instance.OnActivationCompleted += CanRespond;
         return Task.CompletedTask;
     }
 
-    private void AttackInitiated() => DefendSystem.Instance.OnTargetSelected += SetDefender;
-
-    private void SetDefender(ICharacter target)
+    private void CanRespond(Action arg0)
     {
-        DefendSystem.Instance.OnTargetSelected -= SetDefender;
-        _target = target;
-        _target.CharStats.Health.OnTakeDamage += OnTakeDamage;
+        if (arg0 is not AttackAction || arg0.Owner.Name != "Klaw") return;
+
+        ((AttackAction)arg0).Target.CharStats.Health.OnTakeDamage += Resolve;
     }
 
-    private void OnTakeDamage(DamageAction action)
+    private void Resolve(DamageAction action)
     {
-        if (action.Value > 0)
-        {
-            _target.CharStats.Attacker.Stunned = true;
-        }
+        action.DamageTargets[0].CharStats.Health.OnTakeDamage -= Resolve;
 
-        _target.CharStats.Health.OnTakeDamage -= OnTakeDamage;
+        if (action.DamageTargets[0].CharStats.Health.CurrentHealth > 0 && action.Value > 0)
+        {
+            action.DamageTargets[0].CharStats.Attacker.Stunned = true;
+        }
     }
 
     public override bool CanActivate(Player p)
@@ -44,16 +44,9 @@ public class SonicConverter : EncounterCardEffect
 
     public override async Task Activate(Player player)
     {
-        List<Task> tasks = new()
-        {
-            PayCostSystem.instance.GetResources(Resource.Energy, 1),
-            PayCostSystem.instance.GetResources(Resource.Scientific, 1),
-            PayCostSystem.instance.GetResources(Resource.Physical, 1)
-        };
+        await PayCostSystem.instance.GetResources(cost);
 
-        await Task.WhenAll(tasks);
-
-        _owner.CharStats.AttackInitiated -= AttackInitiated;
+        GameStateManager.Instance.OnActivationCompleted -= CanRespond;
         ScenarioManager.inst.EncounterDeck.Discard(Card);
     }
 }

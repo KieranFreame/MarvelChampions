@@ -6,22 +6,24 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Sonic Boom", menuName = "MarvelChampions/Card Effects/Klaw/Sonic Boom")]
 public class SonicBoom : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    readonly Dictionary<Resource, int> cost = new()
     {
+        {Resource.Energy, 1 },
+        {Resource.Scientific, 1 },
+        {Resource.Physical, 1 },
+    };
+
+    public override async Task Resolve()
+    {
+        var player = TurnManager.instance.CurrPlayer;
+
         if (player.HaveResource(Resource.Energy)  && player.HaveResource(Resource.Scientific) && player.HaveResource(Resource.Physical))
         {
             int decision = await ChooseEffectUI.ChooseEffect(new List<string>() { "Spend one of each resource (Energy, Scientific and Physical)", "Exhaust each character you control" });
 
             if (decision == 1)
             {
-                List<Task> tasks = new()
-                {
-                    PayCostSystem.instance.GetResources(Resource.Energy, 1),
-                    PayCostSystem.instance.GetResources(Resource.Scientific, 1),
-                    PayCostSystem.instance.GetResources(Resource.Physical, 1)
-                };
-
-                await Task.WhenAll(tasks);
+                await PayCostSystem.instance.GetResources(cost);
                 return;
             }
         }

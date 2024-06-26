@@ -8,11 +8,12 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Ritual Combat", menuName = "MarvelChampions/Card Effects/Nemesis/Black Panther/Ritual Combat")]
 public class RitualCombat : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
         ScenarioManager.inst.EncounterDeck.Mill(1);
 
         int boostCount = (ScenarioManager.inst.EncounterDeck.discardPile.Last() as EncounterCardData).boostIcons + 1;
+        var player = TurnManager.instance.CurrPlayer;
 
         if (player.Identity.ActiveIdentity is Hero)
         {
@@ -20,7 +21,7 @@ public class RitualCombat : EncounterCardEffect
 
             if (decision == 1)
             {
-                player.CharStats.Health.TakeDamage(new(player, boostCount, card));
+                player.CharStats.Health.TakeDamage(new(player, boostCount, _card));
                 return;
             }
         }

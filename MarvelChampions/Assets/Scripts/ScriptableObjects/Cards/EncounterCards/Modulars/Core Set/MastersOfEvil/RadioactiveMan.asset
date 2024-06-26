@@ -24,6 +24,7 @@ MonoBehaviour:
   boostIcons: 0
   boostDescription: Discard 1 card at random from your hand
   effect: {fileID: 11400000, guid: cea3435e083a39a489244edc795284a5, type: 2}
+  boost: {fileID: 11400000, guid: 779c049dd9d000f4d89d02d31dea274b, type: 2}
   baseAttack: 1
   baseScheme: 1
   baseHealth: 7

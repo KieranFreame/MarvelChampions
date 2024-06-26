@@ -7,9 +7,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Wicked Ambitions", menuName = "MarvelChampions/Card Effects/Mutagen Formula/Wicked Ambitions")]
 public class WickedAmbitions : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
-        for (int i = 0; i < owner.Stages.Stage * 2; i++)
+        var player = TurnManager.instance.CurrPlayer;
+
+        for (int i = 0; i < _owner.Stages.Stage * 2; i++)
         {
             EncounterCardData data = ScenarioManager.inst.EncounterDeck.deck[0] as EncounterCardData;
 
@@ -25,7 +27,7 @@ public class WickedAmbitions : EncounterCardEffect
                 {
                     MinionCard goblin = CreateCardFactory.Instance.CreateCard(data, RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
                     VillainTurnController.instance.MinionsInPlay.Add(goblin);
-                    await goblin.Effect.OnEnterPlay(_owner, goblin, player);
+                    await goblin.Effect.OnEnterPlay();
                 }
             }
             else

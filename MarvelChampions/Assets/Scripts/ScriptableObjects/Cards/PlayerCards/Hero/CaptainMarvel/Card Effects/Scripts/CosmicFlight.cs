@@ -13,7 +13,7 @@ public class CosmicFlight : PlayerCardEffect
     {
         if (!_owner.Identity.IdentityTraits.Contains("Aerial"))
         {
-            _owner.Identity.IdentityTraits.Add("Aerial");
+            _owner.Identity.IdentityTraits.AddItem("Aerial");
             addedTrait = true;
         }
             
@@ -32,7 +32,7 @@ public class CosmicFlight : PlayerCardEffect
             action.Value -= 3;
 
             if (addedTrait)
-                _owner.Identity.IdentityTraits.Remove("Aerial");
+                _owner.Identity.IdentityTraits.RemoveItem("Aerial");
 
             _owner.CharStats.Health.Modifiers.Remove(OnTakeDamage);
             _owner.Deck.Discard(Card);  

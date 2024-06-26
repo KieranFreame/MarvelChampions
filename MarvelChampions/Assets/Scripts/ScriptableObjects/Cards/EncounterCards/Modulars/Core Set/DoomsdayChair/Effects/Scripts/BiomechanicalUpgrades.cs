@@ -11,15 +11,12 @@ public class BiomechanicalUpgrades : AttachmentCardEffect, IAttachment
 {
     public ICharacter Attached { get => attached; set => attached = value; }
 
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        ScenarioManager.inst.Surge(player);
+        ScenarioManager.inst.Surge(TurnManager.instance.CurrPlayer);
 
-        Card = card;
-
-        List<ICharacter> attachable = new() { owner };
-        attachable.AddRange(VillainTurnController.instance.MinionsInPlay);
-        attachable.RemoveAll(x => x.Attachments.Where(x => (x as MonoBehaviour).gameObject.name == _card.CardName).Count() != 0);
+        List<ICharacter> attachable = new(VillainTurnController.instance.MinionsInPlay) { _owner };
+        attachable.RemoveAll(x => x.Attachments.Any(x => ((IEffect)x).Card.CardName == _card.CardName));
 
         int highHP = int.MinValue;
 
@@ -33,14 +30,9 @@ public class BiomechanicalUpgrades : AttachmentCardEffect, IAttachment
         }
 
         if (attached != null)
-        {
             Attach();
-        }
         else
-        {
-            ScenarioManager.inst.Surge(player);
-            ScenarioManager.inst.EncounterDeck.Discard(card);
-        }
+            ScenarioManager.inst.EncounterDeck.Discard(_card);
 
         return Task.CompletedTask;
     }

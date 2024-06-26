@@ -6,16 +6,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Taskmaster's Sword", menuName = "MarvelChampions/Card Effects/RotRS/Taskmaster/Taskmaster's Sword")]
 public class TaskmastersSword : AttachmentCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
-    {
-        _owner = owner;
-        Card = card;
-
-        Attach();
-
-        return Task.CompletedTask;
-    }
-
     public override bool CanActivate(Player player)
     {
         if (player.Exhausted)
@@ -31,10 +21,7 @@ public class TaskmastersSword : AttachmentCardEffect
     {
         player.Exhaust();
 
-        List<Task> tasks = new() { PayCostSystem.instance.GetResources(Resource.Scientific, 1), PayCostSystem.instance.GetResources(Resource.Physical, 1) };
-
-        foreach (var t in tasks)
-            await t;
+        await PayCostSystem.instance.GetResources(new() { { Resource.Scientific, 1 }, { Resource.Physical, 1 } });
 
         Detach();
         ScenarioManager.inst.EncounterDeck.Discard(Card);

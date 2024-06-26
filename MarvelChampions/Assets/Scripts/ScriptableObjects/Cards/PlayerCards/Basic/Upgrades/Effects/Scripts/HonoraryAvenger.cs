@@ -37,7 +37,7 @@ public class HonoraryAvenger : PlayerCardEffect
 
         if (ally.CardTraits.Contains("Avenger") == false)
         {
-            ally.CardTraits.Add("Avenger");
+            ally.CardTraits.AddItem("Avenger");
             addedTrait = true;
         }
 
@@ -51,7 +51,7 @@ public class HonoraryAvenger : PlayerCardEffect
         ally.Attachments.Remove(_card as IAttachment);
 
         if (addedTrait)
-            ally.CardTraits.Remove("Avenger");
+            ally.CardTraits.RemoveItem("Avenger");
 
         ally.CharStats.Health.IncreaseMaxHealth(1);
     }

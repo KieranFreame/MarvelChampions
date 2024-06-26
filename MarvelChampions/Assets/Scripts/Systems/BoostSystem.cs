@@ -12,9 +12,7 @@ public class BoostSystem
     {
         get
         {
-            if (instance == null)
-                instance = new BoostSystem();
-
+            instance ??= new BoostSystem();
             return instance;
         }
     }
@@ -32,7 +30,7 @@ public class BoostSystem
 
     public int BoostCardCount { get; set; } = 1;
     private readonly List<CardData> _boostCards = new();
-
+    public Action Action { get; }
     public delegate Task<int> ModifyBoost(int boostIcons);
     public List<ModifyBoost> Modifiers { get; private set; } = new();
 
@@ -51,7 +49,6 @@ public class BoostSystem
         while (_boostCards.Count > 0)
         {
             EncounterCard inst = CreateCardFactory.Instance.CreateCard(_boostCards[0], GameObject.Find("EncounterCards").transform) as EncounterCard;
-            inst.Flip();
 
             int boostIcons = inst.BoostIcons;
 
@@ -64,7 +61,9 @@ public class BoostSystem
 
             value += boostIcons;
 
-            await inst.Effect.Boost(action);
+            if (inst.Boost != null)
+                await EffectManager.Inst.AddEffect(inst, inst.Boost);
+
             await Task.Delay(2000);
             _boostCards.RemoveAt(0);
 
@@ -75,10 +74,5 @@ public class BoostSystem
         //OnBoostCardsResolved?.Invoke(value);
         _boostCards.Clear();
         return value;
-    }
-
-    public bool IsBoost(CardData card)
-    {
-        return _boostCards.Contains(card);
     }
 }

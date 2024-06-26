@@ -21,3 +21,4 @@ MonoBehaviour:
   boostIcons: 0
   boostDescription: 'Choose One: Spend an energy resource or spawn a drone.'
   effect: {fileID: 11400000, guid: 36080aca6eb1a074a8392d9bb3a63900, type: 2}
+  boost: {fileID: 11400000, guid: 1c1bbd33b2f52c94c97040bf55582cab, type: 2}

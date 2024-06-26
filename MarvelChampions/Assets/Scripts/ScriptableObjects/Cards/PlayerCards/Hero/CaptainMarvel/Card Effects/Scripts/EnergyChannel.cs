@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -50,7 +51,8 @@ public class EnergyChannel : PlayerCardEffect
 
     private async Task AddCounters()
     {
-        await PayCostSystem.instance.GetResources(Resource.Energy, 5, true);
+        CancellationToken token = FinishButton.ToggleFinishButton(true, PayCostSystem.instance.FinishedSelecting);
+        await PayCostSystem.instance.GetResources(new() { { Resource.Energy, 5 } });
         counters.AddCounters(PayCostSystem.instance.Resources.Count);
     }
 

@@ -10,15 +10,15 @@ public class InterrogationRoom : PlayerCardEffect, IOptional
 
     public override Task OnEnterPlay()
     {
-        GameStateManager.Instance.OnCharacterDefeated += QueueEffect;
+        GameStateManager.Instance.OnCharacterDefeated += CanRespond;
         return Task.CompletedTask;
     }
 
-    public void QueueEffect(ICharacter minion)
+    public void CanRespond(ICharacter minion)
     {
-        if (minion.GetType() == typeof(MinionCard) && !(Card as PlayerCard).Exhausted)
+        if (minion is MinionCard && !_card.Exhausted && ScenarioManager.inst.ThreatPresent())
         {
-            EffectManager.Inst.Resolving.Push(this);
+            EffectManager.Inst.Responding.Add(this);
         }
     }
 
@@ -30,6 +30,6 @@ public class InterrogationRoom : PlayerCardEffect, IOptional
 
     public override void OnExitPlay()
     {
-        GameStateManager.Instance.OnCharacterDefeated -= QueueEffect;
+        GameStateManager.Instance.OnCharacterDefeated -= CanRespond;
     }
 }

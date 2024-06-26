@@ -8,12 +8,12 @@ public class BaronZemo : EncounterCardEffect
 {
     Player affected;
 
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task OnEnterPlay()
     {
-        affected = player;
+        affected = TurnManager.instance.CurrPlayer;
 
         //Quickstrike
-        await (card as MinionCard).CharStats.InitiateAttack();
+        await (_card as MinionCard).CharStats.InitiateAttack();
 
         affected.CanThwart = false;
     }

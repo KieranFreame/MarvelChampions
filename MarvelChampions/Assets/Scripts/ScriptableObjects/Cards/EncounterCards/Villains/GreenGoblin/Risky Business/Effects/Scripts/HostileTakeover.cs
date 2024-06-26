@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Hostile Takeover", menuName = "MarvelChampions/Card Effects/Risky Business/Hostile Takeover")]
 public class HostileTakeover : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task OnEnterPlay()
     {
         EncounterCard enterprise = CreateCardFactory.Instance.CreateCard(Database.GetCardDataById("RISKY-E-000"), GameObject.Find("AttachmentTransform").transform) as EncounterCard;
         await enterprise.OnRevealCard();

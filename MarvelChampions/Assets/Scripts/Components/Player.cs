@@ -12,7 +12,7 @@ public class Player : MonoBehaviour, ICharacter, IExhaust
     public Identity Identity { get; private set; }
     public CharacterStats CharStats { get; set; }
     public Deck Deck;
-    public Hand Hand = new();
+    public Hand Hand;
     private List<IAttachment> attachments = new();
     public ObservableCollection<IAttachment> Attachments { get => CardsInPlay.Attachments; set => attachments = new(); }
     public PlayerCards CardsInPlay { get; private set; } = new();
@@ -34,6 +34,7 @@ public class Player : MonoBehaviour, ICharacter, IExhaust
     public void LoadData(HeroData hData, AlterEgoData aData, List<CardData> deck)
     {
         Deck = new(deck);
+        Hand = new(this);
 
         Identity = new Identity(this, hData, aData);
         CharStats = new(this, hData, aData);

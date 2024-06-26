@@ -75,7 +75,7 @@ public class Deck
         discardPile.Add(d);
         limbo.Remove(d);
 
-        if ((discard as MonoBehaviour).gameObject != null)
+        if (discard != null)
             if (discard is SchemeCard || discard is MinionCard)
                 Object.Destroy((discard as MonoBehaviour).transform.parent.gameObject);
             else

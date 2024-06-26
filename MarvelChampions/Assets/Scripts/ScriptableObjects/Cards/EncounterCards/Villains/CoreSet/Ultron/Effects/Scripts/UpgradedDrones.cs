@@ -8,10 +8,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Upgraded Drones", menuName = "MarvelChampions/Card Effects/Ultron/Upgraded Drones")]
 public class UpgradedDrones : EncounterCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        Card = card;
-
         foreach (var drone in VillainTurnController.instance.MinionsInPlay.Where(x => x.CardName == "Drone"))
         {
             drone.CharStats.Attacker.CurrentAttack++;
@@ -45,14 +43,7 @@ public class UpgradedDrones : EncounterCardEffect
 
     public override async Task Activate(Player player)
     {
-        List<Task> tasks = new()
-        {
-            PayCostSystem.instance.GetResources(Resource.Energy, 1),
-            PayCostSystem.instance.GetResources(Resource.Scientific, 1),
-            PayCostSystem.instance.GetResources(Resource.Physical, 1)
-        };
-
-        await Task.WhenAll(tasks);
+        await PayCostSystem.instance.GetResources(new() { { Resource.Energy, 1 }, { Resource.Scientific, 1 }, { Resource.Physical, 1 } });
 
         foreach (var drone in VillainTurnController.instance.MinionsInPlay.Where(x => x.CardName == "Drone"))
         {

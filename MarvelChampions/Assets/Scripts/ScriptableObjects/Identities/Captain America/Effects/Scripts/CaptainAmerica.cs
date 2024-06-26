@@ -30,8 +30,7 @@ namespace CaptainAmericaHeroPack
         {
             PlayerCard card = await TargetSystem.instance.SelectTarget(owner.Hand.cards.ToList());
 
-            owner.Hand.Remove(card);
-            owner.Deck.Discard(card);
+            owner.Hand.Discard(card);
 
             owner.Ready();
             hasActivated = true;

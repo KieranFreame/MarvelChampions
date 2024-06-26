@@ -10,13 +10,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Melter", menuName = "MarvelChampions/Card Effects/Masters of Evil/Melter")]
 public class Melter : EncounterCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        _owner = owner;
-        Card = card;
-
         DefendSystem.Instance.OnSelectingDefender += SelectingDefender;
-
         return Task.CompletedTask;
     }
 

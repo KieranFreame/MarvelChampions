@@ -7,37 +7,21 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Goblin Knight", menuName = "MarvelChampions/Card Effects/Mutagen Formula/Goblin Knight")]
 public class GoblinKnight : EncounterCardEffect
 {
-    bool resolveBoost = false;
-
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        Card = card;
-
-        AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
+        GameStateManager.Instance.OnActivationCompleted += CanRespond;
         return Task.CompletedTask;
     }
 
-    private void IsTriggerMet(AttackAction action)
+    private async void CanRespond(Action action)
     {
-        if (action.Card == Card as ICard)
-            EffectManager.Inst.Resolving.Push(this);
+        if (action is not AttackAction || ((AttackAction)action).Card == Card) return;
+
+        await EffectManager.Inst.AddEffect(_card, this);
     }
 
     public override async Task Resolve()
     {
-        if (resolveBoost)
-        {
-            EncounterCardData knight = ScenarioManager.inst.EncounterDeck.discardPile.LastOrDefault(x => x.cardName == "Goblin Knight") as EncounterCardData;
-
-            if (knight != null)
-            {
-                ScenarioManager.inst.EncounterDeck.discardPile.Remove(knight);
-                ScenarioManager.inst.EncounterDeck.AddToDeck(knight);
-            }
-
-            return;
-        }
-
         EncounterCardData data = ScenarioManager.inst.EncounterDeck.deck[0] as EncounterCardData;
         ScenarioManager.inst.EncounterDeck.Mill();
 
@@ -45,20 +29,12 @@ public class GoblinKnight : EncounterCardEffect
         {
             MinionCard goblin = CreateCardFactory.Instance.CreateCard(data, RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
             VillainTurnController.instance.MinionsInPlay.Add(goblin);
-            await goblin.Effect.OnEnterPlay(_owner, goblin, TurnManager.instance.CurrPlayer);
+            await goblin.Effect.OnEnterPlay();
         }
     }
     public override Task WhenDefeated()
     {
-        AttackSystem.Instance.OnAttackCompleted.Remove(IsTriggerMet);
+        GameStateManager.Instance.OnActivationCompleted -= CanRespond;
         return Task.CompletedTask;
     }
-
-    #region Boost
-    public override Task Boost(Action action)
-    {
-        EffectManager.Inst.Resolving.Push(this);
-        return Task.CompletedTask;
-    }
-    #endregion
 }

@@ -6,10 +6,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Exhaustion", menuName = "MarvelChampions/Card Effects/Expert/Exhaustion")]
 public class Exhaustion : EncounterCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task Resolve()
     {
-        ScenarioManager.inst.Surge(player);
+        var player = TurnManager.instance.CurrPlayer;
 
+        ScenarioManager.inst.Surge(player);
         player.Exhaust();
 
         return Task.CompletedTask;

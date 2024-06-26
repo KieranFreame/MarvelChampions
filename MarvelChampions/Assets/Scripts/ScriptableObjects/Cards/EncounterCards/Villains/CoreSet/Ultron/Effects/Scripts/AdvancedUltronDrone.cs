@@ -8,11 +8,8 @@ public class AdvancedUltronDrone : EncounterCardEffect
 {
     UltronDrones ultronDrones;
 
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        _owner = owner;
-        Card = card;
-
         AttackSystem.Instance.Guards.Add((MinionCard)_card);
         GameStateManager.Instance.OnCharacterDefeated += WhenDefeated;
         ultronDrones = GameObject.Find("Ultron Drones").GetComponent<EncounterCard>().Effect as UltronDrones;

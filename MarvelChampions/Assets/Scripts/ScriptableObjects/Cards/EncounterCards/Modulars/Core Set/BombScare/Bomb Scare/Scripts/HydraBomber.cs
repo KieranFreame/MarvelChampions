@@ -14,11 +14,6 @@ public class HydraBomber : EncounterCardEffect
     /// When Revealed: Choose to either take 2 damage, or place 1 threat on the main scheme
     /// </summary>
 
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
-    {
-       await EffectManager.Inst.AddEffect(_card, this);
-    }
-
     public override async Task Resolve()
     {
         target = TurnManager.instance.CurrPlayer;

@@ -22,7 +22,8 @@ MonoBehaviour:
   cardArt: {fileID: 0}
   boostIcons: 0
   boostDescription: Deal 1 damage to each hero.
-  effect: {fileID: 11400000, guid: f9a66fdc2eedaec4dbd99a94054ee745, type: 2}
+  effect: {fileID: 11400000, guid: 1d18c46988293a245b479df55c314543, type: 2}
+  boost: {fileID: 11400000, guid: f9a66fdc2eedaec4dbd99a94054ee745, type: 2}
   baseAttack: 2
   baseScheme: 1
   baseHealth: 6

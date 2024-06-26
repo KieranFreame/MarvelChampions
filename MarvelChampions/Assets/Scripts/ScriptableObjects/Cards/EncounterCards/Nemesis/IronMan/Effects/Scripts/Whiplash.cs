@@ -8,9 +8,9 @@ public class Whiplash : EncounterCardEffect
 {
     Retaliate _retaliate;
 
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task OnEnterPlay()
     {
-        _retaliate = new(card as MinionCard, 1);
+        _retaliate = new(_card as MinionCard, 1);
         await Task.Yield();
     }
 }

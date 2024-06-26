@@ -7,8 +7,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Harvest", menuName = "MarvelChampions/Card Effects/Nemesis/Ms Marvel/Harvest")]
 public class Harvest : EncounterCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task Resolve()
     {
+        var player = TurnManager.instance.CurrPlayer;
         List<PlayerCard> personas = player.CardsInPlay.Permanents.Where(x => x.CardTraits.Contains("Persona")).ToList();
 
         if (personas.Count > 0)
@@ -18,7 +19,7 @@ public class Harvest : EncounterCardEffect
                 person.Exhaust();
             }
 
-            owner.CharStats.Health.CurrentHealth += personas.Count;
+            _owner.CharStats.Health.CurrentHealth += personas.Count;
         }
         else
         {

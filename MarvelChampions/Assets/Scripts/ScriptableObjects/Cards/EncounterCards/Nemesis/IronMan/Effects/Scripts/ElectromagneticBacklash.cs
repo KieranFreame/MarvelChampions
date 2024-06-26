@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Electromagnetic Backlash", menuName = "MarvelChampions/Card Effects/Nemesis/Iron Man/Electromagnetic Backlash")]
 public class ElectromagneticBacklash : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
         foreach (Player p in TurnManager.Players)
         {

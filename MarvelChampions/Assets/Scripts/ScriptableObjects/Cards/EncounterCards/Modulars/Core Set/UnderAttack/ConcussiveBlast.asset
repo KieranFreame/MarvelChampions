@@ -21,3 +21,4 @@ MonoBehaviour:
   boostIcons: 0
   boostDescription: Deal 1 damage to each character you control.
   effect: {fileID: 11400000, guid: 599c9b223df4ab04cac4ad2175c57d4e, type: 2}
+  boost: {fileID: 11400000, guid: 599c9b223df4ab04cac4ad2175c57d4e, type: 2}

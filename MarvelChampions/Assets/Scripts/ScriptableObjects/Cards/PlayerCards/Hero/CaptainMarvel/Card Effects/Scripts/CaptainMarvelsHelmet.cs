@@ -11,7 +11,7 @@ public class CaptainMarvelsHelmet : PlayerCardEffect
     {
         _owner.CharStats.Defender.CurrentDefence += (_owner.Identity.IdentityTraits.Contains("Aerial") ? 2 : 1);
 
-        _owner.Identity.IdentityTraits.CollectionChanged += OnTraitsChange;
+        _owner.Identity.IdentityTraits.Subscribe(OnTraitsChange);
 
         return Task.CompletedTask;
     }
@@ -34,6 +34,6 @@ public class CaptainMarvelsHelmet : PlayerCardEffect
     public override void OnExitPlay()
     {
         _owner.CharStats.Defender.CurrentDefence -= (_owner.Identity.IdentityTraits.Contains("Aerial") ? 2 : 1);
-        _owner.Identity.IdentityTraits.CollectionChanged -= OnTraitsChange;
+        _owner.Identity.IdentityTraits.Unsubscribe(OnTraitsChange);
     }
 }

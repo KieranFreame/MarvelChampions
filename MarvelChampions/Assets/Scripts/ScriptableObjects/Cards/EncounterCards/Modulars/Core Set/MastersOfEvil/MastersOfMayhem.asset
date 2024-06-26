@@ -15,7 +15,7 @@ MonoBehaviour:
   cardID: MASTERS-T-001
   cardName: Masters of Mayhem
   cardDesc: Each Masters of Evil minion attacks. If no attacks were made this way
-    deach the encounter deck and discard pile for a Masters of Evil minion and put
+    search the encounter deck and discard pile for a Masters of Evil minion and put
     it into play.
   cardType: 7
   cardTraits: []
@@ -23,3 +23,4 @@ MonoBehaviour:
   boostIcons: 2
   boostDescription: 
   effect: {fileID: 11400000, guid: 7a54e12bc2cb97f48ad747b4f597a3dd, type: 2}
+  boost: {fileID: 0}

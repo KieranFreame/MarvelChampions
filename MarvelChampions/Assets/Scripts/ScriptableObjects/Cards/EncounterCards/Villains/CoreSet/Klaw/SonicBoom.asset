@@ -22,3 +22,4 @@ MonoBehaviour:
   boostIcons: 0
   boostDescription: If this activation deals damage to you, exhaust your hero.
   effect: {fileID: 11400000, guid: 9c0038627b348e840a556808942f10b3, type: 2}
+  boost: {fileID: 11400000, guid: 916a7a66f69eb0c47840fb43b7c27bfc, type: 2}

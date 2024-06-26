@@ -23,6 +23,7 @@ public class MinionCard : EncounterCard, ICharacter
         for (int i = Attachments.Count - 1; i >= 0; i--)
         {
             Attachments[i].WhenRemoved();
+            Attachments.RemoveAt(i);
         }
 
         VillainTurnController.instance.MinionsInPlay.Remove(this);

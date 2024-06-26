@@ -13,4 +13,5 @@ public enum Zone
     Schemes,
     Hand,
     Victory,
+    OutOfPlay,
 }

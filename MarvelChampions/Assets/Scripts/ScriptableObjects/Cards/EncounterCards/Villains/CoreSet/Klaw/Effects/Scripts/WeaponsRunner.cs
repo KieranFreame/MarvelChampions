@@ -6,11 +6,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Weapons Runner", menuName = "MarvelChampions/Card Effects/Klaw/Weapons Runner")]
 public class WeaponsRunner : EncounterCardEffect
 {
-    public override async Task WhenRevealed(Villain owner, EncounterCard card, Player player)
+    public override Task Resolve()
     {
-        ScenarioManager.inst.Surge(player);
-
-        await Task.Yield();
+        ScenarioManager.inst.Surge(TurnManager.instance.CurrPlayer);
+        return Task.CompletedTask;
     }
 
     public override Task Boost(Action action)

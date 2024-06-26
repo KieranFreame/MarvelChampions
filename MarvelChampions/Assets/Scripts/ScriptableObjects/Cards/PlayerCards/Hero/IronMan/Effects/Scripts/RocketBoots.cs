@@ -14,16 +14,16 @@ public class RocketBoots : PlayerCardEffect
 
     public override async Task Activate()
     {
-        await PayCostSystem.instance.GetResources(Resource.Scientific, 1);
+        await PayCostSystem.instance.GetResources(new() { { Resource.Scientific, 1 } });
         _card.Exhaust();
 
-        _owner.Identity.IdentityTraits.Add("Aerial");
+        _owner.Identity.IdentityTraits.AddItem("Aerial");
         TurnManager.OnEndPlayerPhase += EndOfPhase;
     }
 
     private void EndOfPhase()
     {
-        _owner.Identity.IdentityTraits.Remove("Aerial");
+        _owner.Identity.IdentityTraits.RemoveItem("Aerial");
         TurnManager.OnEndPlayerPhase -= EndOfPhase;
     }
 }

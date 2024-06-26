@@ -11,9 +11,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Hydra Jet-Trooper", menuName = "MarvelChampions/Card Effects/Modulars/RotRS/Hydra Assault/Hydra Jet-Trooper")]
 public class HydraJetTrooper : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task OnEnterPlay()
     {
-        await (card as MinionCard).CharStats.InitiateAttack();
+        await (_card as MinionCard).CharStats.InitiateAttack();
     }
 
     public override Task Boost(Action action)

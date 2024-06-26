@@ -7,6 +7,7 @@ using UnityEngine;
 public class EnhancedReflexes : PlayerCardEffect, IGenerate
 {
     Counters energy;
+    List<Resource> resources = new List<Resource>() { Resource.Energy };
 
     public override Task OnEnterPlay()
     {
@@ -37,6 +38,8 @@ public class EnhancedReflexes : PlayerCardEffect, IGenerate
             _owner.Deck.Discard(_card);
         }
 
-        return new List<Resource>() { Resource.Energy };
+        return resources;
     }
+
+    public List<Resource> GetResources() => resources;
 }

@@ -8,7 +8,7 @@ public class Hero
 {
     public string Name { get; private set; }
     public Sprite Art { get; private set; }
-    public ObservableCollection<string> Traits { get; protected set; } = new();
+    public ObservableSet<string> Traits { get; protected set; } = new();
     public List<Keywords> Keywords { get; protected set; } = new List<Keywords>();
     public int BaseHandSize { get; protected set; }
     public int HandSize { get; set; }
@@ -21,7 +21,7 @@ public class Hero
         Art = data.heroArt;
 
         foreach (string trait in data.heroTraits)
-            Traits.Add(trait);
+            Traits.AddItem(trait);
 
         HandSize = BaseHandSize = data.baseHandSize;
         Keywords = data.keywords;

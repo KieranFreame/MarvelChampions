@@ -7,7 +7,7 @@ public class Villain : MonoBehaviour, ICharacter
     //public VillainData data;
     public ObservableCollection<IAttachment> Attachments { get; set; } = new();
     public string Name { get; set; }
-    public HashSet<string> VillainTraits { get; private set; }
+    public ObservableSet<string> VillainTraits { get; private set; } = new();
     public VillainEffect VillainEffect { get; private set; }
     public Sprite Art { get; set; }
     public bool CanAttack { get; set; } = true;
@@ -23,7 +23,10 @@ public class Villain : MonoBehaviour, ICharacter
     public async void LoadData(VillainData data)
     {
         Name = data.villainName;
-        VillainTraits = new(data.villainTraits);
+        
+        for (int i = 0; i < data.villainTraits.Count; i++)
+            VillainTraits.AddItem(data.villainTraits[i]);
+
         VillainEffect = data.villainEffect;
 
         Art = data.villainArt;

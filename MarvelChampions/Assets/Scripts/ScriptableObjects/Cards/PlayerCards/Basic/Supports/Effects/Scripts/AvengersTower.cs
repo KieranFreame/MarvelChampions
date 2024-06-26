@@ -20,7 +20,7 @@ public class AvengersTower : PlayerCardEffect
 
         foreach (AllyCard a in _owner.CardsInPlay.Allies)
         {
-            a.CardTraits.CollectionChanged += TraitChanged;
+            a.CardTraits.Collection.CollectionChanged += TraitChanged;
         }
 
         return Task.CompletedTask;
@@ -56,7 +56,7 @@ public class AvengersTower : PlayerCardEffect
                         }
                     }
 
-                    a.CardTraits.CollectionChanged += TraitChanged;
+                    a.CardTraits.Collection.CollectionChanged += TraitChanged;
                 }
                 break;
             case NotifyCollectionChangedAction.Remove:
@@ -77,7 +77,7 @@ public class AvengersTower : PlayerCardEffect
                         }
                     }
 
-                    a.CardTraits.CollectionChanged -= TraitChanged;
+                    a.CardTraits.Collection.CollectionChanged -= TraitChanged;
                 }
                 break;
         }

@@ -9,9 +9,8 @@ public class EdisonsGiantRobot : EncounterCardEffect
 {
     bool CanBeDamaged;
 
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        Card = card;
         CanBeDamaged = false;
 
         (Card as MinionCard).CharStats.Health.Modifiers.Add(ModifyDamage);
@@ -29,18 +28,12 @@ public class EdisonsGiantRobot : EncounterCardEffect
 
     public override bool CanActivate(Player player)
     {
-        if (CanBeDamaged) //already activated
-            return false;
-
-        if (!player.HaveResource(Resource.Scientific))
-            return false;
-
-        return true;
+        return !CanBeDamaged && player.HaveResource(Resource.Scientific);
     }
 
     public override async Task Activate(Player p)
     {
-        await PayCostSystem.instance.GetResources(Resource.Scientific, 1);
+        await PayCostSystem.instance.GetResources(new() { { Resource.Scientific, 1 } });
 
         CanBeDamaged = true;
 

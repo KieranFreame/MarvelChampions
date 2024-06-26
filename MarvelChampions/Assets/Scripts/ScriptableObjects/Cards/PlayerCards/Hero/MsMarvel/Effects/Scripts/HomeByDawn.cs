@@ -8,21 +8,14 @@ using UnityEngine;
 public class HomeByDawn : EncounterCardEffect
 {
     Player khan;
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
-        _owner = owner;
-        Card = card;
         khan = TurnManager.Players.FirstOrDefault(x => x.Identity.AlterEgo.Name == "Kamala Khan");
 
         if (khan.Identity.ActiveIdentity is not AlterEgo)
-        {
-            bool decision = await ConfirmActivateUI.MakeChoice("Flip to Alter-Ego?");
-
-            if (decision)
-            {
+            if (await ConfirmActivateUI.MakeChoice("Flip to Alter-Ego?"))
                 khan.Identity.FlipToAlterEgo();
-            }
-        }
+        
 
         if (khan.Identity.ActiveIdentity is AlterEgo && !khan.Exhausted) //chose to flip\was already alterego && is not exhausted
         {
@@ -37,10 +30,10 @@ public class HomeByDawn : EncounterCardEffect
             }
         }
 
-        List<PlayerCard> personas = khan.CardsInPlay.Permanents.Where(x => x.CardType == CardType.Support && x.CardTraits.Contains("Persona")).ToList();
+        List<PlayerCard> personas = new (khan.CardsInPlay.Permanents.Where(x => x.CardType == CardType.Support && x.CardTraits.Contains("Persona")));
             
         if (personas.Count == 0)
-            ScenarioManager.inst.Surge(player);
+            ScenarioManager.inst.Surge(TurnManager.instance.CurrPlayer);
         else
         {
             PlayerCard discard = await TargetSystem.instance.SelectTarget(personas);

@@ -36,8 +36,7 @@ public class LegalPractice : PlayerCardEffect
 
         foreach (PlayerCard c in discards)
         {
-            _owner.Hand.Remove(c);
-            _owner.Deck.Discard(c);
+            _owner.Hand.Discard(c);
         }
         
         await _owner.CharStats.InitiateThwart(new(thwart, Owner));

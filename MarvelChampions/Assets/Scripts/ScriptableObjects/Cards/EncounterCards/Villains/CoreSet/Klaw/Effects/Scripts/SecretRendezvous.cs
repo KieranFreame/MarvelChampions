@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Secret Rendezvous", menuName = "MarvelChampions/Card Effects/Klaw/Secret Rendezvous")]
 public class SecretRendezvous : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task OnEnterPlay()
     {
         EncounterCardData data;
 

@@ -7,29 +7,24 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Affairs of State", menuName = "MarvelChampions/Card Effects/Black Panther/Affairs of State")]
 public class AffairsState : EncounterCardEffect
 {
-    Player tchalla;
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
-        _owner = owner;
-        Card = card;
-        tchalla = TurnManager.Players.FirstOrDefault(x => x.Identity.AlterEgo.Name == "T'Challa");
+        var tchalla = TurnManager.Players.FirstOrDefault(x => x.Identity.AlterEgo.Name == "T'Challa");
 
         if (tchalla.Identity.ActiveIdentity is not AlterEgo)
         {
-            bool decision = await ConfirmActivateUI.MakeChoice("Flip to Alter-Ego?");
-
-            if (decision)
+            if (await ConfirmActivateUI.MakeChoice("Flip to Alter-Ego?"))
             {
                 tchalla.Identity.FlipToAlterEgo();
             }
         }
 
-        List<PlayerCard> upgrades = tchalla.CardsInPlay.Permanents.Where(x => x.CardTraits.Contains("Black Panther")).ToList();
+        List<PlayerCard> upgrades = new(tchalla.CardsInPlay.Permanents.Where(x => x.CardTraits.Contains("Black Panther")));
         
         if ((tchalla.Identity.ActiveIdentity is Hero || tchalla.Exhausted) && upgrades.Count == 0)
         {
             Debug.Log("The effect of Affairs of State cannot be resolved. This card gains Surge");
-            ScenarioManager.inst.Surge(player);
+            ScenarioManager.inst.Surge(TurnManager.instance.CurrPlayer);
             return;
         }
 
@@ -54,7 +49,7 @@ public class AffairsState : EncounterCardEffect
             }
         }
 
-        Debug.Log("Discard an Upgrade or Support you control");
+        Debug.Log("Discard a Black Panther Upgrade you control");
         PlayerCard p = await TargetSystem.instance.SelectTarget(upgrades);
 
         tchalla.CardsInPlay.Permanents.Remove(p);

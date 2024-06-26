@@ -6,17 +6,15 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Heart-Shaped Herb", menuName = "MarvelChampions/Card Effects/Nemesis/Black Panther/Heart-Shaped Herb")]
 public class HeartShapedHerb : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task Resolve()
     {
-        _owner = owner;
+        ScenarioManager.inst.Surge(TurnManager.instance.CurrPlayer);
 
-        ScenarioManager.inst.Surge(player);
-
-        owner.CharStats.Health.Tough = true;
+        _owner.CharStats.Health.Tough = true;
         foreach (var m in VillainTurnController.instance.MinionsInPlay)
             m.CharStats.Health.Tough = true;
 
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 
     public override async Task Boost(Action action)

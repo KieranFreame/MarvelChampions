@@ -8,9 +8,9 @@ namespace Nemesis
     [CreateAssetMenu(fileName = "The Vulture", menuName = "MarvelChampions/Card Effects/Nemesis/Spider-Man (Peter Parker)/Vulture")]
     public class Vulture : EncounterCardEffect
     {
-        public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+        public override async Task OnEnterPlay()
         {
-            await (card as MinionCard).CharStats.InitiateAttack();
+            await ((MinionCard)_card).CharStats.InitiateAttack();
         }
     }
 }

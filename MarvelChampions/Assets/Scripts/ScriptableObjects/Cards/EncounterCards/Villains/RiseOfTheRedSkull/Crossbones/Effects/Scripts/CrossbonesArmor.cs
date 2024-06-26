@@ -7,11 +7,8 @@ using UnityEngine;
 public class CrossbonesArmor : AttachmentCardEffect
 {
     private Counters counters;
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task OnEnterPlay()
     {
-        _owner = owner;
-        Card = card;
-
         counters = _card.gameObject.AddComponent<Counters>();
         _owner.CharStats.Health.Modifiers.Add(OnTakeDamage);
 

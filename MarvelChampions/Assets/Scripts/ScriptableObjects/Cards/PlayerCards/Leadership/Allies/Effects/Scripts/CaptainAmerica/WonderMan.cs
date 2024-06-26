@@ -31,9 +31,7 @@ public class WonderMan : PlayerCardEffect
     private async Task<AttackAction> PayCost(AttackAction action)
     {
         PlayerCard discard = await TargetSystem.instance.SelectTarget(_owner.Hand.cards.ToList());
-        _owner.Hand.Remove(discard);
-        _owner.Deck.Discard(discard);
-
+        _owner.Hand.Discard(discard);
         return action;
     }
 

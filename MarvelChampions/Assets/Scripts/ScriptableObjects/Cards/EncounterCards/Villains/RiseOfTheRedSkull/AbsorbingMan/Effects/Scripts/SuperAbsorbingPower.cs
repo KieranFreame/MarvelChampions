@@ -10,19 +10,21 @@ public class SuperAbsorbingPower : EncounterCardEffect
     {
         _owner = owner;
         (card as SchemeCard).Threat.CurrentThreat *= TurnManager.Players.Count;
-        owner.VillainTraits.Add("Ice");
-        owner.VillainTraits.Add("Metal");
-        owner.VillainTraits.Add("Stone");
-        owner.VillainTraits.Add("Wood");
+        owner.VillainTraits.AddItem("Ice");
+        owner.VillainTraits.AddItem("Metal");
+        owner.VillainTraits.AddItem("Stone");
+        owner.VillainTraits.AddItem("Wood");
         return Task.CompletedTask;
     }
 
     public override Task WhenDefeated()
     {
-        _owner.VillainTraits.Remove("Ice");
-        _owner.VillainTraits.Remove("Metal");
-        _owner.VillainTraits.Remove("Wood");
-        _owner.VillainTraits.Remove("Stone");
+        _owner.VillainTraits.RemoveItem("Ice");
+        _owner.VillainTraits.RemoveItem("Metal");
+        _owner.VillainTraits.RemoveItem("Wood");
+        _owner.VillainTraits.RemoveItem("Stone");
+
+        _owner.VillainTraits.AddItem(NoneShallPass.CurrentEnvironment.CardTraits.Collection[0]);
 
         return Task.CompletedTask;
     }

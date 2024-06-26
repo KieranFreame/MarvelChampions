@@ -11,14 +11,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Yon-Rogg", menuName = "MarvelChampions/Card Effects/Nemesis/Captain Marvel/Yon-Rogg")]
 public class YonRogg : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        _owner = owner;
-        Card = card;
-
         GameStateManager.Instance.OnActivationCompleted += CanRespond;
-
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 
     private async void CanRespond(Action action)

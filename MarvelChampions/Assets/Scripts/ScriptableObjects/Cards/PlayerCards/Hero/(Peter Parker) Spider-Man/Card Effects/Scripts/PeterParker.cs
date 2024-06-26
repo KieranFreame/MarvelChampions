@@ -5,10 +5,14 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Peter Parker", menuName = "MarvelChampions/Identity Effects/Spider-Man (Peter Parker)/AlterEgo")]
 public class PeterParker : IdentityEffect, IGenerate
 {
+    List<Resource> resource = new() { Resource.Scientific };
+
     public override void LoadEffect(Player _owner)
     {
         owner = _owner;
         hasActivated = false;
+
+        owner.resourceGenerators.Add(CanGenerateResource);
 
         TurnManager.OnStartPlayerPhase += Reset;
     }
@@ -21,11 +25,13 @@ public class PeterParker : IdentityEffect, IGenerate
     public List<Resource> GenerateResource()
     {
         hasActivated = true;
-        return new List<Resource>() { Resource.Scientific };
+        return resource;
     }
 
     public bool CompareResource(Resource resource)
     {
-        return resource == Resource.Scientific;
+        return resource == Resource.Scientific || resource == Resource.Wild;
     }
+
+    public List<Resource> GetResources() => resource;
 }

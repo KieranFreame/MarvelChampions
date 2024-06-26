@@ -10,4 +10,5 @@ public class EncounterCardData : CardData
     [TextArea (3,5)]
     public string boostDescription;
     public EncounterCardEffect effect;
+    public EncounterCardEffect boost;
 }

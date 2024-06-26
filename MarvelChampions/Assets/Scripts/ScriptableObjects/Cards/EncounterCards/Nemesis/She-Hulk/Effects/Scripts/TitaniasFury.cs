@@ -8,39 +8,22 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Titania's Fury", menuName = "MarvelChampions/Card Effects/Nemesis/She-Hulk/Titania's Fury")]
 public class TitaniasFury : EncounterCardEffect
 {
-    bool didAttack = false;
-
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
+        var player = TurnManager.instance.CurrPlayer;
         MinionCard titania = VillainTurnController.instance.MinionsInPlay.FirstOrDefault(x => x.CardName == "Titania");
 
         if (titania == default)
             ScenarioManager.inst.Surge(player);
         else
         {
-            if (player.Identity.ActiveIdentity is Hero)
+            if (player.Identity.ActiveIdentity is AlterEgo || !await titania.CharStats.InitiateAttack())
             {
-
-                titania.CharStats.AttackInitiated += AttackInitiated;
-                await titania.CharStats.InitiateAttack();
-
-                if (!didAttack)
-                {
-                    titania.CharStats.Health.CurrentHealth += 6;
-                    ScenarioManager.inst.Surge(player);
-                }
-
-                titania.CharStats.AttackInitiated -= AttackInitiated;
-            }
-            else //alter-ego
-            {
-                titania.CharStats.Health.CurrentHealth += 6;
+                titania.CharStats.Health.CurrentHealth += titania.CharStats.Health.BaseHP;
                 ScenarioManager.inst.Surge(player);
             }
         }
     }
-
-    private void AttackInitiated() { didAttack = true; }
 
     public override async Task Boost(Action action)
     {

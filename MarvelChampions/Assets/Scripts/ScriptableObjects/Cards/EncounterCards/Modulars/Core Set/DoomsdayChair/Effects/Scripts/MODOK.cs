@@ -8,9 +8,9 @@ public class MODOK : EncounterCardEffect
 {
     Retaliate _retaliate;
 
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        _retaliate = new(owner, 2);
+        _retaliate = new(_owner, 2);
 
         return Task.CompletedTask;
     }

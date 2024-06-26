@@ -8,6 +8,13 @@ public class ExoSuit : EncounterCardEffect, IAttachment
 {
     public ICharacter Attached { get; set; }
 
+    readonly Dictionary<Resource, int> cost = new()
+    {
+        {Resource.Energy, 1},
+        {Resource.Physical, 1},
+        {Resource.Scientific, 1}
+    };
+
     public override Task WhenRevealed(Villain owner, EncounterCard card, Player player)
     {
         _owner = owner;
@@ -25,18 +32,7 @@ public class ExoSuit : EncounterCardEffect, IAttachment
 
     public override async Task Activate(Player player)
     {
-        List<Task> tasks = new List<Task>()
-        {
-            PayCostSystem.instance.GetResources(Resource.Energy, 1),
-            PayCostSystem.instance.GetResources(Resource.Physical, 1),
-            PayCostSystem.instance.GetResources(Resource.Scientific, 1)
-        };
-
-        foreach (Task t in tasks)
-        {
-            await t;
-        }
-
+        await PayCostSystem.instance.GetResources(cost);
         Detach();
         ScenarioManager.inst.EncounterDeck.Discard(Card);
     }

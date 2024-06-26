@@ -29,4 +29,9 @@ public class EyeAgamotto : PlayerCardEffect, IGenerate
         _card.Exhaust();
         return new() { Resource.Wild };
     }
+
+    public List<Resource> GetResources()
+    {
+        return new() { Resource.Wild };
+    }
 }

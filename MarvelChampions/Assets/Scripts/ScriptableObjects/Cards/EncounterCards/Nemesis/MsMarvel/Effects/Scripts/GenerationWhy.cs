@@ -7,7 +7,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Generation Why?", menuName = "MarvelChampions/Card Effects/Nemesis/Ms Marvel/Generation Why?")]
 public class GenerationWhy : EncounterCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
         foreach (var p in TurnManager.Players)
         {
@@ -15,7 +15,7 @@ public class GenerationWhy : EncounterCardEffect
             p.Deck.Mill(count);
         }
 
-        (card as SchemeCard).Threat.CurrentThreat *= TurnManager.Players.Count;
+        (_card as SchemeCard).Threat.CurrentThreat *= TurnManager.Players.Count;
         VillainTurnController.instance.HazardCount++;
 
         return Task.CompletedTask;

@@ -6,12 +6,20 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Goblin Thrall", menuName = "MarvelChampions/Card Effects/Mutagen Formula/Goblin Thrall")]
 public class GoblinThrall : EncounterCardEffect
 {
-    Guard _guard;
-
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        _guard = new(card as MinionCard);
+        AttackSystem.Instance.Guards.Add((MinionCard)_card);
+        GameStateManager.Instance.OnCharacterDefeated += WhenDefeated;
         return Task.CompletedTask;
+    }
+
+    public void WhenDefeated(ICharacter defeated)
+    {
+        if (defeated is not MinionCard || defeated as MinionCard != _card as MinionCard)
+            return;
+
+        AttackSystem.Instance.Guards.Remove((MinionCard)_card);
+        GameStateManager.Instance.OnCharacterDefeated -= WhenDefeated;
     }
 
     public override async Task Boost(Action action)
@@ -21,6 +29,6 @@ public class GoblinThrall : EncounterCardEffect
         card.InPlay = true;
         card.transform.SetParent(RevealEncounterCardSystem.Instance.MinionTransform);
         VillainTurnController.instance.MinionsInPlay.Add(card as MinionCard);
-        await card.Effect.OnEnterPlay(ScenarioManager.inst.ActiveVillain, card, TurnManager.instance.CurrPlayer);
+        await card.Effect.OnEnterPlay();
     }
 }

@@ -19,7 +19,7 @@ public class EnhancedIvoryHorn : EncounterCardEffect
 
     public override async Task Activate(Player player)
     {
-        await PayCostSystem.instance.GetResources(resourceToCheck:Resource.Physical, amount:3);
+        await PayCostSystem.instance.GetResources(new() { { Resource.Physical, 3 } });
 
         if (PayCostSystem.instance.Resources.Count >= 3)
         {

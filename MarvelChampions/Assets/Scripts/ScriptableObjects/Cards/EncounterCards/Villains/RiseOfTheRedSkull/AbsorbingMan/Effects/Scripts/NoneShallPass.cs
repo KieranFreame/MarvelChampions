@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -27,7 +29,7 @@ public class NoneShallPass : EncounterCardEffect
         ScenarioManager.inst.EncounterDeck.discardPile.Remove(data);
 
         CurrentEnvironment = CreateCardFactory.Instance.CreateCard(data, GameObject.Find("AttachmentTransform").transform) as EncounterCard;
-        await CurrentEnvironment.Effect.OnEnterPlay(owner, CurrentEnvironment, player);
+        await CurrentEnvironment.Effect.OnEnterPlay();
 
         ScenarioManager.inst.EncounterDeck.AddToDeck(ScenarioManager.inst.EncounterDeck.discardPile);
         ScenarioManager.inst.EncounterDeck.discardPile.Clear();

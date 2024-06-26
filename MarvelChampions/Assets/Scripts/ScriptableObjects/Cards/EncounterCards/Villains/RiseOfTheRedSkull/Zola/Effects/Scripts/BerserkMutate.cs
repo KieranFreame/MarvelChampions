@@ -8,11 +8,11 @@ public class BerserkMutate : EncounterCardEffect
 {
     int counters;
 
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task OnEnterPlay()
     {
-        if (player.Identity.ActiveIdentity is Hero)
+        if (TurnManager.instance.CurrPlayer.Identity.ActiveIdentity is Hero)
         {
-            await (card as MinionCard).CharStats.InitiateAttack();
+            await (_card as MinionCard).CharStats.InitiateAttack();
         }
     }
 

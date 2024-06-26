@@ -34,7 +34,7 @@ public class VibraniumArmor : AttachmentCardEffect
 
     public override async Task Activate(Player p)
     {
-        await PayCostSystem.instance.GetResources(Resource.Physical, 2);
+        await PayCostSystem.instance.GetResources(new() { { Resource.Physical, 2 } });
         p.Exhaust();
 
         Detach();

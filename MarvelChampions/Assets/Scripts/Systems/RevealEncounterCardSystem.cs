@@ -51,7 +51,8 @@ public class RevealEncounterCardSystem
         Debug.Log("Revealing " + cardToReveal.CardName);
         await Task.Delay(3000);
 
-        await EffectManager.Inst.AddEffect(cardToReveal, cardToReveal.Effect);
+        if (CardToReveal.CardType == CardType.Treachery || CardToReveal.CardType == CardType.Obligation)
+            await EffectManager.Inst.AddEffect(cardToReveal, cardToReveal.Effect);
 
         if (CardToReveal == null) return;
 
@@ -65,6 +66,8 @@ public class RevealEncounterCardSystem
                     ScenarioManager.inst.EncounterDeck.Discard(CardToReveal);
                 break;
             default:
+                if (CardToReveal.Effect != null)
+                    await CardToReveal.Effect.OnEnterPlay();
                 MoveCard(CardToReveal);
                 break;
         }

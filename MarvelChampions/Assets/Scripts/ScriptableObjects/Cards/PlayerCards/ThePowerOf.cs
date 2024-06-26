@@ -5,28 +5,19 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "The Power Of", menuName = "MarvelChampions/Card Effects/The Power of Aspect")]
 public class ThePowerOf : ResourceCardEffect
 {
-    public override List<Resource> GetResources()
+    public override void GetResources()
     {
-        if (PlayCardSystem.Instance.CardToPlay.CardAspect == _card.CardAspect)
-        {
-            return new List<Resource>() { _card.Resources[0], _card.Resources[0] };
-        }
-
-        return _card.Resources;
+        PayCostSystem.instance.availableResources.Add(_card, 
+            (PlayCardSystem.Instance.CardToPlay.CardAspect == _card.CardAspect) ? new List<Resource>() { _card.Resources[0], _card.Resources[0] } : new List<Resource>() { _card.Resources[0] });
     }
 
     public override int ResourceCount(PlayerCard card)
     {
-        if (card == null)
+        if (card == null || card.CardAspect != _card.CardAspect)
         {
             return 1;
         }
 
-        if (card.CardAspect == _card.CardAspect)
-        {
-            return 2;
-        }
-
-        return 1;
+        return 2;
     }
 }

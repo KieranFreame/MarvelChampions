@@ -10,14 +10,6 @@ public class Drone : EncounterCardEffect
     Player cardOwner;
     PlayerCardData hijackedCard;
 
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
-    {
-        _owner = owner;
-        Card = card;
-
-        return Task.CompletedTask;
-    }
-
     public void HijackCard(PlayerCardData data, Player owner)
     {
         hijackedCard = data;

@@ -12,11 +12,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Madame Hydra", menuName = "MarvelChampions/Card Effects/Legions of Hydra/Madame Hydra")]
 public class MadameHydra : EncounterCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        _owner = owner;
-        Card = card;
-
         (Card as MinionCard).CharStats.Health.Modifiers.Add(ModifyDamage);
 
         GameStateManager.Instance.OnActivationCompleted += CanRespond;

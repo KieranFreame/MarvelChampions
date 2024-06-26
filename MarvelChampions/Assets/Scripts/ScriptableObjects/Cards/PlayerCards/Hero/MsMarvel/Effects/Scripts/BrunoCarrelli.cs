@@ -67,7 +67,7 @@ public class BrunoCarrelli : PlayerCardEffect
 
         PlayerCard card = await TargetSystem.instance.SelectTarget(_owner.Hand.cards.ToList());
 
-        _owner.Hand.Remove(card);
+        _owner.Hand.RemoveFromHand(card);
         _owner.Deck.limbo.Remove(card.Data); //don't shuffle back on reset
 
         storedCards.Add(card.Data);

@@ -29,7 +29,7 @@ public class ConcussionBlasters : AttachmentCardEffect
 
     public override async Task Activate(Player p)
     {
-        await PayCostSystem.instance.GetResources(Resource.Energy, 2);
+        await PayCostSystem.instance.GetResources(new() { { Resource.Energy, 2 } });
         p.Exhaust();
 
         Detach();

@@ -7,7 +7,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Legions Of Hydra", menuName = "MarvelChampions/Card Effects/Legions of Hydra/Legions Of Hydra")]
 public class LegionsOfHydra : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task OnEnterPlay()
     {
         MinionCard madame = VillainTurnController.instance.MinionsInPlay.FirstOrDefault(x => x.CardName == "Madame Hydra");
 
@@ -19,15 +19,15 @@ public class LegionsOfHydra : EncounterCardEffect
             {
                 madame = CreateCardFactory.Instance.CreateCard(data, RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
                 VillainTurnController.instance.MinionsInPlay.Add(madame);
-                await madame.Effect.OnEnterPlay(owner, madame, player);
+                await madame.Effect.OnEnterPlay();
             }
         }
 
         int hydra = VillainTurnController.instance.MinionsInPlay.Where(x => x.CardTraits.Contains("Hydra")).Count();
-        
-        //TODO: Give Villain Traits
 
-        (card as SchemeCard).Threat.GainThreat(hydra*2);
+        if (ScenarioManager.inst.ActiveVillain.VillainTraits.Contains("Hydra")) hydra++;
+
+        (_card as SchemeCard).Threat.GainThreat(hydra*2);
 
         VillainTurnController.instance.HazardCount++;
     }

@@ -6,8 +6,10 @@ public class KlawVengeance : EncounterCardEffect
 {
     int charHP;
     ICharacter _target;
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
+        var player = TurnManager.instance.CurrPlayer;
+
         if (player.Identity.ActiveIdentity is AlterEgo)
         {
             Debug.Log("Discarding 1 Card from your hand");
@@ -15,13 +17,12 @@ public class KlawVengeance : EncounterCardEffect
 
             Debug.Log("Discarded " + pCard.CardName);
 
-            player.Hand.Remove(pCard);
-            player.Deck.Discard(pCard);
+            player.Hand.Discard(pCard);
         }
         else //hero
         {
-            owner.CharStats.AttackInitiated += AttackInitiated;
-            await owner.CharStats.InitiateAttack();
+            _owner.CharStats.AttackInitiated += AttackInitiated;
+            await _owner.CharStats.InitiateAttack();
         }
     }
 

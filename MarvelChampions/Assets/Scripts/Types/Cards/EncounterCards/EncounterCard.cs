@@ -18,18 +18,18 @@ public class EncounterCard : MonoBehaviour, ICard
     public string CardName { get => Data.cardName; }
     public string CardDesc { get => Data.cardDesc; }
     public CardType CardType { get => Data.cardType; }
-    public ObservableCollection<string> CardTraits { get; protected set; } = new();
+    public ObservableSet<string> CardTraits { get; protected set; } = new();
 
-    public event UnityAction OnBoost;
     public event UnityAction SetupComplete;
 
     protected EncounterCardEffect effect;
+    protected EncounterCardEffect boost;
 
     public async Task OnRevealCard()
     {
         await effect.WhenRevealed(Owner, this, FindObjectOfType<Player>());
     }
-    public void OnBoostCard() => OnBoost?.Invoke();
+
     public virtual void LoadCardData(EncounterCardData data, Villain owner)
     {
         //EncounterCard
@@ -39,7 +39,7 @@ public class EncounterCard : MonoBehaviour, ICard
         Data = data;
 
         foreach (string trait in Data.cardTraits)
-            CardTraits.Add(trait);
+            CardTraits.AddItem(trait);
 
         TryGetComponent(out CardUI cardUI);
 
@@ -54,15 +54,25 @@ public class EncounterCard : MonoBehaviour, ICard
             effect.Owner = Owner;
             effect._card = this;
         }
+        
+        if (Data.boost != null)
+        {
+            boost = Instantiate(Data.boost);
+            boost.Owner = Owner;
+            boost._card = this;
+        }
             
 
         SetupComplete?.Invoke();
     }
 
-    public void Flip() { return; }
-
     public virtual EncounterCardEffect Effect
     {
         get => effect;
+    }
+    
+    public virtual EncounterCardEffect Boost
+    {
+        get => boost;
     }
 }

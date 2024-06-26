@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Payoff", menuName = "MarvelChampions/Card Effects/Risky Business/Payoff")]
 public class Payoff : EncounterCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
         VillainTurnController.instance.HazardCount++;
         return Task.CompletedTask;

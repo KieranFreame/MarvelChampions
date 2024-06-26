@@ -8,4 +8,5 @@ public interface IGenerate
     public List<Resource> GenerateResource();
     public bool CompareResource(Resource resource);
     public int ResourceCount() { return 1; }
+    public List<Resource> GetResources();
 }

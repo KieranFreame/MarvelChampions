@@ -8,9 +8,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Electric Whip Attack", menuName = "MarvelChampions/Card Effects/Nemesis/Iron Man/Electric Whip Attack")]
 public class ElectricWhipAttack : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
-        if (player.CardsInPlay.Permanents.Any(x => x.Data.cardType == CardType.Upgrade) == false)
+        var player = TurnManager.instance.CurrPlayer;
+
+        if (!player.CardsInPlay.Permanents.Any(x => x.CardType == CardType.Upgrade))
         {
             ScenarioManager.inst.Surge(player);
             return;

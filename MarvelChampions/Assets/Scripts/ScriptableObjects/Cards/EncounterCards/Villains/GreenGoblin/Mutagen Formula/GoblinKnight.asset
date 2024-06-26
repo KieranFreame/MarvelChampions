@@ -24,6 +24,7 @@ MonoBehaviour:
   boostIcons: 2
   boostDescription: Shuffle this back into the Encounter Deck
   effect: {fileID: 11400000, guid: 63b4768501f9bd949a57bf318c66ddcb, type: 2}
+  boost: {fileID: 11400000, guid: e98607da44a142747b2f4979be442545, type: 2}
   baseAttack: 2
   baseScheme: 2
   baseHealth: 7

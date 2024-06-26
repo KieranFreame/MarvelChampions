@@ -9,14 +9,11 @@ public class SolidSoundBody : EncounterCardEffect
 {
     Retaliate retaliate;
 
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task Resolve()
     {
-        _owner = owner;
-        Card = card;
-
-        retaliate = new(owner, 1);
+        retaliate = new(_owner, 1);
         
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 
     public override bool CanActivate(Player p)
@@ -26,15 +23,7 @@ public class SolidSoundBody : EncounterCardEffect
 
     public override async Task Activate(Player p)
     {
-        List<Task> tasks = new()
-        {
-            PayCostSystem.instance.GetResources(Resource.Energy, 1),
-            PayCostSystem.instance.GetResources(Resource.Scientific, 1),
-            PayCostSystem.instance.GetResources(Resource.Physical, 1)
-        };
-
-        await Task.WhenAll(tasks);
-
+        await PayCostSystem.instance.GetResources(new() { { Resource.Energy, 1 }, { Resource.Scientific, 1 }, { Resource.Physical, 1 } });
         retaliate.WhenRemoved();
         ScenarioManager.inst.EncounterDeck.Discard(Card);
     }

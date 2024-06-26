@@ -7,6 +7,7 @@ using UnityEngine.EventSystems;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
+using UnityEngine.Events;
 
 public class PayCostSystem : MonoBehaviour
 {
@@ -35,30 +36,33 @@ public class PayCostSystem : MonoBehaviour
     #endregion
 
     #region Fields
-    //readonly List<PlayerCard> candidates = new();
-    public readonly List<ICard> _discards = new();
-    private readonly List<IGenerate> _effects = new();
+    public Dictionary<PlayerCard, List<Resource>> availableResources = new();
+    public readonly List<PlayerCard> _selected = new();
     private readonly List<Resource> _resources = new();
-    PlayerCard _cardToPlay;
-    //List<PlayerCard> zone;
+    bool playerSelected = false;
+    bool finished;
+    #endregion
+
+    #region Events
+    public UnityAction GetAvailableResources;
     #endregion
 
     private void Clear()
     {
-        Resources.Clear();
-        _discards.Clear();
-        _effects.Clear();
+        availableResources.Clear();
+        _resources.Clear();
+        _selected.Clear();
     }
 
     public async Task PayForCard(PlayerCard cardToPlay)
     {
-        UIManager.MakingSelection = true;
-        int resourceCount = 0;
         Clear();
+        GetAvailableResources?.Invoke();
+        availableResources.Remove(cardToPlay);
 
-        _cardToPlay = cardToPlay;
+        int cost = cardToPlay.CardCost;
 
-        while (resourceCount < cardToPlay.CardCost)
+        while (true)
         {
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
@@ -68,225 +72,175 @@ public class PayCostSystem : MonoBehaviour
                 };
 
                 List<RaycastResult> results = new();
-
                 raycaster.Raycast(pointerEventData, results);
+                var obj = results.Where(x => x.gameObject.GetComponent<PlayerCard>() != null).ToList();
 
-                foreach (RaycastResult r in results)
+                if (obj.Count != 0 && obj[0].gameObject.TryGetComponent(out PlayerCard card)) //PlayerCard selected
                 {
-                    if (r.gameObject.GetComponent<PlayerCard>() != null)
+                    if (availableResources.ContainsKey(card))
                     {
-                        PlayerCard card = r.gameObject.GetComponent<PlayerCard>();
-
-                        if (card != cardToPlay)
+                        if (!_selected.Contains(card))
                         {
-                            resourceCount += HandleCardSelected(card);
-                            continue;
+                            cost = (cost - availableResources[card].Count < 0) ? 0 : cost - availableResources[card].Count;
+                            _selected.Add(card);
+                        }
+                        else
+                        {
+                            cost += (cost + availableResources[card].Count > cardToPlay.CardCost) ? cardToPlay.CardCost : cost + availableResources[card].Count;
+                            _selected.Remove(card);
                         }
                     }
-                    else if (r.gameObject.GetComponent<Player>() != null)
+                }
+                else
+                {
+                    obj = results.Where(x => x.gameObject.GetComponent<Player>()).ToList();
+
+                    if (obj.Count > 0 && obj[0].gameObject.TryGetComponent(out Player p) && p.Identity.ActiveEffect is IGenerate effect) //Identity selected (Peter Parker, Venom)
                     {
-                        Player p = r.gameObject.GetComponent<Player>();
+                        if (!playerSelected)
+                            cost = (cost - effect.GetResources().Count < 0) ? 0 : cost - effect.GetResources().Count;
+                        else
+                            cost = (cost + effect.GetResources().Count > cardToPlay.CardCost) ? cardToPlay.CardCost : cost + effect.GetResources().Count;
 
-                        if (p.Identity.ActiveEffect is IGenerate)
-                        {
-                            IGenerate eff = p.Identity.ActiveEffect as IGenerate;
+                        playerSelected = !playerSelected;
 
-                            if (!_effects.Contains(eff))
-                            {
-                                if (eff.CanGenerateResource() > 0)
-                                {
-                                    _effects.Add(eff);
-                                    resourceCount++;
-                                }
-                            }
-                            else
-                            {
-                                _effects.Remove(eff);
-                                resourceCount--;
-                            }    
-                        }
+                        if (playerSelected) Debug.Log("Added Resource from " + p.Name);
                     }
                 }
             }
 
+            if (cost <= 0)
+            {
+                HandleResources();
+                break;
+            }
+
             await Task.Yield();
         }
-
-        foreach (var eff in _effects)
-        {
-            _resources.AddRange(eff.GenerateResource());
-        }
-
-        foreach (PlayerCard card in _discards.Cast<PlayerCard>())
-        {
-            if (card.Data.cardType is CardType.Resource)
-            {
-                _resources.AddRange((card as ResourceCard).GetResources());
-
-                if (card.Effect != null)
-                    await (card.Effect as ResourceCardEffect).WhenSpent();
-            }
-            else
-            {
-                _resources.AddRange(card.Resources);
-            }
-
-            cardToPlay.Owner.Hand.Remove(card);
-        }
-
-        cardToPlay.Owner.Deck.Discard(_discards);
-        UIManager.MakingSelection = false;
     }
-    public async Task<bool> GetResources(Resource resourceToCheck = Resource.Any, int amount = 0, bool enableFinish = false)
+
+    public async Task GetResources(Dictionary<Resource, int> needed)
     {
-        UIManager.MakingSelection = true;
-        CancellationToken token = enableFinish ? FinishButton.ToggleFinishButton(true, FinishedSelecting) : default;
-        Player player = FindObjectOfType<Player>();
         Clear();
+        GetAvailableResources?.Invoke();
+        int wildCount = 0;
+        finished = false;
 
-        int resourceCount = 0;
-
-        Debug.Log($"Spend {amount} {resourceToCheck} resources");
-
-        while (!token.IsCancellationRequested && resourceCount < amount)
+        while (!finished)
         {
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                pointerEventData = new PointerEventData(eventSystem)
-                {
-                    position = Input.mousePosition
-                };
-
                 List<RaycastResult> results = new();
-
                 raycaster.Raycast(pointerEventData, results);
+                var obj = results.Where(x => x.gameObject.GetComponent<PlayerCard>() != null).ToList();
 
-                foreach (RaycastResult r in results)
+                if (obj.Count != 0 && obj[0].gameObject.TryGetComponent(out PlayerCard card)) //PlayerCard selected
                 {
-                    if (r.gameObject.GetComponent<PlayerCard>() != null)
+                    if (availableResources.ContainsKey(card))
                     {
-                        PlayerCard card = r.gameObject.GetComponent<PlayerCard>();
-
-                        if (card.Resources.Contains(resourceToCheck) || card.Resources.Contains(Resource.Wild) || resourceToCheck == Resource.Any || card.Effect is IGenerate)
+                        if (!_selected.Contains(card))
                         {
-                            resourceCount += HandleCardSelected(card);
-                            continue;
-                        }
-                        
-                    }
-                    else if (r.gameObject.GetComponent<Player>() != null)
-                    {
-                        Player p = r.gameObject.GetComponent<Player>();
-
-                        if (p.Identity.ActiveEffect is IGenerate)
-                        {
-                            IGenerate eff = p.Identity.ActiveEffect as IGenerate;
-
-                            if (!_effects.Contains(eff))
+                            foreach (var r in availableResources[card])
                             {
-                                if (eff.CompareResource(resourceToCheck))
-                                {
-                                    _effects.Add(eff);
-                                    resourceCount++;
-                                }
+                                if (needed.ContainsKey(r))
+                                    needed[r]--;
+                                else if (r == Resource.Wild)
+                                    wildCount++;
                             }
-                            else
+                        }
+                        else
+                        {
+                            foreach (var r in availableResources[card])
                             {
-                                _effects.Remove(eff);
-                                resourceCount--;
+                                if (needed.ContainsKey(r))
+                                    needed[r]++;
+                                else if (r == Resource.Wild)
+                                    wildCount--;
                             }
                         }
                     }
                 }
+                else
+                {
+                    obj = results.Where(x => x.gameObject.GetComponent<Player>()).ToList();
+
+                    if (obj.Count > 0 && obj[0].gameObject.TryGetComponent(out Player p) && p.Identity.ActiveEffect is IGenerate effect) //Identity selected (Peter Parker, Venom)
+                    {
+                        if (!playerSelected)
+                        {
+                            foreach (var r in effect.GetResources())
+                            {
+                                if (needed.ContainsKey(r))
+                                    needed[r]++;
+                                else if (r == Resource.Wild)
+                                    wildCount--;
+                            }
+                        }
+                        else
+                        {
+                            foreach (var r in effect.GetResources())
+                            {
+                                if (needed.ContainsKey(r))
+                                    needed[r]++;
+                                else if (r == Resource.Wild)
+                                    wildCount--;
+                            }
+                        }
+
+                        playerSelected = !playerSelected;
+
+                        if (playerSelected) Debug.Log("Added Resource from " + p.Name);
+                    }
+                }
+            }
+
+            int remainder = 0;
+
+            foreach (var r in needed)
+            {
+                if (r.Value > 0)
+                    remainder += r.Value;
+            }
+
+            if (wildCount >= remainder)
+            {
+                HandleResources(); 
+                break;
             }
 
             await Task.Yield();
         }
-
-        if (resourceCount > 0)
-        {
-            foreach (var eff in _effects)
-            {
-                _resources.AddRange(eff.GenerateResource());
-            }
-
-            foreach (PlayerCard card in _discards.Cast<PlayerCard>())
-            {
-                if (card.Data.cardType is CardType.Resource)
-                {
-                    _resources.AddRange((card as ResourceCard).GetResources());
-
-                    if (card.Effect != null)
-                        await (card.Effect as ResourceCardEffect).WhenSpent();
-                }
-                else
-                {
-                    _resources.AddRange(card.Resources);
-                }
-
-                player.Hand.Remove(card);
-            }
-
-            player.Deck.Discard(_discards);
-        }
-
-        
-        UIManager.MakingSelection = false;
-
-        if (token != default)
-            FinishButton.ToggleFinishButton(false, FinishedSelecting);
-
-        return resourceCount > 0;
-    }
-
-    private int HandleCardSelected(PlayerCard card)
-    {
-        if (!card.InPlay)
-        {
-            if (!_discards.Contains(card))
-            {
-                _discards.Add(card);
-                if (card.Data.cardType == CardType.Resource)
-                    return (card as ResourceCard).GetResources().Count;
-                else
-                    return card.Resources.Count;
-            }
-            else
-            {
-                _discards.Remove(card);
-                if (card.Data.cardType == CardType.Resource)
-                    return -(card as ResourceCard).GetResources().Count;
-                else
-                    return -card.Resources.Count;
-            }    
-        }
-        else
-        {
-            if (card.Effect is IGenerate)
-            {
-                IGenerate eff = card.Effect as IGenerate;
-                if (!_effects.Contains(eff))
-                {
-                    if (eff.CanGenerateResource() > 0)
-                    {
-                        _effects.Add(eff);
-                        return eff.ResourceCount();
-                    }
-                }
-                else
-                {
-                    _effects.Remove(eff);
-                    return -eff.ResourceCount();
-                }
-            }        
-        }
-
-        return 0;
     }
 
     public void FinishedSelecting()
     {
+        finished = true;
         FinishButton.ToggleFinishButton(false, FinishedSelecting);
+    }
+
+    private void HandleResources()
+    {
+        var player = TurnManager.instance.CurrPlayer;
+
+        foreach (var card in _selected)
+        {
+            if (card.gameObject.name == player.name)
+            {
+                _resources.AddRange(((IGenerate)player.Identity.ActiveEffect).GenerateResource());
+                continue;
+            }
+
+            if (card.InPlay)
+            {
+                var eff = (IGenerate)card.Effect;
+                _resources.AddRange(eff.GenerateResource());
+            }
+            else
+            {
+                _resources.AddRange(card.Resources);
+                player.Hand.Discard(card);
+            }
+        }
     }
 
     #region Properties

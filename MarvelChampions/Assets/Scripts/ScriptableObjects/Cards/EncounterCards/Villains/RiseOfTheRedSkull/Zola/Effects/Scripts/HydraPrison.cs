@@ -31,7 +31,7 @@ public class HydraPrison : EncounterCardEffect
                         continue; //no ally (Rocket, Groot, Hulk, etc.)
                     else
                     {
-                        p.Hand.Remove(ally);
+                        p.Hand.RemoveFromHand(ally);
                         p.Deck.limbo.Remove(prisoner);
                         Destroy(ally);
                     }

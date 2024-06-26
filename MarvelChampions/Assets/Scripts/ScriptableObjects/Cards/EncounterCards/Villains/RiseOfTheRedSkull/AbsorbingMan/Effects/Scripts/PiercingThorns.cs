@@ -12,8 +12,7 @@ public class PiercingThorns : EncounterCardEffect
 
         Debug.Log("Discarding " + pCard.CardName);
 
-        player.Hand.Remove(pCard);
-        player.Deck.Discard(pCard);
+        player.Hand.Discard(pCard);
 
         if (owner.VillainTraits.Contains("Wood"))
         {

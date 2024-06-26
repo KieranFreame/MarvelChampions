@@ -43,7 +43,7 @@ public class PlayerCard : MonoBehaviour, ICard, IExhaust
         GetComponent<CardUI>().CardArt = Data.cardArt;
 
         foreach (string trait in Data.cardTraits)
-            CardTraits.Add(trait);
+            CardTraits.AddItem(trait);
 
         if (Data.effect != null)
         {
@@ -74,6 +74,8 @@ public class PlayerCard : MonoBehaviour, ICard, IExhaust
         }
     }
 
+    public virtual void GetResources() => PayCostSystem.instance.availableResources.Add(this, Resources);
+
     public PlayerCardEffect Effect { get; private set; }
     public virtual List<Resource> Resources { get => Data.cardResources; }
     public int CardCost 
@@ -97,5 +99,5 @@ public class PlayerCard : MonoBehaviour, ICard, IExhaust
     public string CardName { get => Data.cardName; }
     public string CardDesc { get => Data.cardDesc; }
     public CardType CardType { get => Data.cardType; }
-    public ObservableCollection<string> CardTraits { get; protected set; } = new();
+    public ObservableSet<string> CardTraits { get; protected set; } = new();
 }

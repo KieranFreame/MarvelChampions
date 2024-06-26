@@ -7,16 +7,13 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Kree Manipulator", menuName = "MarvelChampions/Card Effects/Nemesis/Captain Marvel/Kree Manipulator")]
 public class KreeManipulator : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task Resolve()
     {
-        _owner = owner;
-        Card = card;
-
-        ScenarioManager.inst.Surge(player);
+        ScenarioManager.inst.Surge(TurnManager.instance.CurrPlayer);
 
         ScenarioManager.inst.MainScheme.Threat.GainThreat(1);
 
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 
     public override async Task Boost(Action action)

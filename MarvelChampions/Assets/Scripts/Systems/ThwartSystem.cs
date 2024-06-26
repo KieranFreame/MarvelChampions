@@ -11,9 +11,7 @@ public class ThwartSystem// : MonoBehaviour
     {
         get
         {
-            if (instance == null)
-                instance = new();
-
+            instance ??= new();
             return instance;
         }
     }
@@ -71,11 +69,7 @@ public class ThwartSystem// : MonoBehaviour
 
         action.Target.Threat.RemoveThreat(action.Value);
 
-        for (int i = OnThwartComplete.Count - 1; i >= 0; i--)
-        {
-            OnThwartComplete[i](action);
-        }
-
-        //await EffectManager.Instance.ResolveEffects();
+        GameStateManager.Instance.ActivationCompleted(action);
+        await EffectManager.Inst.CheckResponding();
     }
 }

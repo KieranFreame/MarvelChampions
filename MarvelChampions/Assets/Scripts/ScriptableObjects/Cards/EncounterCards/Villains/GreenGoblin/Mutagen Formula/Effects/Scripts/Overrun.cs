@@ -7,7 +7,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Overrun", menuName = "MarvelChampions/Card Effects/Mutagen Formula/Overrun")]
 public class Overrun : EncounterCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
         ScenarioManager.inst.MainScheme.Threat.Acceleration += 2;
         ScenarioManager.inst.MainScheme.Threat.CurrentThreat *= TurnManager.Players.Count;
@@ -16,14 +16,14 @@ public class Overrun : EncounterCardEffect
 
     public override async Task WhenDefeated()
     {
-        List<EncounterCardData> data = ScenarioManager.inst.EncounterDeck.GetTop(2).Cast<EncounterCardData>().ToList();
+        var data = ScenarioManager.inst.EncounterDeck.GetTop(2);
 
         for (int i = 1; i <= 0; i--)
         {
             if (data[i].cardTraits.Contains("Goblin"))
             {
                 MinionCard goblin = CreateCardFactory.Instance.CreateCard(data[i], RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
-                await goblin.Effect.OnEnterPlay(_owner, goblin, TurnManager.instance.CurrPlayer);
+                await goblin.Effect.OnEnterPlay();
                 ScenarioManager.inst.EncounterDeck.limbo.Add(data[i]);
             }
             else

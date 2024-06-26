@@ -8,13 +8,9 @@ namespace CoreSet
     [CreateAssetMenu(fileName = "Radioactive Man", menuName = "MarvelChampions/Card Effects/Masters of Evil/Radioactive Man")]
     public class RadioactiveMan : EncounterCardEffect
     {
-        public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+        public override Task OnEnterPlay()
         {
-            _owner = owner;
-            Card = card;
-
             GameStateManager.Instance.OnActivationCompleted += CanRespond;
-
             return Task.CompletedTask;
         }
 
@@ -35,8 +31,7 @@ namespace CoreSet
 
             Debug.Log("Discarded " + pCard.CardName);
 
-            p.Hand.Remove(pCard);
-            p.Deck.Discard(pCard);
+            p.Hand.Discard(pCard);
 
             return Task.CompletedTask;
         }
@@ -50,8 +45,7 @@ namespace CoreSet
 
             Debug.Log("Discarded " + pCard.CardName);
 
-            p.Hand.Remove(pCard);
-            p.Deck.Discard(pCard);
+            p.Hand.Discard(pCard);
 
             return Task.CompletedTask;
         }

@@ -5,10 +5,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Zola's Experiments", menuName = "MarvelChampions/Card Effects/RotRS/Zola/Zola's Experiments")]
 public class ZolaExperiments : EncounterCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        _owner = owner;
-
         ScenarioManager.inst.MainScheme.Threat.Acceleration++;
 
         RevealEncounterCardSystem.OnEncounterCardRevealed += AttachMinion;

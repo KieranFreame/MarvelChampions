@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,31 +25,44 @@ public class SpiderTracer : PlayerCardEffect, IAttachment
 
     public override async Task OnEnterPlay()
     {
+        Debug.Log(_card); Debug.Log(Card);
         Attached = await TargetSystem.instance.SelectTarget(minions);
         Attach();
     }
 
     public override async Task Resolve()
     {
-        await ThwartSystem.Instance.InitiateThwart(new(3, Owner));
-        _owner.Deck.Discard(Card);
+        if (ScenarioManager.inst.ThreatPresent())
+        {
+            Debug.Log("Spider-Tracer has triggered. Select a scheme to remove 3 threat from");
+            var schemes = new List<SchemeCard>(ScenarioManager.sideSchemes) { ScenarioManager.inst.MainScheme };
+            var target = await TargetSystem.instance.SelectTarget(schemes);
+            target.Threat.RemoveThreat(3);
+        }
+
+        Detach();
+        _owner.Deck.Discard(_card);
     }
 
     public void Attach()
     {
-        Attached.Attachments.Add(this);
+        GameStateManager.Instance.OnCharacterDefeated += CanTrigger;
 
-        _card.transform.SetParent(((MonoBehaviour)Attached).transform, false);
+        _card.transform.SetParent(((MinionCard)Attached).transform.parent, false);
         _card.transform.SetAsFirstSibling();
         _card.transform.localPosition = new Vector3(-50, 0, 0);
     }
 
-    public void WhenRemoved()
+    private void CanTrigger(ICharacter arg0)
     {
-        _owner.CardsInPlay.Permanents.Remove(_card);
-        Attached.Attachments.Remove(this);
+        if (arg0 != Attached) return;
 
-        if (ScenarioManager.inst.ThreatPresent())
-            EffectManager.Inst.Resolving.Push(this);
+        EffectManager.Inst.Resolving.Push(this);
+    }
+
+    public void Detach()
+    {
+        GameStateManager.Instance.OnCharacterDefeated -= CanTrigger;
+        _owner.CardsInPlay.Permanents.Remove(_card);
     }
 }

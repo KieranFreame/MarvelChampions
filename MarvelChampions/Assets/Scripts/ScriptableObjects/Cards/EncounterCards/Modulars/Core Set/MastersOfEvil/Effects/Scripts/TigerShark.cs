@@ -12,11 +12,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Tiger Shark", menuName = "MarvelChampions/Card Effects/Masters of Evil/Tiger Shark")]
 public class TigerShark : EncounterCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        _owner = owner;
-        Card = card;
-
         GameStateManager.Instance.OnActivationCompleted += AttackCompleted;
         return Task.CompletedTask;
     }

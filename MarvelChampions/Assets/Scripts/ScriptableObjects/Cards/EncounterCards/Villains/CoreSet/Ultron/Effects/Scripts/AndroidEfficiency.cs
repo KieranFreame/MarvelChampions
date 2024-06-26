@@ -35,7 +35,7 @@ public class AndroidEfficiency : EncounterCardEffect
 
             if (decision == 1)
             {
-                await PayCostSystem.instance.GetResources(Resource.Energy, 1);
+                await PayCostSystem.instance.GetResources(new() { { Resource.Energy, 1 } });
                 return;
             }
         }

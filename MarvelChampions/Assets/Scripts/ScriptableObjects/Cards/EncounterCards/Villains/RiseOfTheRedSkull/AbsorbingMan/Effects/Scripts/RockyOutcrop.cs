@@ -12,14 +12,11 @@ public class RockyOutcrop : EncounterCardEffect
     public override async Task WhenRevealed(Villain owner, EncounterCard card, Player player)
     {
         ScenarioManager.inst.Surge(player);
-        await OnEnterPlay(owner, card, player);
+        await OnEnterPlay();
     }
 
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        _owner = owner;
-        Card = card;
-
         DefendSystem.Instance.OnDefenderSelected += OnDefenderSelected;
 
         return Task.CompletedTask;
@@ -41,7 +38,7 @@ public class RockyOutcrop : EncounterCardEffect
 
             card.InPlay = true;
             RevealEncounterCardSystem.Instance.MoveCard(card);
-            await OnEnterPlay(ScenarioManager.inst.ActiveVillain, card, null);
+            await OnEnterPlay();
 
             (ScenarioManager.inst.MainScheme.Effect as NoneShallPass).EncounterCardRevealed(card);
 

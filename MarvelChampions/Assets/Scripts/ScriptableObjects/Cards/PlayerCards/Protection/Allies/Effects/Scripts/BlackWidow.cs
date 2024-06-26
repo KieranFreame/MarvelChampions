@@ -29,7 +29,7 @@ namespace CoreSet
 
         public override async Task Resolve()
         {
-            await PayCostSystem.instance.GetResources(Resource.Scientific, 1);
+            await PayCostSystem.instance.GetResources(new() { { Resource.Scientific, 1} });
             _card.Exhaust();
             CancelEffect();
             RevealEncounterCardSystem.Instance.CancelCard();
@@ -39,7 +39,7 @@ namespace CoreSet
 
         public void CancelEffect()
         {
-            Stack<IEffect> stack = new Stack<IEffect>();
+            var stack = new Stack<IEffect>();
 
             while (EffectManager.Inst.Resolving.Peek().Card is not EncounterCard && EffectManager.Inst.Resolving.Count != 0)
             {

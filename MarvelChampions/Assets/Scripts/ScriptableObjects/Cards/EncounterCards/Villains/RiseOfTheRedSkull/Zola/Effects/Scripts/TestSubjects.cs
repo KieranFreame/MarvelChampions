@@ -6,10 +6,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Test Subjects", menuName = "MarvelChampions/Card Effects/RotRS/Zola/Test Subjects")]
 public class TestSubjects : EncounterCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
         VillainTurnController.instance.HazardCount++;
-        (card as SchemeCard).Threat.CurrentThreat *= TurnManager.Players.Count;
+        (_card as SchemeCard).Threat.CurrentThreat *= TurnManager.Players.Count;
 
         return Task.CompletedTask;
     }

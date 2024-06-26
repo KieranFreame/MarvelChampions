@@ -25,7 +25,7 @@ public class MsMarvel : IdentityEffect
     {
         if (owner.Exhausted) return;
         if (arg0.CardType != CardType.Event) return;
-        if (!arg0.CardTraits.Any(x => x == "Attack" || x == "Thwart" || x == "Defense")) return;
+        if (!arg0.CardTraits.Collection.Any(x => x == "Attack" || x == "Thwart" || x == "Defense")) return;
 
         bool choice = await ConfirmActivateUI.MakeChoice("Return Card to Hand?");
 

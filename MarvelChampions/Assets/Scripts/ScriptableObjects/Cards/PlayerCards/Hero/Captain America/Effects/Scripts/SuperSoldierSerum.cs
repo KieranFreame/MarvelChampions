@@ -5,6 +5,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Super-Soldier Serum", menuName = "MarvelChampions/Card Effects/Captain America/Super-Soldier Serum")]
 public class SuperSoldierSerum : PlayerCardEffect, IGenerate
 {
+    List<Resource> resources = new() { Resource.Physical };
+
     public int CanGenerateResource()
     {
         return (!_card.Exhausted) ? 1 : 0;
@@ -18,6 +20,8 @@ public class SuperSoldierSerum : PlayerCardEffect, IGenerate
     public List<Resource> GenerateResource()
     {
         _card.Exhaust();
-        return new List<Resource>() { Resource.Physical };
+        return resources;
     }
+
+    public List<Resource> GetResources() => resources;
 }

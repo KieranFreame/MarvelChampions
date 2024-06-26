@@ -7,13 +7,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Hydra Patrol", menuName = "MarvelChampions/Card Effects/Modulars/RotRS/Hydra Patrol/Hydra Patrol")]
 public class HydraPatrol : EncounterCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        Card = card;
+        (_card as SchemeCard).Threat.CurrentThreat *= TurnManager.Players.Count;
 
-        (card as SchemeCard).Threat.CurrentThreat *= TurnManager.Players.Count;
-
-        ThwartSystem.Instance.Crisis.Add(card as SchemeCard);
+        ThwartSystem.Instance.Crisis.Add(_card as SchemeCard);
         return Task.CompletedTask;
     }
 
@@ -36,6 +34,6 @@ public class HydraPatrol : EncounterCardEffect
 
         ScenarioManager.inst.EncounterDeck.Shuffle();
 
-        await minion.Effect.OnEnterPlay(_owner, minion, TurnManager.instance.CurrPlayer);
+        await minion.Effect.OnEnterPlay();
     }
 }

@@ -7,11 +7,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Thomas Edison", menuName = "MarvelChampions/Card Effects/Nemesis/Ms Marvel/Thomas Edison")]
 public class ThomasEdison : EncounterCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        Card = card;
-
-        (Card as MinionCard).CharStats.Health.Modifiers.Add(ModifyDamage);
+        (_card as MinionCard).CharStats.Health.Modifiers.Add(ModifyDamage);
         return Task.CompletedTask;
     }
 

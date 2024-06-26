@@ -10,17 +10,13 @@ public class ManOutOfTime : EncounterCardEffect
 {
     Player rogers;
 
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
-        _owner = owner;
-        _card = card;
         rogers = TurnManager.Players.FirstOrDefault(x => x.Identity.AlterEgo.Name == "Steve Rogers");
 
         if (rogers.Identity.ActiveIdentity is not AlterEgo)
         {
-            bool decision = await ConfirmActivateUI.MakeChoice("Flip to Alter-Ego?");
-
-            if (decision)
+            if (await ConfirmActivateUI.MakeChoice("Flip to Alter-Ego?"))
             {
                 rogers.Identity.FlipToAlterEgo();
             }
@@ -28,9 +24,7 @@ public class ManOutOfTime : EncounterCardEffect
 
         if (rogers.Identity.ActiveIdentity is AlterEgo && !rogers.Exhausted) //chose to flip\was already alterego && is not exhausted
         {
-            int decision = await ChooseEffectUI.ChooseEffect(new List<string>() { "Exhaust Steve Rogers. Remove this from the game", "Discard hald of the cards in your hand (rounded down)." });
-
-            if (decision == 1)
+            if (await ChooseEffectUI.ChooseEffect(new List<string>() { "Exhaust Steve Rogers. Remove this from the game", "Discard hald of the cards in your hand (rounded down)." }) == 1)
             {
                 rogers.Exhaust();
                 ScenarioManager.inst.RemoveFromGame(_card.Data);
@@ -39,23 +33,11 @@ public class ManOutOfTime : EncounterCardEffect
             }
         }
 
-        int amountToDiscard;
-
-        if (rogers.Hand.cards.Count % 2 == 0) //even
-        {
-            amountToDiscard = rogers.Hand.cards.Count / 2;
-        }
-        else //odd
-        {
-            amountToDiscard = (int)Math.Floor((double)(rogers.Hand.cards.Count / 2));
-        }
-
-        List<PlayerCard> discards = await TargetSystem.instance.SelectTargets(rogers.Hand.cards.ToList(), amountToDiscard, default);
+        List<PlayerCard> discards = await TargetSystem.instance.SelectTargets(rogers.Hand.cards.ToList(), (int)Math.Floor(rogers.Hand.cards.Count / 2.0), default);
 
         foreach (var pCard in discards)
         {
-            rogers.Hand.Remove(pCard);
-            rogers.Deck.Discard(pCard);
+            rogers.Hand.Discard(pCard);
         }
     }
 }

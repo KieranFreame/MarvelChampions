@@ -5,16 +5,15 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Sweeping Swoop", menuName = "MarvelChampions/Card Effects/Nemesis/Spider-Man (Peter Parker)/Sweeping Swoop")]
 public class SweepingSwoop : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task Resolve()
     {
+        var player = TurnManager.instance.CurrPlayer;
         player.CharStats.Attacker.Stunned = true;
 
         if (VillainTurnController.instance.MinionsInPlay.FirstOrDefault(x => x.CardName == "The Vulture") != default)
-        {
             ScenarioManager.inst.Surge(player);
-        }
 
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 
     public override async Task Boost(Action action)

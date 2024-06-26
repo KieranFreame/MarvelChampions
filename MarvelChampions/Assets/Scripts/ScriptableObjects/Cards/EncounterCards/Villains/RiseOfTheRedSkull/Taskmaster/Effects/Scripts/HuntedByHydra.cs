@@ -17,8 +17,7 @@ public class HuntedByHydra : EncounterCardEffect
 
             var pCard = p.Hand.cards[Random.Range(0, p.Hand.cards.Count)];
 
-            p.Hand.Remove(pCard);
-            p.Deck.Discard(pCard);
+            p.Hand.Discard(pCard);
         }
 
         return Task.CompletedTask;

@@ -1,29 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Yon-Rogg's Treason", menuName = "MarvelChampions/Card Effects/Nemesis/Captain Marvel/Yon-Rogg's Treason")]
 public class YonRoggsTreason : EncounterCardEffect
 {
-    List<PlayerCard> discards = new();
-
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task Resolve()
     {
-        foreach (PlayerCard c in player.Hand.cards)
-        {
-            if (c.Resources.Contains(Resource.Energy))
-            {
-                discards.Add(c);
-            }
-        }
+        var player = TurnManager.instance.CurrPlayer;
+        var discards = new List<PlayerCard>(player.Hand.cards.Where(x => x.Resources.Contains(Resource.Energy)));
 
         if (discards.Count > 0)
         {
             foreach (PlayerCard c in discards)
             {
-                player.Hand.Remove(c);
-                player.Deck.Discard(c);
+                player.Hand.Discard(c);
             }
         }
         else
@@ -31,6 +24,6 @@ public class YonRoggsTreason : EncounterCardEffect
             ScenarioManager.inst.Surge(player);
         }
 
-        await Task.Yield();
+        return Task.CompletedTask;
     }
 }

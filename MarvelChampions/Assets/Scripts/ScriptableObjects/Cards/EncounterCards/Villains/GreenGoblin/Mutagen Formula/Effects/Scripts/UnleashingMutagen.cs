@@ -7,17 +7,14 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Unleashing the Mutagen", menuName = "MarvelChampions/Card Effects/Mutagen Formula/Unleashing the Mutagen")]
 public class UnleashingMutagen : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task OnEnterPlay()
     {
-        _owner = owner;
-        Card = card;
-
         foreach (var p in TurnManager.Players)
         {
-            MinionCardData data = ScenarioManager.inst.EncounterDeck.Search("Goblin Thrall", false) as MinionCardData;
-            MinionCard thrall = CreateCardFactory.Instance.CreateCard(data, RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
+            var data = ScenarioManager.inst.EncounterDeck.Search("Goblin Thrall", false);
+            MinionCard thrall = (MinionCard)CreateCardFactory.Instance.CreateCard(data, RevealEncounterCardSystem.Instance.MinionTransform);
             VillainTurnController.instance.MinionsInPlay.Add(thrall);
-            await thrall.Effect.OnEnterPlay(_owner, thrall, p);
+            await thrall.Effect.OnEnterPlay();
         }
     }
 
@@ -39,7 +36,7 @@ public class UnleashingMutagen : EncounterCardEffect
             {
                 MinionCard goblin = CreateCardFactory.Instance.CreateCard(data, RevealEncounterCardSystem.Instance.MinionTransform) as MinionCard;
                 VillainTurnController.instance.MinionsInPlay.Add(goblin);
-                await goblin.Effect.OnEnterPlay(_owner, goblin, TurnManager.instance.CurrPlayer);
+                await goblin.Effect.OnEnterPlay();
             }
         }
     }

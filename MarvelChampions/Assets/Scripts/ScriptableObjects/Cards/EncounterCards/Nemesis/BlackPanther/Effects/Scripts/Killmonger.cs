@@ -6,16 +6,13 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Killmonger", menuName = "MarvelChampions/Card Effects/Nemesis/Black Panther/Killmonger")]
 public class Killmonger : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task OnEnterPlay()
     {
-        _owner = owner;
-        Card = card;
         (Card as MinionCard).CharStats.Health.Modifiers.Add(OnTakeDamage);
-
         await Task.Yield();
     }
 
-    public async Task<DamageAction> OnTakeDamage(DamageAction action)
+    public Task<DamageAction> OnTakeDamage(DamageAction action)
     {
         if (action.Card != null)
         {
@@ -25,8 +22,8 @@ public class Killmonger : EncounterCardEffect
             }
         }
 
-        await Task.Yield();
-        return action;
+        
+        return Task.FromResult(action);
     }
 
     public override Task WhenDefeated()

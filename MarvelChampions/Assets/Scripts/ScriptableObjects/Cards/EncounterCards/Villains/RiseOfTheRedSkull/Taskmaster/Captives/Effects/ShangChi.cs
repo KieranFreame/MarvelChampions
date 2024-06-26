@@ -13,9 +13,9 @@ namespace TaskmasterScenario
         {
             if (Card.PrevZone == Zone.Hand)
             {
-                CancellationToken token = CancelButton.ToggleCancelBtn(true, CancelEffect);
-                await PayCostSystem.instance.GetResources(Resource.Energy, 1, true);
-                CancelButton.ToggleCancelBtn(false, CancelEffect);
+                /*CancellationToken token = CancelButton.ToggleCancelBtn(true, CancelEffect);
+                await PayCostSystem.instance.GetResources(new() { { Resource.Energy, 1 } }, true);
+                CancelButton.ToggleCancelBtn(false, CancelEffect);*/
 
                 List<ICharacter> enemies = new() { ScenarioManager.inst.ActiveVillain };
                 enemies.AddRange(VillainTurnController.instance.MinionsInPlay);

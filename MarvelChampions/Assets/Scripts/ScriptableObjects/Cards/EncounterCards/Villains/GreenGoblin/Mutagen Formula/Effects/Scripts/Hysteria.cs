@@ -7,10 +7,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Hysteria", menuName = "MarvelChampions/Card Effects/Mutagen Formula/Hysteria")]
 public class Hysteria : AttachmentCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        attached = _owner = owner;
-        Card = card;
+        attached = _owner;
 
         Attach();
 
@@ -29,7 +28,7 @@ public class Hysteria : AttachmentCardEffect
 
     public override async Task Activate(Player player)
     {
-        await PayCostSystem.instance.GetResources(Resource.Scientific, 2);
+        await PayCostSystem.instance.GetResources(new() { { Resource.Scientific, 2 } });
 
         Detach();
         ScenarioManager.inst.EncounterDeck.Discard(Card);

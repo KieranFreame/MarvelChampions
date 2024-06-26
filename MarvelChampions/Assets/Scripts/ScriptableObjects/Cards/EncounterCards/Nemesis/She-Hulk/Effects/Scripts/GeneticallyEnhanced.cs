@@ -6,10 +6,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Genetically Enhanced", menuName = "MarvelChampions/Card Effects/Nemesis/She-Hulk/Genetically Enhanced")]
 public class GeneticallyEnhanced : AttachmentCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        Card = card;
-
         int high = int.MinValue;
 
         foreach (MinionCard m in VillainTurnController.instance.MinionsInPlay)
@@ -27,7 +25,7 @@ public class GeneticallyEnhanced : AttachmentCardEffect
         }
         else
         {
-            ScenarioManager.inst.Surge(player);
+            ScenarioManager.inst.Surge(TurnManager.instance.CurrPlayer);
             ScenarioManager.inst.EncounterDeck.Discard(Card);
         }
 

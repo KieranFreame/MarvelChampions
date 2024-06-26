@@ -22,6 +22,7 @@ MonoBehaviour:
   boostIcons: 0
   boostDescription: Exhaust each ally you control
   effect: {fileID: 11400000, guid: 1ad3e3675c691784aad49a2779c673d1, type: 2}
+  boost: {fileID: 11400000, guid: b10ea54155c68a94ebf6b7346337bb13, type: 2}
   baseAttack: 3
   baseScheme: 1
   baseHealth: 5

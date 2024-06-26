@@ -9,7 +9,7 @@ using System.Collections.ObjectModel;
 [CreateAssetMenu(fileName = "CrisisInterdiction", menuName = "MarvelChampions/Card Effects/Captain Marvel/Crisis Interdiction")]
 public class CrisisInterdiction : PlayerCardEffect
 {
-    SchemeCard prevTarget;
+    List<SchemeCard> schemes;
 
     public override bool CanBePlayed()
     {
@@ -19,43 +19,34 @@ public class CrisisInterdiction : PlayerCardEffect
     public override async Task OnEnterPlay()
     {
         if (_owner.Identity.IdentityTraits.Contains("Aerial"))
-            ThwartSystem.Instance.OnThwartComplete.Add(IsTriggerMet);
+            GameStateManager.Instance.OnActivationCompleted += IsTriggerMet;
 
         await _owner.CharStats.InitiateThwart(new(2, Owner));
     }
 
-    private void IsTriggerMet(ThwartAction action)
-    {   
-        ThwartSystem.Instance.OnThwartComplete.Remove(IsTriggerMet);
+    private void IsTriggerMet(Action action)
+    {
+        if (action is not ThwartAction || ((ThwartAction)action).Owner != Owner) { return; }
 
-        List<SchemeCard> schemes = new() { ScenarioManager.inst.MainScheme };
-        schemes.AddRange(ScenarioManager.sideSchemes);
+        var thwart = (ThwartAction)action;
+        GameStateManager.Instance.OnActivationCompleted -= IsTriggerMet;
 
-        //If there are no schemes, or the previous scheme is the only target.
-        if (!ScenarioManager.inst.ThreatPresent() || (schemes.Count() == 1 && schemes[0] == action.Target))
+        if (!ScenarioManager.inst.ThreatPresent())
             return;
 
-        prevTarget = action.Target;
+        schemes = new(ScenarioManager.sideSchemes.Where(x => x != thwart.Target));
+        if (thwart.Target != ScenarioManager.inst.MainScheme && ThwartSystem.Instance.Crisis.Count == 0)
+            schemes.Add(ScenarioManager.inst.MainScheme);
+
+        if (schemes.Count == 0) return;
+
         EffectManager.Inst.Resolving.Push(this);
     }
 
     public override async Task Resolve()
     {
-        TargetSystem.instance.candidates.CollectionChanged += CandidateAdded;
-
-        await _owner.CharStats.InitiateThwart(new(2, Owner));
-
-        TargetSystem.instance.candidates.CollectionChanged -= CandidateAdded;
-    }
-
-    private void CandidateAdded(object sender, NotifyCollectionChangedEventArgs e)
-    {
-        switch (e.Action)
-        {
-            case NotifyCollectionChangedAction.Add:
-                if (e.NewItems.Contains(prevTarget))
-                   ((ObservableCollection<dynamic>)sender).Remove(prevTarget);
-                break;
-        }
+        Debug.Log("Captain Marvel has the Aerial trait. Please select an additional scheme to thwart");
+        var target = await TargetSystem.instance.SelectTarget(schemes);
+        target.Threat.RemoveThreat(2);
     }
 }

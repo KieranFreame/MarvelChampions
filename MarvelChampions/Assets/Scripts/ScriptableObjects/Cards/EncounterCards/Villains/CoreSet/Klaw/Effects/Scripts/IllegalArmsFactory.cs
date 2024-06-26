@@ -6,12 +6,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Illegal Arms Factory", menuName = "MarvelChampions/Card Effects/Klaw/Illegal Arms Factory")]
 public class IllegalArmsFactory : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
-        Card = card;
         VillainTurnController.instance.HazardCount++;
 
-        (card as SchemeCard).Threat.GainThreat(1 * TurnManager.Players.Count);
+        (_card as SchemeCard).Threat.GainThreat(1 * TurnManager.Players.Count);
 
         await Task.Yield();
     }

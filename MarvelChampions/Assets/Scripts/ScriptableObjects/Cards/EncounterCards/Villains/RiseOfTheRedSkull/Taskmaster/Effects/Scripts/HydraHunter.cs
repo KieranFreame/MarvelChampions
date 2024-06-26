@@ -6,9 +6,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Hydra Hunter", menuName = "MarvelChampions/Card Effects/RotRS/Taskmaster/Hydra Hunter")]
 public class HydraHunter : EncounterCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        (card as MinionCard).CharStats.Attacker.Keywords.AddRange(new List<Keywords>() { Keywords.Ranged, Keywords.Piercing });
+        (_card as MinionCard).CharStats.Attacker.Keywords.AddRange(new List<Keywords>() { Keywords.Ranged, Keywords.Piercing });
         return Task.CompletedTask;
     }
 

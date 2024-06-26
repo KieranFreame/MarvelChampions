@@ -9,20 +9,17 @@ public class HighwayRobbery : EncounterCardEffect
 {
     List<PlayerCard> stolenCards = new();
 
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task OnEnterPlay()
     {
-        _owner = owner;
-        Card = card;
-
         float x = 50;
 
         foreach (Player p in TurnManager.Players)
         {
             var pCard = p.Hand.cards[Random.Range(0, p.Hand.cards.Count)];
-            p.Hand.cards.Remove(pCard);
+            p.Hand.RemoveFromHand(pCard);
             stolenCards.Add(pCard);
 
-            pCard.transform.SetParent(card.transform.parent, false);
+            pCard.transform.SetParent(_card.transform.parent, false);
             pCard.transform.SetAsFirstSibling();
             pCard.transform.localPosition = new Vector3(x, 0, 0);
             x -= 10;

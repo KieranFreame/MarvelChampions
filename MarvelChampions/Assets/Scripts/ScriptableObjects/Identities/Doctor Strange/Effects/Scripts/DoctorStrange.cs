@@ -24,7 +24,7 @@ public class DoctorStrange : IdentityEffect
     public override async void Activate()
     {
         owner.Exhaust();
-        await PayCostSystem.instance.GetResources(amount: InvocationDeck.Instance.Invocations[0].cardCost);
+        await PayCostSystem.instance.PayForCard(InvocationDeck.Instance.invocationTransform.GetComponentInChildren<PlayerCard>());
         await InvocationDeck.Instance.Activate();
         InvocationDeck.Instance.Discard();
     }

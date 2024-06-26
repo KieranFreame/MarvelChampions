@@ -22,6 +22,7 @@ MonoBehaviour:
   boostIcons: 0
   boostDescription: The villain gains Tough
   effect: {fileID: 11400000, guid: 1cc9ab94f6bb29c40b30087c37be5f00, type: 2}
+  boost: {fileID: 11400000, guid: bbacc212ec06eca4e99a3f754bd46e52, type: 2}
   baseAttack: 3
   baseScheme: 1
   baseHealth: 6

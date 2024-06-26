@@ -121,4 +121,9 @@ public class TargetSystem : MonoBehaviour
 
         return selections;
     }
+
+    public void FinishedSelecting()
+    {
+        FinishButton.ToggleFinishButton(false, FinishedSelecting);
+    }
 }

@@ -22,3 +22,4 @@ MonoBehaviour:
   boostIcons: 1
   boostDescription: Ultron heals 1 damage for each Drone minion
   effect: {fileID: 11400000, guid: 64e68583787611340a567ee4c8ebf170, type: 2}
+  boost: {fileID: 11400000, guid: 37d3f0d6be7268244b374ece0beef5f5, type: 2}

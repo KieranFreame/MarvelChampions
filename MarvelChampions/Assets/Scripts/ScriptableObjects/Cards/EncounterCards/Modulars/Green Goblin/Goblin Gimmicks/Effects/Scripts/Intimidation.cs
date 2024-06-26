@@ -14,7 +14,7 @@ public class Intimidation : EncounterCardEffect
 
             if (decision == 1)
             {
-                await PayCostSystem.instance.GetResources(amount: 2);
+                await PayCostSystem.instance.GetResources(new() { { Resource.Any, 2 } });
                 return;
             }
         }

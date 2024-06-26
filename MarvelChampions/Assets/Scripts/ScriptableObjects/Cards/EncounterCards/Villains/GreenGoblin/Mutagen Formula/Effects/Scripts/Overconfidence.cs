@@ -12,22 +12,22 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Overconfidence", menuName = "MarvelChampions/Card Effects/Mutagen Formula/Overconfidence")]
 public class Overconfidence : EncounterCardEffect
 {
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
+        var player = TurnManager.instance.CurrPlayer;
+
+        GameStateManager.Instance.OnActivationCompleted += IsTriggerMet;
+
         if (player.Identity.ActiveIdentity is Hero)
-        {
-            AttackSystem.Instance.OnAttackCompleted.Add(IsTriggerMet);
-            await owner.CharStats.InitiateAttack();
-        }
+            await _owner.CharStats.InitiateAttack();
         else
-        {
-            SchemeSystem.Instance.SchemeComplete.Add(IsTriggerMet);
-            await owner.CharStats.InitiateScheme();
-        }
+            await _owner.CharStats.InitiateScheme();
     }
 
     private void IsTriggerMet(Action action)
     {
+        GameStateManager.Instance.OnActivationCompleted -= IsTriggerMet;
+
         if (action.Value >= 3)
             ScenarioManager.inst.Surge(TurnManager.instance.CurrPlayer);
     }

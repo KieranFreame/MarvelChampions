@@ -6,25 +6,19 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Business Problems", menuName = "MarvelChampions/Card Effects/Iron Man/Business Problems")]
 public class BusinessProblems : EncounterCardEffect
 {
-    Player stark;
-
-    public override async Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override async Task Resolve()
     {
-        _owner = owner;
-        Card = card;
-        stark = TurnManager.Players.FirstOrDefault(x => x.Identity.AlterEgo.Name == "Tony Stark");
+        var stark = TurnManager.Players.FirstOrDefault(x => x.Identity.AlterEgo.Name == "Tony Stark");
 
         if (stark.Identity.ActiveIdentity is not AlterEgo)
         {
-            bool decision = await ConfirmActivateUI.MakeChoice("Flip to Alter-Ego?");
-
-            if (decision)
+            if (await ConfirmActivateUI.MakeChoice("Flip to Alter-Ego?"))
             {
                 stark.Identity.FlipToAlterEgo();
             }
         }
 
-        if (stark.Identity.ActiveIdentity is AlterEgo && !stark.Exhausted) //chose to flip\was already alterego && is not exhausted
+        if (stark.Identity.ActiveIdentity is AlterEgo && !stark.Exhausted)
         {
             int decision = await ChooseEffectUI.ChooseEffect(new List<string>() { "Exhaust Tony Stark. Remove this card from the game", "Exhaust all your upgrades" });
 
@@ -37,7 +31,7 @@ public class BusinessProblems : EncounterCardEffect
             }
         }
 
-        List<PlayerCard> upgrades = stark.CardsInPlay.Permanents.Where(x => x.Data.cardType == CardType.Upgrade).ToList();
+        List<PlayerCard> upgrades = new(stark.CardsInPlay.Permanents.Where(x => x.CardType == CardType.Upgrade));
 
         foreach (var c in upgrades)
         {

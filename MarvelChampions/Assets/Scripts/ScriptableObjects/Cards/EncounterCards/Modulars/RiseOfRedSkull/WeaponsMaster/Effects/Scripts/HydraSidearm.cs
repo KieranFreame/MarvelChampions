@@ -22,17 +22,7 @@ public class HydraSidearm : AttachmentCardEffect
 
     public override async Task Activate(Player player)
     {
-        List<Task> tasks = new()
-        {
-            PayCostSystem.instance.GetResources(Resource.Energy, 1),
-            PayCostSystem.instance.GetResources(Resource.Physical, 1)
-        };
-
-        foreach (Task t in tasks)
-        {
-            await t;
-        }
-
+        await PayCostSystem.instance.GetResources(new() { { Resource.Physical, 1 }, { Resource.Energy, 1 } });
         Detach();
         ScenarioManager.inst.EncounterDeck.Discard(Card);
     }

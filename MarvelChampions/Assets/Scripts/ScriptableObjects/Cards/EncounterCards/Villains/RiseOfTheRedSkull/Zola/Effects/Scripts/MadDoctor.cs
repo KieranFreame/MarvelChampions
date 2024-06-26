@@ -59,7 +59,7 @@ public class MadDoctor : EncounterCardEffect
 
             VillainTurnController.instance.MinionsInPlay.Add(card);
 
-            await card.Effect.OnEnterPlay(_owner, card, TurnManager.instance.FirstPlayer);
+            await card.Effect.OnEnterPlay();
 
             test.RemoveCounters(3);
         }

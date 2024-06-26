@@ -12,7 +12,7 @@ public class RedDagger : PlayerCardEffect
 
         if (decision)
         {
-            await PayCostSystem.instance.GetResources(amount: 2);
+            await PayCostSystem.instance.GetResources(new() { { Resource.Any, 2 } });
 
             List<ICharacter> enemies = new List<ICharacter>() { ScenarioManager.inst.ActiveVillain };
             enemies.AddRange(VillainTurnController.instance.MinionsInPlay);

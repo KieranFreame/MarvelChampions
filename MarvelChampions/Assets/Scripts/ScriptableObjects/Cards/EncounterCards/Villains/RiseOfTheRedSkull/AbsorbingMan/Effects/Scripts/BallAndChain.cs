@@ -23,7 +23,7 @@ public class BallAndChain : AttachmentCardEffect
 
     public override async Task Activate(Player player)
     {
-        await PayCostSystem.instance.GetResources(Resource.Physical, 1);
+        await PayCostSystem.instance.GetResources(new() { { Resource.Physical, 1 } });
 
         EncounterCardData data = _card.Data;
 

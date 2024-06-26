@@ -40,4 +40,9 @@ public class EnhancedAwareness : PlayerCardEffect, IGenerate
 
         return new List<Resource>() { Resource.Scientific };
     }
+
+    public List<Resource> GetResources()
+    {
+        return new() { Resource.Scientific };
+    }
 }

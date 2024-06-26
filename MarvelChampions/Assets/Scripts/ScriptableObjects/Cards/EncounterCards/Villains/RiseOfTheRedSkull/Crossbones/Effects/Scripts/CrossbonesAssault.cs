@@ -6,10 +6,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Crossbones' Assault", menuName = "MarvelChampions/Card Effects/RotRS/Crossbones/Crossbones' Assault")]
 public class CrossbonesAssault : EncounterCardEffect
 {
-    public override Task OnEnterPlay(Villain owner, EncounterCard card, Player player)
+    public override Task OnEnterPlay()
     {
-        _owner = owner;
-
         ScenarioManager.inst.MainScheme.Threat.Acceleration++;
         return Task.CompletedTask;
     }
